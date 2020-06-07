@@ -1,0 +1,74 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13.0"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "concurrency",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13.0"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "concurrency",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1
+					],
+					"name" : "concurrency",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 1,
+					"id" : "concurrency::@570c1f3505a4033b9074",
+					"jsonFile" : "target-concurrency-Debug-716e3ed18bcd0a10b50d.json",
+					"name" : "concurrency",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/src/concurrency/out/build/x64-Debug",
+		"source" : "C:/src/concurrency"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 0
+	}
+}
