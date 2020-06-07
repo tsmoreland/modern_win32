@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Terry Moreland
+// Copyright © 2020 Terry util
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -11,12 +11,12 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __MORELAND_SYSTEM_WINDOWS_UNIQUE_HANDLE_H__
-#define __MORELAND_SYSTEM_WINDOWS_UNIQUE_HANDLE_H__
+#ifndef __UTIL_SYSTEM_WINDOWS_UNIQUE_HANDLE_H__
+#define __UTIL_SYSTEM_WINDOWS_UNIQUE_HANDLE_H__
 #include <tuple>
 #include <utility>
 
-namespace moreland::system::windows
+namespace util::system::windows
 {
     /// <summary>
     /// C++ wrapper around Win32 HANDLE using template TRAITS to handle specific behaviour with regard to close and invalid value
@@ -83,17 +83,17 @@ namespace moreland::system::windows
 			std::swap(m_handle, other.m_handle);
 		}
 
-        [[nodicsard]] explicit operator bool() const noexcept
+        [[nodiscard]] explicit operator bool() const noexcept
         {
             return m_handle != TRAITS::invalid();
         }
 
-        #if __cplusplus > 201703L || _MSVC_LANG > 201703L
+#       if __cplusplus > 201703L || _MSVC_LANG > 201703L
         [[nodiscard]] auto operator<=>(unique_handle const& other) noexcept
         {
             return m_handle <=> other.m_handle;
         }
-        #else
+#       else
         [[nodicsard]] bool operator==(unique_handle const& other)
         {
             return m_handle == other.m_handle;
@@ -119,7 +119,7 @@ namespace moreland::system::windows
             return m_handle >= other.m_handle;
         }
 
-        #endif
+#       endif
 
         unique_handle& operator=(unique_handle const& other) = delete;
         unique_handle& operator=(unique_handle&& other) noexcept
@@ -153,7 +153,7 @@ namespace moreland::system::windows
 		lhs.swap(rhs);
 	}
 
-    #if __cplusplus > 201703L || _MSVC_LANG > 201703L
+#   if __cplusplus > 201703L || _MSVC_LANG > 201703L
 
     template <typename TRAITS>
     [[nodiscard]] auto operator<=>(unique_handle<TRAITS> const& lhs, unique_handle<TRAITS> const& rhs)
@@ -161,7 +161,7 @@ namespace moreland::system::windows
         return lhs.get() <=> rhs.get();
     }
 
-    #else
+#   else
 
     template <typename TRAITS>
     [[nodicsard]] bool operator==(unique_handle<TRAITS> const& lhs, unique_handle<TRAITS> const& rhs)
@@ -194,7 +194,7 @@ namespace moreland::system::windows
     {
         return lhs.get() >= rhs.get();
     }
-    #endif
+#   endif
 
 }
 

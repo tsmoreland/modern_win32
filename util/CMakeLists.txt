@@ -1,10 +1,10 @@
-project(concurrency CXX)
+project(util CXX)
 
 ################################################################################
 # Source groups
 ################################################################################
 set(no_group_source_files
-    "src/concurrency.cpp"
+    "src/util.cpp"
 )
 source_group("" FILES ${no_group_source_files})
 
@@ -17,9 +17,11 @@ set(ALL_FILES
 ################################################################################
 
 add_library(${PROJECT_NAME} SHARED ${ALL_FILES} "include/system/windows/invalid_handle.h"  "include/concurrency/synchronization/event.h" "include/shared/template_utilities.h" "include/shared/windows_exception.h")
+include(GenerateExportHeader)
+generate_export_header(${PROJECT_NAME})
 
 use_props(${PROJECT_NAME} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PROPS}")
-set(ROOT_NAMESPACE concurrency)
+set(ROOT_NAMESPACE util)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     VS_GLOBAL_KEYWORD "Win32Proj"

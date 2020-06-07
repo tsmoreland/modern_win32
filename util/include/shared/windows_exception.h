@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Terry Moreland
+// Copyright © 2020 Terry util
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -11,21 +11,47 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __MORELAND_CONCURRENCY_SHARED_TEMPLATE_UTILITIES_H__
-#define __MORELAND_CONCURRENCY_SHARED_TEMPLATE_UTILITIES_H__
+#ifndef __UTIL_SHARED_WINDOWS_EXCEPTION_H__
+#define __UTIL_SHARED_WINDOWS_EXCEPTION_H__
 
-namespace moreland::shared
+#if _WIN32
+
+#include <stdexcept>
+#include <Windows.h>
+
+namespace util::shared
 {
-    template <typename DESTINATION_TYPE, typename SOURCE_TYPE, typename CONVERTER, Args... ARGS>
-    void pack(T *left, T const& right, Args const& ... args, CONVERTER converter)
+    class windows_exception final : public std::exception
     {
-        *left = converter(right);
-        pack(++left,  args..., converter);
-    }
+        using error_code_type = decltype(GetLastError());
+    public:
+        explicit windows_exception(error_code_type const error, char const* message) 
+            : std::exception(message)
+            , m_error_code(error)
+        {
+        }
+        explicit windows_exception(char const* message) 
+            : std::exception(message)
+            , m_error_code(GetLastError())
+        {
+        }
+        explicit windows_exception() 
+            : std::exception("An error occurred with Win32 function, please check error code for more details")
+            , m_error_code(GetLastError())
+        {
+        }
 
-    template <typename DESTINATION_TYPE, typename SOURCE_TYPE, typename CONVERTER, Args... ARGS>
-    void pack(T *left, CONVERTER converter) { }
+        [[nodiscard]] error_code_type get_error_code() const noexcept 
+        {
+            return m_error_code;
+        }
+    private:
+        error_code_type m_error_code;
+
+    };
 
 }
 
 #endif
+#endif
+

@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Terry Moreland
+// Copyright © 2020 Terry util
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -11,8 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __MORELAND_SYSTEM_WINDOWS_INVALID_HANDLE_H__
-#define __MORELAND_SYSTEM_WINDOWS_INVALID_HANDLE_H__
+#ifndef __UTIL_SYSTEM_WINDOWS_NULL_HANDLE_H__
+#define __UTIL_SYSTEM_WINDOWS_NULL_HANDLE_H__
 
 #include <system/windows/unique_handle.h>
 
@@ -20,15 +20,15 @@
 
 #include <Windows.h>
 
-namespace moreland::system::windows
+namespace util::system::windows
 {
-    struct invalid_handle_traits
+    struct null_handle_traits
     {
         using native_handle_type = HANDLE;
 
-        static native_handle_type invalid() noexcept
+        static constexpr native_handle_type invalid() noexcept
         {
-			return INVALID_HANDLE_VALUE;
+			return nullptr;
         }
         static void close(native_handle_type const handle) noexcept
         {
@@ -36,7 +36,7 @@ namespace moreland::system::windows
         }
     };
 
-    using invalid_handle = unique_handle<invalid_handle_traits>;
+    using null_handle = unique_handle<null_handle_traits>;
 
 }
 
