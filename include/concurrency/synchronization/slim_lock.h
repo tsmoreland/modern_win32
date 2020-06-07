@@ -1,5 +1,5 @@
 //
-// Copyright � 2020 Terry Moreland
+// Copyright © 2020 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -23,161 +23,103 @@
 
 #endif
 
-#include <algorithm>
-#include <optional>
 #include <shared_mutex>
 
 namespace moreland::concurrency::synchronization
 {
 
-    template <typename LOCK>
-    class lock_guard final
-    {
-        using unlock_action = void (LOCK::*)();
-    public:
-        explicit lock_guard(LOCK* lock, unlock_action const unlock)
-            : m_lock(lock)
-            , m_unlock(unlock)
-        {
-        }
-        lock_guard(lock_guard const&) = delete;
-        lock_guard(lock_guard&& other) noexcept
-            : m_lock{other.m_lock}
-            , m_unlock{other.m_unlock}
-        {
-            other.m_lock = nullptr;
-            other.m_unlock = nullptr;
-        }
-        ~lock_guard() 
-        {
-            if (m_lock != nullptr && m_unlock != nullptr)
-                (m_lock->*m_unlock)();
-        }
-
-        lock_guard& operator=(lock_guard const&) = delete;
-        lock_guard& operator=(lock_guard&& other) = delete;
-
-    private:
-        LOCK* m_lock;
-        unlock_action m_unlock;
-    };
-
 #ifdef _WIN32
 
+    /// <summary>
+    /// modern C++ wrapper around SRWLOCK intended to mirror std::shared_mutex such that it be used by both
+    /// std::lock_guard and std::shared_lock to provide RAII release of the lock
+    /// </summary>
     class slim_lock final
     {
+        using native_handle_type = PSRWLOCK;
+
     public:
         explicit slim_lock() 
         {
             InitializeSRWLock(&m_lock);
         }
         slim_lock(slim_lock const&) = delete;
-        slim_lock(slim_lock&&) noexcept = delete;
-        ~slim_lock() = default;
+        slim_lock(slim_lock&&) noexcept = default;
+        ~slim_lock() noexcept = default;
 
-        [[nodiscard]] SRWLOCK const& get_value() const noexcept
-        {
-            return m_lock;
-        }
-        lock_guard<slim_lock> enter_write_lock()
-        {
-            enter_exclusive_lock();
-            return lock_guard<slim_lock>(this, &slim_lock::exit_exclusive_lock);
-        }
-        lock_guard<slim_lock> enter_read_lock()
-        {
-            enter_shared_lock();
-            return lock_guard<slim_lock>(this, &slim_lock::exit_shared_lock);
-        }
-
-        std::optional<lock_guard<slim_lock>> try_enter_write_lock()
-        {
-            return try_enter_exclusive_lock()
-                ? std::optional<lock_guard<slim_lock>>(std::in_place, this, &slim_lock::exit_exclusive_lock)
-                : std::nullopt;
-        }
-        std::optional<lock_guard<slim_lock>> try_enter_read_lock()
-        {
-            return (try_enter_shared_lock())
-                ? std::optional<lock_guard<slim_lock>>(std::in_place, this, &slim_lock::exit_shared_lock)
-                : std::nullopt;
-        }
-
-        slim_lock& operator=(slim_lock const&) = delete;
-        slim_lock& operator=(slim_lock&&) noexcept = delete;
-    private:
-        SRWLOCK m_lock{};
-
-        void enter_exclusive_lock() noexcept
+        /// <summary>
+        /// Acquires a slim reader/writer (SRW) lock in exclusive mode.
+        /// </summary>
+        void lock() noexcept
         {
             AcquireSRWLockExclusive(&m_lock);
         }
-        void exit_exclusive_lock() noexcept
+        /// <summary>
+        /// Attempts to acquire a slim reader/writer (SRW) lock in exclusive mode. If the call is successful, the calling thread takes ownership of the lock.
+        /// </summary>
+        /// <returns>true if lock has been obtained; otherwise, false</returns>
+        [[nodiscard]] bool try_lock() noexcept
+        {
+            return TryAcquireSRWLockExclusive(&m_lock) != 0;
+        }
+        /// <summary>
+        /// Releases an SRW lock that was opened in exclusive mode.
+        /// </summary>
+        void unlock() noexcept
         {
             ReleaseSRWLockExclusive(&m_lock);
         }
-        void enter_shared_lock() noexcept
+        /// <summary>
+        /// Acquires an SRW lock in shared mode.
+        /// </summary>
+        void lock_shared() noexcept
         {
             AcquireSRWLockShared(&m_lock);
         }
-        void exit_shared_lock() noexcept
+        /// <summary>
+        /// Attempts to acquire a slim reader/writer (SRW) lock in shared mode. If the call is successful, the calling thread takes ownership of the lock.
+        /// </summary>
+        /// <returns>true if lock has been obtained; otherwise, false</returns>
+        [[nodiscard]] bool try_lock_shared() noexcept
+        {
+            return TryAcquireSRWLockShared(&m_lock) != 0;
+        }
+        /// <summary>
+        /// Releases an SRW lock that was opened in shared mode.
+        /// </summary>
+        /// <returns></returns>
+        void unlock_shared() noexcept
         {
             ReleaseSRWLockShared(&m_lock);
         }
-        bool try_enter_exclusive_lock() noexcept
+
+        /// <summary>
+        /// returns the underlying implementation-defined native handle object
+        /// </summary>
+        [[nodiscard]] native_handle_type native_handle() noexcept
         {
-            return TryAcquireSRWLockExclusive(&m_lock) == TRUE;
+            return &m_lock;
         }
-        bool try_enter_shared_lock() noexcept
-        {
-            return TryAcquireSRWLockShared(&m_lock) == TRUE;
-        }
+
+        slim_lock& operator=(slim_lock const&) = delete;
+        slim_lock& operator=(slim_lock&&) noexcept = default;
+    protected:
+
+        void enter_exclusive_lock() noexcept { AcquireSRWLockExclusive(&m_lock); }
+
+        void enter_shared_lock() noexcept { AcquireSRWLockShared(&m_lock); }
+
+        bool try_enter_exclusive_lock() noexcept { return TryAcquireSRWLockExclusive(&m_lock) == TRUE; }
+        bool try_enter_shared_lock() noexcept { return TryAcquireSRWLockShared(&m_lock) == TRUE; }
+
+    private:
+        SRWLOCK m_lock{};
     };
 
 #else
-    class slim_lock final 
-    {
-    public:
-        [[nodiscard]] std::shared_timed_mutex const& get_value() const noexcept
-        {
-            return m_mutex;
-        }
-        lock_guard<slim_lock> enter_write_lock()
-        {
-            m_mutex.lock();
-            return lock_guard<slim_lock>(this, &slim_lock::exit_exclusive_lock);
-        }
-        lock_guard<slim_lock> enter_read_lock()
-        {
-            m_mutex.lock_shared();
-            return lock_guard<slim_lock>(this, &slim_lock::exit_shared_lock);
-        }
-        std::optional<lock_guard<slim_lock>> try_enter_write_lock()
-        {
-            return m_mutex.try_lock()
-                ? std::optional<lock_guard<slim_lock>>(std::in_place, this, &slim_lock::exit_exclusive_lock)
-                : std::nullopt;
-        }
-        std::optional<lock_guard<slim_lock>> try_enter_read_lock()
-        {
-            return m_mutex.try_lock_shared()
-                ? std::optional<lock_guard<slim_lock>>(std::in_place, this, &slim_lock::exit_shared_lock)
-                : std::nullopt;
-        }
 
+    using slim_lock = std::shared_mutex;
 
-    private:
-        std::shared_timed_mutex m_mutex{};
-
-        void exit_exclusive_lock() noexcept
-        {
-            m_mutex.unlock();
-        }
-        void exit_shared_lock() noexcept
-        {
-            m_mutex.unlock_shared();
-        }
-    };
 #endif
 
 
