@@ -4,8 +4,7 @@ project(concurrency CXX)
 # Source groups
 ################################################################################
 set(no_group_source_files
-    "../include/concurrency/synchronization/slim_lock.h"
-    "concurrency.cpp"
+    "src/concurrency.cpp"
 )
 source_group("" FILES ${no_group_source_files})
 
@@ -16,7 +15,8 @@ set(ALL_FILES
 ################################################################################
 # Target
 ################################################################################
-add_library(${PROJECT_NAME} SHARED ${ALL_FILES})
+
+add_library(${PROJECT_NAME} SHARED ${ALL_FILES} "include/system/windows/invalid_handle.h"  "include/concurrency/synchronization/event.h" "include/shared/template_utilities.h" "include/shared/windows_exception.h")
 
 use_props(${PROJECT_NAME} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PROPS}")
 set(ROOT_NAMESPACE concurrency)
@@ -47,11 +47,11 @@ endif()
 ################################################################################
 if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
     target_include_directories(${PROJECT_NAME} PUBLIC
-        "${CMAKE_CURRENT_SOURCE_DIR}/../include"
+        "${CMAKE_CURRENT_SOURCE_DIR}/include"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
     target_include_directories(${PROJECT_NAME} PUBLIC
-        "${CMAKE_CURRENT_SOURCE_DIR}/../include"
+        "${CMAKE_CURRENT_SOURCE_DIR}/include"
     )
 endif()
 

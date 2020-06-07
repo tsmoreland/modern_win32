@@ -11,8 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __SLIM_LOCK_H__
-#define __SLIM_LOCK_H__
+#ifndef __MORELAND_CONCURRENCY_SYNCHRONIZATION_SLIM_LOCK_H__
+#define __MORELAND_CONCURRENCY_SYNCHRONIZATION_SLIM_LOCK_H__
 
 #ifdef _WIN32
 
@@ -44,7 +44,12 @@ namespace moreland::concurrency::synchronization
             InitializeSRWLock(&m_lock);
         }
         slim_lock(slim_lock const&) = delete;
-        slim_lock(slim_lock&&) noexcept = default;
+        slim_lock(slim_lock&& other) noexcept 
+            : m_lock(other.m_lock)
+        {
+            other.m_lock = SRWLOCK{};
+            InitializeSRWLock(&other.m_lock);
+        }
         ~slim_lock() noexcept = default;
 
         /// <summary>
@@ -102,7 +107,22 @@ namespace moreland::concurrency::synchronization
         }
 
         slim_lock& operator=(slim_lock const&) = delete;
-        slim_lock& operator=(slim_lock&&) noexcept = default;
+        slim_lock& operator=(slim_lock&& other) noexcept 
+        {
+            if (this == &other)
+                return *this;
+
+            // TODO: add method to check if locked and unlock appropriate type, this may be handled along with recursive support
+            unlock();
+            unlock_shared();
+
+            m_lock = other.m_lock;
+            
+            other.m_lock = SRWLOCK{};
+            InitializeSRWLock(&other.m_lock);
+
+            return *this;
+        }
     protected:
 
         void enter_exclusive_lock() noexcept { AcquireSRWLockExclusive(&m_lock); }
@@ -122,6 +142,6 @@ namespace moreland::concurrency::synchronization
 
 #endif
 
-
 }
+
 #endif
