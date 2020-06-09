@@ -1,0 +1,112 @@
+set(BINARY ${CMAKE_PROJECT_NAME}_tst)
+
+find_package(GTest REQUIRED)
+
+file(GLOB_RECURSE TEST_SOURCES LIST_DIRECTORIES false *.h *.cpp)
+
+set(SOURCES ${TEST_SOURCES})
+
+add_executable(${BINARY} ${TEST_SOURCES})
+
+add_test(NAME ${BINARY} COMMAND ${BINARY})
+
+set_target_properties(${BINARY} PROPERTIES
+    VS_GLOBAL_KEYWORD "Win32Proj"
+)
+use_props(${BINARY} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PROPS}")
+
+# use this if/when utils exports something
+# target_link_libraries(${BINARY} PUBLIC ${CMAKE_PROJECT_NAME}_lib GTest::GTest GTest::Main)
+target_link_libraries(${BINARY} PUBLIC GTest::GTest GTest::Main)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+	INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
+)
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+	"${CMAKE_CURRENT_SOURCE_DIR}/include"
+)
+
+################################################################################
+# Compile definitions
+################################################################################
+if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE
+        "$<$<CONFIG:Debug>:"
+            "_DEBUG"
+        ">"
+        "$<$<CONFIG:Release>:"
+            "NDEBUG"
+        ">"
+        "_CONSOLE;"
+        "UNICODE;"
+        "_UNICODE"
+    )
+elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE
+        "$<$<CONFIG:Debug>:"
+            "_DEBUG"
+        ">"
+        "$<$<CONFIG:Release>:"
+            "NDEBUG"
+        ">"
+        "WIN32;"
+        "_CONSOLE;"
+        "UNICODE;"
+        "_UNICODE"
+    )
+endif()
+
+################################################################################
+# Compile and link options
+################################################################################
+if(MSVC)
+    if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
+        target_compile_options(${PROJECT_NAME} PRIVATE
+            $<$<CONFIG:Debug>:
+                ${DEFAULT_CXX_DEBUG_RUNTIME_LIBRARY}
+            >
+            $<$<CONFIG:Release>:
+                /Oi;
+                ${DEFAULT_CXX_RUNTIME_LIBRARY};
+                /Gy
+            >
+            /permissive-;
+            /std:c++latest;
+            /sdl;
+            /W3;
+            ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT};
+            ${DEFAULT_CXX_EXCEPTION_HANDLING}
+        )
+    elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
+        target_compile_options(${PROJECT_NAME} PRIVATE
+            $<$<CONFIG:Debug>:
+                ${DEFAULT_CXX_DEBUG_RUNTIME_LIBRARY}
+            >
+            $<$<CONFIG:Release>:
+                /Oi;
+                ${DEFAULT_CXX_RUNTIME_LIBRARY};
+                /Gy
+            >
+            /permissive-;
+            /std:c++latest;
+            /sdl;
+            /W3;
+            ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT};
+            ${DEFAULT_CXX_EXCEPTION_HANDLING}
+        )
+    endif()
+
+	target_link_options(${PROJECT_NAME} PRIVATE
+		$<$<CONFIG:Debug>:
+			/INCREMENTAL
+		>
+		$<$<CONFIG:Release>:
+			/OPT:REF;
+			/OPT:ICF;
+			/INCREMENTAL:NO
+		>
+		/DEBUG;
+		/SUBSYSTEM:CONSOLE
+	)
+endif()
