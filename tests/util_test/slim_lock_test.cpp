@@ -13,7 +13,8 @@
 
 #include <gtest/gtest.h>
 #include "concurrency/synchronization/slim_lock.h"
-#include <thread>
+#include <future>
+#include <chrono>
 
 using util::concurrency::synchronization::slim_lock;
 
@@ -21,9 +22,84 @@ TEST(slim_lock, shared_lock_allows_multiple_threads)
 {
     //arrange
     slim_lock lock{};
+    auto complete{false};
+    auto timed_out{false};
 
+    auto const timeout = std::async(std::launch::async,
+        [&complete, &timed_out]()
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+            if (!complete) {
+                timed_out = false;
+                FAIL() << "slim locks did not complete in time";
+            }
+        });
 
+    // act
+    auto thread_one = std::async(std::launch::async, 
+        [&lock]() {
 
-    //act
-    //assert
+            std::shared_lock guard(lock);
+            return true;
+        });
+
+    auto thread_two = std::async(std::launch::async, 
+        [&lock]() {
+            std::shared_lock guard(lock);
+            return true;
+        });
+
+    complete = thread_one.get() && thread_two.get();
+
+    ASSERT_TRUE(complete && !timed_out);
+
+    timeout.wait();
+}
+
+TEST(slim_lock, exclusive_lock_only_allows_one)
+{
+    slim_lock lock{};
+    auto complete{false};
+    auto timed_out{false};
+    auto i{0};
+    std::string name;
+
+    // arrange
+    auto const timeout = std::async(std::launch::async,
+        [&complete, &timed_out]()
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+            if (!complete) {
+                timed_out = false;
+                FAIL() << "slim locks did not complete in time";
+            }
+        });
+
+    // act
+    auto const thread_one = std::async(std::launch::async,
+        [&lock, &name]()
+        {
+            std::lock_guard guard(lock);
+            if (name.empty())
+                name += "thread_one";
+        });
+
+    auto const thread_two = std::async(std::launch::async,
+        [&lock, &name]()
+        {
+            std::lock_guard guard(lock);
+            if (name.empty())
+                name += "thread_two";
+        });
+
+    thread_one.wait();
+    thread_two.wait();
+    complete = true;
+
+    // assert
+    // one or the other but not a combinatino of both, in theory if we're not using a write lock that could maybe happen
+    // probably a better way to verify this but offhand I'm not sure of what it may be
+    ASSERT_TRUE(name == "thread_one" || name == "thread_two");
+
+    timeout.wait();
 }

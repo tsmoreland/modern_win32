@@ -4,6 +4,7 @@ set(CMAKE_SYSTEM_VERSION 10.0 CACHE STRING "" FORCE)
 
 project(util CXX)
 include_directories(util/include)
+enable_testing()
 
 ################################################################################
 # Set target arch type if empty. Visual studio solution generator provides it.
@@ -79,8 +80,6 @@ include(CMake/GlobalSettingsInclude.cmake OPTIONAL)
 # Use solution folders feature
 ################################################################################
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-enable_testing()
 
 ################################################################################
 # Sub-projects
