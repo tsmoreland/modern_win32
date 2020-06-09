@@ -14,7 +14,7 @@
 #ifndef __UTIL_SYSTEM_WINDOWS_INVALID_HANDLE_H__
 #define __UTIL_SYSTEM_WINDOWS_INVALID_HANDLE_H__
 
-#include <system/windows/unique_handle.h>
+#include <util/system/windows/unique_handle.h>
 
 #ifdef _WIN32
 

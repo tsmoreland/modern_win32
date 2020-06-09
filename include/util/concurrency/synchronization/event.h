@@ -16,13 +16,13 @@
 
 #include <chrono>
 #include <stdexcept>
-#include <system/windows/null_handle.h>
-#include <shared/template_utilities.h>
+#include <util/system/windows/null_handle.h>
+#include <util/shared/template_utilities.h>
 
 #ifdef _WIN32
 
 #include <Windows.h>
-#include <shared/windows_exception.h>
+#include <util/shared/windows_exception.h>
 
 namespace util::concurrency::synchronization
 {

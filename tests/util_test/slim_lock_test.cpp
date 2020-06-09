@@ -12,23 +12,31 @@
 // 
 
 #include <gtest/gtest.h>
-#include "concurrency/synchronization/slim_lock.h"
+#include "util/concurrency/synchronization/slim_lock.h"
 #include <future>
 #include <chrono>
 
 using util::concurrency::synchronization::slim_lock;
 
+void wait_for(bool const& complete, std::chrono::milliseconds const& interval) 
+{
+    auto const start = std::chrono::steady_clock::now();
+    while ( (std::chrono::steady_clock::now() - start) < interval)
+        if (!complete)
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+}
+
 TEST(slim_lock, shared_lock_allows_multiple_threads)
 {
     //arrange
     slim_lock lock{};
-    auto complete{false};
-    auto timed_out{false};
+    bool complete{false};
+    bool timed_out{false};
 
     auto const timeout = std::async(std::launch::async,
         [&complete, &timed_out]()
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+            wait_for(complete, std::chrono::milliseconds(250));
             if (!complete) {
                 timed_out = false;
                 FAIL() << "slim locks did not complete in time";
@@ -59,16 +67,15 @@ TEST(slim_lock, shared_lock_allows_multiple_threads)
 TEST(slim_lock, exclusive_lock_only_allows_one)
 {
     slim_lock lock{};
-    auto complete{false};
-    auto timed_out{false};
-    auto i{0};
+    bool complete{false};
+    bool timed_out{false};
     std::string name;
 
     // arrange
     auto const timeout = std::async(std::launch::async,
         [&complete, &timed_out]()
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+            wait_for(complete, std::chrono::milliseconds(250));
             if (!complete) {
                 timed_out = false;
                 FAIL() << "slim locks did not complete in time";

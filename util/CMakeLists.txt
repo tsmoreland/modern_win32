@@ -16,7 +16,7 @@ set(ALL_FILES
 # Target
 ################################################################################
 
-add_library(${PROJECT_NAME} SHARED ${ALL_FILES} "include/system/windows/invalid_handle.h"  "include/concurrency/synchronization/event.h" "include/shared/template_utilities.h" "include/shared/windows_exception.h")
+add_library(${PROJECT_NAME} SHARED ${ALL_FILES} "../include/util/system/windows/invalid_handle.h"  "../include/util/concurrency/synchronization/event.h" "../include/util/shared/template_utilities.h" "../include/util/shared/windows_exception.h")
 include(GenerateExportHeader)
 generate_export_header(${PROJECT_NAME})
 
