@@ -67,6 +67,6 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Sub-projects
 add_subdirectory(src)
-add_subdirectory(tests/util_test)
+add_subdirectory(tests/modern_win32_test)
 
 
