@@ -11,21 +11,40 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __UTIL_CONCURRENCY_SHARED_TEMPLATE_UTILITIES_H__
-#define __UTIL_CONCURRENCY_SHARED_TEMPLATE_UTILITIES_H__
+#include <gtest/gtest.h>
+#include <util/concurrency/synchronization/event.h>
+#include "context.h"
 
-namespace util::shared
+using util::concurrency::synchronization::auto_reset_event;
+using util::concurrency::synchronization::manual_reset_event;
+
+using util::test::context;
+constexpr auto TEST_TIMOUT = std::chrono::milliseconds(250);
+
+TEST(auto_reset_event, is_reset_after_wait) 
 {
-    template <typename DESTINATION_TYPE, typename SOURCE_TYPE, typename CONVERTER, typename... ARGS>
-    void pack(DESTINATION_TYPE *left, SOURCE_TYPE const& right, ARGS const& ... args, CONVERTER converter)
-    {
-        *left = converter(right);
-        pack(++left,  args..., converter);
-    }
+    // Arrange
+    context context{TEST_TIMOUT};
+    auto_reset_event event{false};
 
-    template <typename DESTINATION_TYPE, typename SOURCE_TYPE, typename CONVERTER, typename... ARGS>
-    void pack(DESTINATION_TYPE *left, CONVERTER converter) { }
+    // Act
+    auto const signalled = context::get_second_wait_result(event);
+    context.complete = true;
 
+    // Assert
+    ASSERT_TRUE(!signalled && !context.get_timed_out());
 }
 
-#endif
+TEST(manual_reset_event, is_reset_after_wait) 
+{
+    // Arrange
+    context context{TEST_TIMOUT};
+    manual_reset_event event{false};
+
+    // Act
+    auto const signalled = context::get_second_wait_result(event);
+    context.complete = true;
+
+    // Assert
+    ASSERT_TRUE(signalled && !context.get_timed_out());
+}

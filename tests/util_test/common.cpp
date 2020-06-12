@@ -11,21 +11,29 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __UTIL_CONCURRENCY_SHARED_TEMPLATE_UTILITIES_H__
-#define __UTIL_CONCURRENCY_SHARED_TEMPLATE_UTILITIES_H__
+#include "common.h"
+#include <future>
+#include <gtest/gtest.h>
 
-namespace util::shared
+namespace util::test
 {
-    template <typename DESTINATION_TYPE, typename SOURCE_TYPE, typename CONVERTER, typename... ARGS>
-    void pack(DESTINATION_TYPE *left, SOURCE_TYPE const& right, ARGS const& ... args, CONVERTER converter)
-    {
-        *left = converter(right);
-        pack(++left,  args..., converter);
-    }
 
-    template <typename DESTINATION_TYPE, typename SOURCE_TYPE, typename CONVERTER, typename... ARGS>
-    void pack(DESTINATION_TYPE *left, CONVERTER converter) { }
-
+void wait_for(bool const& complete, std::chrono::milliseconds const& interval) 
+{
+    auto const start = std::chrono::steady_clock::now();
+    while ( (std::chrono::steady_clock::now() - start) < interval)
+        if (!complete)
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
 }
 
-#endif
+void fail_if_not_complete_after(std::chrono::milliseconds timeout, bool& complete, bool& timed_out)
+{
+    wait_for(complete, timeout);
+    if (!complete) {
+        timed_out = false;
+        FAIL() << "test timeout out";
+    }
+}
+
+
+}
