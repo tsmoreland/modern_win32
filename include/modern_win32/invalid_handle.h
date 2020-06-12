@@ -11,21 +11,35 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __UTIL_CONCURRENCY_SHARED_TEMPLATE_UTILITIES_H__
-#define __UTIL_CONCURRENCY_SHARED_TEMPLATE_UTILITIES_H__
+#ifndef __UTIL_SYSTEM_WINDOWS_INVALID_HANDLE_H__
+#define __UTIL_SYSTEM_WINDOWS_INVALID_HANDLE_H__
 
-namespace util::shared
+#include <modern_win32/unique_handle.h>
+
+#ifdef _WIN32
+
+#include <Windows.h>
+
+namespace modern_win32
 {
-    template <typename DESTINATION_TYPE, typename SOURCE_TYPE, typename CONVERTER, typename... ARGS>
-    void pack(DESTINATION_TYPE *left, SOURCE_TYPE const& right, ARGS const& ... args, CONVERTER converter)
+    struct invalid_handle_traits
     {
-        *left = converter(right);
-        pack(++left,  args..., converter);
-    }
+        using native_handle_type = HANDLE;
 
-    template <typename DESTINATION_TYPE, typename SOURCE_TYPE, typename CONVERTER, typename... ARGS>
-    void pack(DESTINATION_TYPE *left, CONVERTER converter) { }
+        static native_handle_type invalid() noexcept
+        {
+			return INVALID_HANDLE_VALUE;
+        }
+        static void close(native_handle_type const handle) noexcept
+        {
+            CloseHandle(handle);
+        }
+    };
+
+    using invalid_handle = unique_handle<invalid_handle_traits>;
 
 }
+
+#endif
 
 #endif

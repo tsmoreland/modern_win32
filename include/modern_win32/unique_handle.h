@@ -16,7 +16,7 @@
 #include <tuple>
 #include <utility>
 
-namespace util::system::windows
+namespace modern_win32
 {
     /// <summary>
     /// C++ wrapper around Win32 HANDLE using template TRAITS to handle specific behaviour with regard to close and invalid value

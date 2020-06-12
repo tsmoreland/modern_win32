@@ -6,7 +6,13 @@ file(GLOB_RECURSE TEST_SOURCES LIST_DIRECTORIES false *.h *.cpp)
 
 set(SOURCES ${TEST_SOURCES})
 
-add_executable(${TEST_PROJECT_NAME} ${TEST_SOURCES} "event_test.cpp" "common.h" "common.cpp" "context.h")
+add_executable(${TEST_PROJECT_NAME} ${TEST_SOURCES} 
+    "event_test.cpp" 
+    "slim_lock_test.cpp" 
+    "common.h" 
+    "common.cpp" 
+    "context.h"
+)
 
 add_test(NAME ${TEST_PROJECT_NAME} COMMAND ${TEST_PROJECT_NAME})
 

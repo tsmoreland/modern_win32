@@ -11,35 +11,40 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __UTIL_SYSTEM_WINDOWS_INVALID_HANDLE_H__
-#define __UTIL_SYSTEM_WINDOWS_INVALID_HANDLE_H__
+#include <gtest/gtest.h>
+#include <modern_win32/threading/event.h>
+#include "context.h"
 
-#include <util/system/windows/unique_handle.h>
+using modern_win32::threading::auto_reset_event;
+using modern_win32::threading::manual_reset_event;
 
-#ifdef _WIN32
+using util::test::context;
+constexpr auto TEST_TIMOUT = std::chrono::milliseconds(250);
 
-#include <Windows.h>
-
-namespace util::system::windows
+TEST(auto_reset_event, is_reset_after_wait) 
 {
-    struct invalid_handle_traits
-    {
-        using native_handle_type = HANDLE;
+    // Arrange
+    context context{TEST_TIMOUT};
+    auto_reset_event event{false};
 
-        static native_handle_type invalid() noexcept
-        {
-			return INVALID_HANDLE_VALUE;
-        }
-        static void close(native_handle_type const handle) noexcept
-        {
-            CloseHandle(handle);
-        }
-    };
+    // Act
+    auto const signalled = context::get_second_wait_result(event);
+    context.complete = true;
 
-    using invalid_handle = unique_handle<invalid_handle_traits>;
-
+    // Assert
+    ASSERT_TRUE(!signalled && !context.get_timed_out());
 }
 
-#endif
+TEST(manual_reset_event, is_reset_after_wait) 
+{
+    // Arrange
+    context context{TEST_TIMOUT};
+    manual_reset_event event{false};
 
-#endif
+    // Act
+    auto const signalled = context::get_second_wait_result(event);
+    context.complete = true;
+
+    // Assert
+    ASSERT_TRUE(signalled && !context.get_timed_out());
+}
