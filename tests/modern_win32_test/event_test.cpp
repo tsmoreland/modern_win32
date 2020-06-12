@@ -12,11 +12,11 @@
 // 
 
 #include <gtest/gtest.h>
-#include <util/concurrency/synchronization/event.h>
+#include <modern_win32/threading/event.h>
 #include "context.h"
 
-using util::concurrency::synchronization::auto_reset_event;
-using util::concurrency::synchronization::manual_reset_event;
+using modern_win32::threading::auto_reset_event;
+using modern_win32::threading::manual_reset_event;
 
 using util::test::context;
 constexpr auto TEST_TIMOUT = std::chrono::milliseconds(250);

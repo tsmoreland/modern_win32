@@ -14,13 +14,13 @@
 #ifndef __UTIL_SYSTEM_WINDOWS_NULL_HANDLE_H__
 #define __UTIL_SYSTEM_WINDOWS_NULL_HANDLE_H__
 
-#include <util/system/windows/unique_handle.h>
+#include <modern_win32/unique_handle.h>
 
 #ifdef _WIN32
 
 #include <Windows.h>
 
-namespace util::system::windows
+namespace modern_win32
 {
     struct null_handle_traits
     {

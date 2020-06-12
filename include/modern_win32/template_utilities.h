@@ -14,7 +14,7 @@
 #ifndef __UTIL_CONCURRENCY_SHARED_TEMPLATE_UTILITIES_H__
 #define __UTIL_CONCURRENCY_SHARED_TEMPLATE_UTILITIES_H__
 
-namespace util::shared
+namespace modern_win32
 {
     template <typename DESTINATION_TYPE, typename SOURCE_TYPE, typename CONVERTER, typename... ARGS>
     void pack(DESTINATION_TYPE *left, SOURCE_TYPE const& right, ARGS const& ... args, CONVERTER converter)

@@ -16,15 +16,15 @@
 
 #include <chrono>
 #include <stdexcept>
-#include <util/system/windows/null_handle.h>
-#include <util/shared/template_utilities.h>
+#include <modern_win32/null_handle.h>
+#include <modern_win32/template_utilities.h>
 
 #ifdef _WIN32
 
 #include <Windows.h>
-#include <util/shared/windows_exception.h>
+#include <modern_win32/windows_exception.h>
 
-namespace util::concurrency::synchronization
+namespace modern_win32::threading
 {
     enum class event_type
     {
@@ -42,7 +42,7 @@ namespace util::concurrency::synchronization
     template <event_type EVENT_TYPE>
     class event final
     {
-        using modern_handle_type = typename util::system::windows::null_handle;
+        using modern_handle_type = typename modern_win32::null_handle;
     public:
         explicit event(bool const initial_state) noexcept
             : m_event{CreateEvent(nullptr, EVENT_TYPE == event_type::manual_reset, initial_state ? TRUE : FALSE, nullptr)}
@@ -83,13 +83,13 @@ namespace util::concurrency::synchronization
         /// If maximum value or maximum value of DWORD, the function will return only when the specified objects are signaled.
         /// </param>
         /// <returns>true if event was signaled; otherwise, false</returns>
-        /// <exception cref="util::shared::windows_exception">if wait fails</exception>
+        /// <exception cref="windows_exception">if wait fails</exception>
         [[nodiscard]] bool wait_one(std::chrono::milliseconds const timeout = get_infinity_in_ms()) const 
         {
             auto const result = WaitForSingleObject(m_event.get(), convert_timeout(timeout)); 
 
             if (result == WAIT_FAILED)
-                throw shared::windows_exception("Wait failed");
+                throw windows_exception();
 
             return result == WAIT_OBJECT_0;
         }
@@ -105,8 +105,8 @@ namespace util::concurrency::synchronization
         /// If maximum value or maximum value of DWORD, the function will return only when the specified objects are signaled.
         /// </param>
         /// <returns>true if all events have been set and no failure has occurred</returns>
-        /// <exception cref="util::shared::windows_exception">if wait fails</exception>
-        /// <exception cref="util::shared::runtime_error">if any handle has been abandonded details</exception>
+        /// <exception cref="windows_exception">if wait fails</exception>
+        /// <exception cref="runtime_error">if any handle has been abandonded details</exception>
         template <typename... EVENTS>
         static bool wait_all(EVENTS const&... events, std::chrono::milliseconds const timeout = get_infinity_in_ms())
         {
@@ -188,26 +188,25 @@ namespace util::concurrency::synchronization
     private:
         modern_handle_type m_event;
 
-        static constexpr DWORD convert_timeout(std::chrono::milliseconds const timeout)
+        static constexpr DWORD convert_timeout(std::chrono::milliseconds const& timeout)
         {
-            #undef max // disable so we can use numerical_limits
-            if (timeout >= get_infinity_in_ms()) {
-                return INFINITE;
-            } else {
-                return static_cast<DWORD>(timeout.count());
-            }
-            #define max(a,b) (a) > (b) ? (a) : (b);
+#           undef max // disable so we can use numerical_limits
+            return (timeout >= get_infinity_in_ms())
+                ? INFINITE
+                : static_cast<DWORD>(timeout.count());
+
+#           define max(a,b) (a) > (b) ? (a) : (b);
         }
 
         template <typename... EVENTS>
         static DWORD wait(EVENTS const&... events, bool const wait_all, std::chrono::milliseconds const timeout)
         {
             modern_handle_type::native_handle_type native_handles[sizeof...(events)];
-            shared::pack(native_handles, events..., [](auto& e) {return e.get();});
+            pack(native_handles, events..., [](auto& e) {return e.get();});
 
             auto const result = WaitForMultipleObjects(sizeof...(events), native_handles, wait_all ? TRUE : FALSE, convert_timeout(timeout));
             if (result == WAIT_FAILED) 
-                throw shared::windows_exception("Error occurred waiting for handles");
+                throw windows_exception();
 
             if (WAIT_ABANDONED <= result && WAIT_ABANDONED+sizeof...(events) > result)
                 throw std::runtime_error("handle has been abandoned");

@@ -1,4 +1,4 @@
-project(util CXX)
+project(modern_win32 CXX)
 
 # Source groups
 set(no_group_source_files
@@ -10,14 +10,20 @@ set(ALL_FILES
     ${no_group_source_files}
 )
 
-#set (ALL_HEADERS
-#    "../include/*.h"
-#)
+set (ALL_HEADERS
+    "../include/modern_win32/threading/event.h"
+    "../include/modern_win32/threading/slim_lock.h"
+    "../include/modern_win32/invalid_handle.h"
+    "../include/modern_win32/null_handle.h"
+    "../include/modern_win32/template_utilities.h"
+    "../include/modern_win32/unique_handle.h"
+    "../include/modern_win32/windows_exception.h"
+)
 
 # Target
 
 add_library(${PROJECT_NAME} SHARED 
-    ${ALL_FILES} 
+    ${ALL_FILES} ${ALL_HEADERS}
 )
 
 include(GenerateExportHeader)

@@ -16,38 +16,25 @@
 
 #if _WIN32
 
-#include <stdexcept>
+#include <system_error>
 #include <Windows.h>
 
-namespace util::shared
+namespace modern_win32
 {
-    class windows_exception final : public std::exception
+    /// <summary>
+    /// wrapper around system_error which constructs error value from GetLastError result
+    /// </summary>
+    class windows_exception final : public std::system_error
     {
-        using error_code_type = decltype(GetLastError());
     public:
-        explicit windows_exception(error_code_type const error, char const* message) 
-            : std::exception(message)
-            , m_error_code(error)
-        {
-        }
         explicit windows_exception(char const* message) 
-            : std::exception(message)
-            , m_error_code(GetLastError())
+            : std::system_error(GetLastError(), std::system_category(), message)
         {
         }
         explicit windows_exception() 
-            : std::exception("An error occurred with Win32 function, please check error code for more details")
-            , m_error_code(GetLastError())
+            : std::system_error(GetLastError(), std::system_category())
         {
         }
-
-        [[nodiscard]] error_code_type get_error_code() const noexcept 
-        {
-            return m_error_code;
-        }
-    private:
-        error_code_type m_error_code;
-
     };
 
 }

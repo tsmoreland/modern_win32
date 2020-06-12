@@ -25,7 +25,7 @@
 
 #include <shared_mutex>
 
-namespace util::concurrency::synchronization
+namespace modern_win32::threading
 {
 
 #ifdef _WIN32

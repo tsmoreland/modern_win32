@@ -15,13 +15,13 @@
 #define __UTIL_TEST_CONTEXT_H__
 
 #include "common.h"
-#include <util/concurrency/synchronization/event.h>
+#include <modern_win32/threading/event.h>
 
 namespace util::test
 {
     class context final
     {
-        using event_type = util::concurrency::synchronization::event_type;
+        using event_type = modern_win32::threading::event_type;
     public:
         
         explicit context(std::chrono::milliseconds const time_out)
@@ -54,7 +54,7 @@ namespace util::test
         }
 
         template <event_type EVENT_TYPE>
-        [[nodiscard]] static bool get_second_wait_result(util::concurrency::synchronization::event<EVENT_TYPE>& event)
+        [[nodiscard]] static bool get_second_wait_result(modern_win32::threading::event<EVENT_TYPE>& event)
         {
             auto signaled = event.set();
             EXPECT_TRUE(signaled);
