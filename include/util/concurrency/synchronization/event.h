@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Terry util
+// Copyright © 2020 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -16,13 +16,13 @@
 
 #include <chrono>
 #include <stdexcept>
-#include <system/windows/null_handle.h>
-#include <shared/template_utilities.h>
+#include <util/system/windows/null_handle.h>
+#include <util/shared/template_utilities.h>
 
 #ifdef _WIN32
 
 #include <Windows.h>
-#include <shared/windows_exception.h>
+#include <util/shared/windows_exception.h>
 
 namespace util::concurrency::synchronization
 {
@@ -34,7 +34,9 @@ namespace util::concurrency::synchronization
 
     constexpr auto get_infinity_in_ms()
     {
-        return std::chrono::duration<long long>(std::numeric_limits<long long>::infinity());
+        // same as std::chrono::millisecond::rep, done to show it can be done this way
+        using millisecond_rep = decltype(std::declval<std::chrono::milliseconds>().count());
+        return std::chrono::duration<millisecond_rep>(INFINITE);
     }
 
     template <event_type EVENT_TYPE>
@@ -189,7 +191,7 @@ namespace util::concurrency::synchronization
         static constexpr DWORD convert_timeout(std::chrono::milliseconds const timeout)
         {
             #undef max // disable so we can use numerical_limits
-            if constexpr(timeout == get_infinity_in_ms() || static_cast<decltype(std::declval<std::chrono::milliseconds>().count())>(std::numeric_limits<DWORD>::max()) > timeout) {
+            if (timeout >= get_infinity_in_ms()) {
                 return INFINITE;
             } else {
                 return static_cast<DWORD>(timeout.count());

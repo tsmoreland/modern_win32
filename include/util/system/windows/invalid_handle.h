@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Terry util
+// Copyright © 2020 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -11,47 +11,35 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __UTIL_SHARED_WINDOWS_EXCEPTION_H__
-#define __UTIL_SHARED_WINDOWS_EXCEPTION_H__
+#ifndef __UTIL_SYSTEM_WINDOWS_INVALID_HANDLE_H__
+#define __UTIL_SYSTEM_WINDOWS_INVALID_HANDLE_H__
 
-#if _WIN32
+#include <util/system/windows/unique_handle.h>
 
-#include <stdexcept>
+#ifdef _WIN32
+
 #include <Windows.h>
 
-namespace util::shared
+namespace util::system::windows
 {
-    class windows_exception final : public std::exception
+    struct invalid_handle_traits
     {
-        using error_code_type = decltype(GetLastError());
-    public:
-        explicit windows_exception(error_code_type const error, char const* message) 
-            : std::exception(message)
-            , m_error_code(error)
-        {
-        }
-        explicit windows_exception(char const* message) 
-            : std::exception(message)
-            , m_error_code(GetLastError())
-        {
-        }
-        explicit windows_exception() 
-            : std::exception("An error occurred with Win32 function, please check error code for more details")
-            , m_error_code(GetLastError())
-        {
-        }
+        using native_handle_type = HANDLE;
 
-        [[nodiscard]] error_code_type get_error_code() const noexcept 
+        static native_handle_type invalid() noexcept
         {
-            return m_error_code;
+			return INVALID_HANDLE_VALUE;
         }
-    private:
-        error_code_type m_error_code;
-
+        static void close(native_handle_type const handle) noexcept
+        {
+            CloseHandle(handle);
+        }
     };
+
+    using invalid_handle = unique_handle<invalid_handle_traits>;
 
 }
 
 #endif
-#endif
 
+#endif

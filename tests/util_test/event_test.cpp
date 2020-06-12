@@ -1,5 +1,5 @@
-﻿//
-// Copyright © 2020 Terry Moreland
+//
+// Copyright � 2020 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -11,5 +11,40 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#include <util/concurrency/synchronization/slim_lock.h>
-#include <util/system/windows/null_handle.h>
+#include <gtest/gtest.h>
+#include <util/concurrency/synchronization/event.h>
+#include "context.h"
+
+using util::concurrency::synchronization::auto_reset_event;
+using util::concurrency::synchronization::manual_reset_event;
+
+using util::test::context;
+constexpr auto TEST_TIMOUT = std::chrono::milliseconds(250);
+
+TEST(auto_reset_event, is_reset_after_wait) 
+{
+    // Arrange
+    context context{TEST_TIMOUT};
+    auto_reset_event event{false};
+
+    // Act
+    auto const signalled = context::get_second_wait_result(event);
+    context.complete = true;
+
+    // Assert
+    ASSERT_TRUE(!signalled && !context.get_timed_out());
+}
+
+TEST(manual_reset_event, is_reset_after_wait) 
+{
+    // Arrange
+    context context{TEST_TIMOUT};
+    manual_reset_event event{false};
+
+    // Act
+    auto const signalled = context::get_second_wait_result(event);
+    context.complete = true;
+
+    // Assert
+    ASSERT_TRUE(signalled && !context.get_timed_out());
+}

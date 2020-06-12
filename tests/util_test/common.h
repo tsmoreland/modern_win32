@@ -1,5 +1,5 @@
-﻿//
-// Copyright © 2020 Terry Moreland
+//
+// Copyright � 2020 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -11,5 +11,16 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#include <util/concurrency/synchronization/slim_lock.h>
-#include <util/system/windows/null_handle.h>
+#ifndef __UTIL_TEST_COMMON_H__
+#define __UTIL_TEST_COMMON_H__
+
+#include <chrono>
+#include <future>
+
+namespace util::test
+{
+    void wait_for(bool const& complete, std::chrono::milliseconds const& interval);
+    void fail_if_not_complete_after(std::chrono::milliseconds timeout, bool& complete, bool& timed_out);
+}
+
+#endif

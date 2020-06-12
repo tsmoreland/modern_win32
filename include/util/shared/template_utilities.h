@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Terry util
+// Copyright © 2020 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -11,35 +11,21 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __UTIL_SYSTEM_WINDOWS_INVALID_HANDLE_H__
-#define __UTIL_SYSTEM_WINDOWS_INVALID_HANDLE_H__
+#ifndef __UTIL_CONCURRENCY_SHARED_TEMPLATE_UTILITIES_H__
+#define __UTIL_CONCURRENCY_SHARED_TEMPLATE_UTILITIES_H__
 
-#include <system/windows/unique_handle.h>
-
-#ifdef _WIN32
-
-#include <Windows.h>
-
-namespace util::system::windows
+namespace util::shared
 {
-    struct invalid_handle_traits
+    template <typename DESTINATION_TYPE, typename SOURCE_TYPE, typename CONVERTER, typename... ARGS>
+    void pack(DESTINATION_TYPE *left, SOURCE_TYPE const& right, ARGS const& ... args, CONVERTER converter)
     {
-        using native_handle_type = HANDLE;
+        *left = converter(right);
+        pack(++left,  args..., converter);
+    }
 
-        static native_handle_type invalid() noexcept
-        {
-			return INVALID_HANDLE_VALUE;
-        }
-        static void close(native_handle_type const handle) noexcept
-        {
-            CloseHandle(handle);
-        }
-    };
-
-    using invalid_handle = unique_handle<invalid_handle_traits>;
+    template <typename DESTINATION_TYPE, typename SOURCE_TYPE, typename CONVERTER, typename... ARGS>
+    void pack(DESTINATION_TYPE *left, CONVERTER converter) { }
 
 }
-
-#endif
 
 #endif
