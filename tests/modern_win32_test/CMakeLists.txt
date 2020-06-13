@@ -9,8 +9,7 @@ set(SOURCES ${TEST_SOURCES})
 add_executable(${TEST_PROJECT_NAME} ${TEST_SOURCES} 
     "event_test.cpp" 
     "slim_lock_test.cpp" 
-    "common.h" 
-    "common.cpp" 
+    "context.cpp" 
     "context.h"
 )
 

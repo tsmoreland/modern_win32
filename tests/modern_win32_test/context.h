@@ -11,14 +11,18 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __UTIL_TEST_CONTEXT_H__
-#define __UTIL_TEST_CONTEXT_H__
+#ifndef __MODERN_WIN32_TEST_CONTEXT_H__
+#define __MODERN_WIN32_TEST_CONTEXT_H__
 
-#include "common.h"
+#include <chrono>
+#include <future>
 #include <modern_win32/threading/event.h>
 
 namespace util::test
 {
+    void wait_for(bool const& complete, std::chrono::milliseconds const& interval);
+    void fail_if_not_complete_after(std::chrono::milliseconds timeout, bool& complete, bool& timed_out);
+
     class context final
     {
         using event_type = modern_win32::threading::event_type;

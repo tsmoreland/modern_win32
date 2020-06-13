@@ -13,7 +13,6 @@
 
 #include <gtest/gtest.h>
 #include <modern_win32/threading/slim_lock.h>
-#include "common.h"
 #include "context.h"
 
 using modern_win32::threading::slim_lock;
