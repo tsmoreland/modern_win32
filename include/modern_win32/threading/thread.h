@@ -15,9 +15,9 @@
 #define __MODERN_WIN32_THREADING_THREAD_H__
 
 #include <modern_win32/null_handle.h>
+#include <modern_win32/module_handle.h>
 #include <modern_win32/windows_exception.h>
 #include <chrono>
-#include <VersionHelpers.h>
 
 namespace modern_win32::threading
 {
@@ -31,7 +31,6 @@ namespace modern_win32::threading
         explicit thread(WORKER worker)
             : m_worker(worker)
         {
-            auto const isIt = IsWindows10OrGreater();
         }
         thread(thread&& other) noexcept
             : m_handle{other.m_handle.release()}
@@ -49,27 +48,21 @@ namespace modern_win32::threading
             if (!is_running())
                 return;
 
-            using set_thread_description_delete = HRESULT (WINAPI *)(HANDLE, PCWSTR);
-            // TODO: added modern class to handle this
-            HMODULE module;
-            if (GetModuleHandleExA(0, "KernelBase.dll", &module) != TRUE)
+            using set_thread_description_delegate = HRESULT (WINAPI *)(HANDLE, PCWSTR);
+            auto const maybe_kernel_base = get_module("KernelBase.dll");
+            if (!maybe_kernel_base.has_value())
                 return;
-            if (!static_cast<bool>(module))
-            {
-                FreeLibrary(module);
-                return;
-            }
 
-            auto const set_name_delegate = reinterpret_cast<set_thread_description_delete>(GetProcAddress(module, "SetThreadDescription"));
-            if (set_name_delegate == nullptr)
-            {
-                FreeLibrary(module);
+            auto const& kernel_base = maybe_kernel_base.value();
+
+            if (!static_cast<bool>(kernel_base))
                 return;
-            }
+
+            auto const set_name_delegate = reinterpret_cast<set_thread_description_delegate>(GetProcAddress(kernel_base.get(), "SetThreadDescription"));
+            if (set_name_delegate == nullptr)
+                return;
 
             set_name_delegate(m_handle.get(), name);
-
-            FreeLibrary(module);
         }
         void start() 
         {
