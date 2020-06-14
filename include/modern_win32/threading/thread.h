@@ -17,6 +17,7 @@
 #include <modern_win32/null_handle.h>
 #include <modern_win32/windows_exception.h>
 #include <chrono>
+#include <VersionHelpers.h>
 
 namespace modern_win32::threading
 {
@@ -30,6 +31,7 @@ namespace modern_win32::threading
         explicit thread(WORKER worker)
             : m_worker(worker)
         {
+            auto const isIt = IsWindows10OrGreater();
         }
         thread(thread&& other) noexcept
             : m_handle{other.m_handle.release()}
@@ -42,18 +44,38 @@ namespace modern_win32::threading
         thread(thread const&) = delete;
         ~thread() = default;
 
+        void set_name(wchar_t const* name) const
+        {
+            if (!is_running())
+                return;
+
+            using set_thread_description_delete = HRESULT (WINAPI *)(HANDLE, PCWSTR);
+            HMODULE const module{GetModuleHandleA("KernelBase.dll")};
+            if (!static_cast<bool>(module))
+                return;
+
+            auto const set_name_delegate = reinterpret_cast<set_thread_description_delete>(GetProcAddress(module, "SetThreadDescription"));
+            if (set_name_delegate == nullptr)
+                return;
+
+            set_name_delegate(m_handle.get(), name);
+        }
         void start() 
         {
-            if (m_handle)
+            if (is_running())
                 return;
             m_handle = CreateThread(nullptr, 0, thread_adapter, this, 0, &m_thread_id);
         }
         void join() const
         {
-            WaitForSingleObject(m_handle.get(), 0);
+            if (is_running())
+                WaitForSingleObject(m_handle.get(), 0);
         }
         [[nodiscard]] bool join(std::chrono::milliseconds const& timeout) const
         {
+            if (!is_running())
+                return false;
+
             auto const native_timeout = timeout.count() > static_cast<std::chrono::milliseconds::rep>(INFINITE)
                 ? INFINITE
                 : static_cast<DWORD>(timeout.count());
@@ -63,6 +85,11 @@ namespace modern_win32::threading
                 throw windows_exception();
 
             return result == WAIT_OBJECT_0;
+        }
+
+        [[nodiscard]] bool is_running() const
+        {
+            return static_cast<bool>(m_handle);
         }
 
         thread& operator=(thread const&) = delete;
