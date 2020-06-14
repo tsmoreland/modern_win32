@@ -50,15 +50,26 @@ namespace modern_win32::threading
                 return;
 
             using set_thread_description_delete = HRESULT (WINAPI *)(HANDLE, PCWSTR);
-            HMODULE const module{GetModuleHandleA("KernelBase.dll")};
-            if (!static_cast<bool>(module))
+            // TODO: added modern class to handle this
+            HMODULE module;
+            if (GetModuleHandleExA(0, "KernelBase.dll", &module) != TRUE)
                 return;
+            if (!static_cast<bool>(module))
+            {
+                FreeLibrary(module);
+                return;
+            }
 
             auto const set_name_delegate = reinterpret_cast<set_thread_description_delete>(GetProcAddress(module, "SetThreadDescription"));
             if (set_name_delegate == nullptr)
+            {
+                FreeLibrary(module);
                 return;
+            }
 
             set_name_delegate(m_handle.get(), name);
+
+            FreeLibrary(module);
         }
         void start() 
         {
