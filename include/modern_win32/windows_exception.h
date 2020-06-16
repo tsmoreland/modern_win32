@@ -11,16 +11,34 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __UTIL_TEST_COMMON_H__
-#define __UTIL_TEST_COMMON_H__
+#ifndef __MODERN_WIN32_SHARED_WINDOWS_EXCEPTION_H__
+#define __MODERN_WIN32_SHARED_WINDOWS_EXCEPTION_H__
 
-#include <chrono>
-#include <future>
+#if _WIN32
 
-namespace util::test
+#include <system_error>
+#include <Windows.h>
+
+namespace modern_win32
 {
-    void wait_for(bool const& complete, std::chrono::milliseconds const& interval);
-    void fail_if_not_complete_after(std::chrono::milliseconds timeout, bool& complete, bool& timed_out);
+    /// <summary>
+    /// wrapper around system_error which constructs error value from GetLastError result
+    /// </summary>
+    class windows_exception final : public std::system_error
+    {
+    public:
+        explicit windows_exception(char const* message) 
+            : std::system_error(GetLastError(), std::system_category(), message)
+        {
+        }
+        explicit windows_exception() 
+            : std::system_error(GetLastError(), std::system_category())
+        {
+        }
+    };
+
 }
 
 #endif
+#endif
+

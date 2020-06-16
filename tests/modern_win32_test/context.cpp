@@ -11,47 +11,28 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __UTIL_SHARED_WINDOWS_EXCEPTION_H__
-#define __UTIL_SHARED_WINDOWS_EXCEPTION_H__
+#include "context.h"
+#include <future>
+#include <gtest/gtest.h>
 
-#if _WIN32
-
-#include <stdexcept>
-#include <Windows.h>
-
-namespace util::shared
+namespace util::test
 {
-    class windows_exception final : public std::exception
-    {
-        using error_code_type = decltype(GetLastError());
-    public:
-        explicit windows_exception(error_code_type const error, char const* message) 
-            : std::exception(message)
-            , m_error_code(error)
-        {
-        }
-        explicit windows_exception(char const* message) 
-            : std::exception(message)
-            , m_error_code(GetLastError())
-        {
-        }
-        explicit windows_exception() 
-            : std::exception("An error occurred with Win32 function, please check error code for more details")
-            , m_error_code(GetLastError())
-        {
-        }
 
-        [[nodiscard]] error_code_type get_error_code() const noexcept 
-        {
-            return m_error_code;
-        }
-    private:
-        error_code_type m_error_code;
-
-    };
-
+void wait_for(bool const& complete, std::chrono::milliseconds const& interval) 
+{
+    auto const start = std::chrono::steady_clock::now();
+    while ( (std::chrono::steady_clock::now() - start) < interval)
+        if (!complete)
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
 }
 
-#endif
-#endif
+void fail_if_not_complete_after(std::chrono::milliseconds timeout, bool& complete, bool& timed_out)
+{
+    wait_for(complete, timeout);
+    if (!complete) {
+        timed_out = false;
+        FAIL() << "test timeout out";
+    }
+}
 
+}

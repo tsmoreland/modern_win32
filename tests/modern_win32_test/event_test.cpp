@@ -11,29 +11,40 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#include "common.h"
-#include <future>
 #include <gtest/gtest.h>
+#include <modern_win32/threading/event.h>
+#include "context.h"
 
-namespace util::test
-{
+using modern_win32::threading::auto_reset_event;
+using modern_win32::threading::manual_reset_event;
 
-void wait_for(bool const& complete, std::chrono::milliseconds const& interval) 
+using util::test::context;
+constexpr auto TEST_TIMOUT = std::chrono::milliseconds(250);
+
+TEST(auto_reset_event, is_reset_after_wait) 
 {
-    auto const start = std::chrono::steady_clock::now();
-    while ( (std::chrono::steady_clock::now() - start) < interval)
-        if (!complete)
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    // Arrange
+    context context{TEST_TIMOUT};
+    auto_reset_event event{false};
+
+    // Act
+    auto const signalled = context::get_second_wait_result(event);
+    context.complete = true;
+
+    // Assert
+    ASSERT_TRUE(!signalled && !context.get_timed_out());
 }
 
-void fail_if_not_complete_after(std::chrono::milliseconds timeout, bool& complete, bool& timed_out)
+TEST(manual_reset_event, is_reset_after_wait) 
 {
-    wait_for(complete, timeout);
-    if (!complete) {
-        timed_out = false;
-        FAIL() << "test timeout out";
-    }
-}
+    // Arrange
+    context context{TEST_TIMOUT};
+    manual_reset_event event{false};
 
+    // Act
+    auto const signalled = context::get_second_wait_result(event);
+    context.complete = true;
 
+    // Assert
+    ASSERT_TRUE(signalled && !context.get_timed_out());
 }

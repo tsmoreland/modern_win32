@@ -12,11 +12,10 @@
 // 
 
 #include <gtest/gtest.h>
-#include "util/concurrency/synchronization/slim_lock.h"
-#include "common.h"
+#include <modern_win32/threading/slim_lock.h>
 #include "context.h"
 
-using util::concurrency::synchronization::slim_lock;
+using modern_win32::threading::slim_lock;
 using util::test::context;
 
 constexpr auto TEST_TIMEOUT = std::chrono::milliseconds(250);

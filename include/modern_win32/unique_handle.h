@@ -11,12 +11,12 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __UTIL_SYSTEM_WINDOWS_UNIQUE_HANDLE_H__
-#define __UTIL_SYSTEM_WINDOWS_UNIQUE_HANDLE_H__
+#ifndef __MODERN_WIN32_SYSTEM_WINDOWS_UNIQUE_HANDLE_H__
+#define __MODERN_WIN32_SYSTEM_WINDOWS_UNIQUE_HANDLE_H__
 #include <tuple>
 #include <utility>
 
-namespace util::system::windows
+namespace modern_win32
 {
     /// <summary>
     /// C++ wrapper around Win32 HANDLE using template TRAITS to handle specific behaviour with regard to close and invalid value
