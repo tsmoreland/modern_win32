@@ -26,6 +26,12 @@ using namespace modern_win32::threading;
 using util::test::context;
 constexpr auto TEST_TIMOUT = std::chrono::milliseconds(250);
 
+TEST(thread, thread_throws_invalid_argument_on_null_worker)
+{
+    std::unique_ptr<thread_start> worker;
+    ASSERT_THROW(thread(std::move(worker)), std::invalid_argument);
+}
+
 TEST(thread, start_launches_thread)
 {
     context ctx{TEST_TIMOUT};
@@ -98,7 +104,7 @@ TEST(thread, is_running_false_if_not_started)
     context ctx{TEST_TIMOUT};
     thread const task(context::get_custom_thread_start(ctx));
     ASSERT_FALSE(task.is_running());
-    ASSERT_TRUE(ctx.complete && !ctx.get_timed_out());
+    ctx.complete = true;
 }
 
 TEST(thread, is_running_false_after_exit)
