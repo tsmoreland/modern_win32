@@ -28,11 +28,10 @@ constexpr auto TEST_TIMOUT = std::chrono::milliseconds(250);
 
 TEST(thread, start_launches_thread)
 {
-    //context ctx{TEST_TIMOUT};
-    context ctx{milliseconds(30000)};
+    context ctx{TEST_TIMOUT};
     manual_reset_event thread_exit(false);
     auto parameter = std::make_tuple(&ctx, &thread_exit);
-    thread task = start_thread(
+    thread const task = start_thread(
         [](thread::thread_parameter const state) -> DWORD
         {
             auto const* param = static_cast<std::tuple<context*, manual_reset_event*>*>(state);
@@ -47,6 +46,7 @@ TEST(thread, start_launches_thread)
             return 0UL;
         }, &parameter);
 
+    EXPECT_TRUE(thread_exit.wait_one());
     ASSERT_TRUE(ctx.complete && !ctx.get_timed_out());
 }
 
@@ -91,6 +91,25 @@ TEST(thread, is_running_true_for_running_thread)
 
     EXPECT_TRUE(thread_exit.set());
     EXPECT_TRUE(ctx.complete && !ctx.get_timed_out());
+}
+
+TEST(thread, is_running_false_if_not_started)
+{
+    context ctx{TEST_TIMOUT};
+    thread const task(context::get_custom_thread_start(ctx));
+    ASSERT_FALSE(task.is_running());
+    ASSERT_TRUE(ctx.complete && !ctx.get_timed_out());
+}
+
+TEST(thread, is_running_false_after_exit)
+{
+    context ctx{TEST_TIMOUT};
+    thread task(context::get_custom_thread_start(ctx));
+    task.start();
+    task.join();
+
+    ASSERT_FALSE(task.is_running());
+    ASSERT_TRUE(ctx.complete && !ctx.get_timed_out());
 }
 
 TEST(thread, join_waits_for_thread_exit)
