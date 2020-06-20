@@ -21,23 +21,30 @@
 
 namespace modern_win32::threading
 {
-    template <typename WORKER>
+    using thread_handle = null_handle;
+
     class thread final
     {
-        using thread_worker = void (*)();
     public:
+        using native_handle_type = typename thread_handle::native_handle_type;
+        using modern_handle_type = thread_handle;
+        using thread_worker = void (*)();
+        using thread_parameter = void*;
+        using thread_proc = DWORD (*)(thread_parameter);
         using native_thread_id = DWORD;
 
-        explicit thread(WORKER worker)
-            : m_worker(worker)
+        explicit thread(modern_handle_type&& handle)
+            : m_handle(handle.release())
+        {
+        }
+        explicit thread(native_handle_type const& handle = thread_handle::invalid())
+            : m_handle(handle)
         {
         }
         thread(thread&& other) noexcept
             : m_handle{other.m_handle.release()}
-            , m_worker{other.m_worker}
             , m_thread_id{other.m_thread_id}
         {
-            other.m_worker = nullptr;
             other.m_thread_id = native_thread_id{};
         }
         thread(thread const&) = delete;
@@ -64,11 +71,25 @@ namespace modern_win32::threading
 
             set_name_delegate(m_handle.get(), name);
         }
-        void start() 
+        /// <summary>
+        /// starts the thread using <paramref name="worker"/> if not already running
+        /// </summary>
+        /// <typeparam name="WORKER"></typeparam>
+        /// <param name="worker">must be castable to thread_worker</param>
+        /// <returns>true if thread is started; otherwise, false</returns>
+        template <typename WORKER>
+        [[nodiscard]] bool start(WORKER worker) 
         {
-            if (is_running())
-                return;
-            m_handle = CreateThread(nullptr, 0, thread_adapter, this, 0, &m_thread_id);
+            static_assert(std::is_convertible<decltype(worker), thread_worker>::value, "WORKER must be assignable to thread_worker");
+            return is_running()
+                ? false
+                : m_handle.reset(CreateThread(nullptr, 0, thread_adapter, static_cast<thread_worker>(worker), 0, &m_thread_id));  // NOLINT(clang-diagnostic-microsoft-cast)
+        }
+        [[nodiscard]] bool start(thread_proc const worker, thread_parameter const parameter) 
+        {
+            return is_running()
+                ? false
+                : m_handle.reset(CreateThread(nullptr, 0, worker, parameter, 0, &m_thread_id));  // NOLINT(clang-diagnostic-microsoft-cast)
         }
         void join() const
         {
@@ -105,32 +126,58 @@ namespace modern_win32::threading
             std::swap(m_handle, other.m_handle);
             static_cast<void>(other.m_handle.reset());
 
-            m_worker = other.m_worker;
-            other.m_worker = nullptr;
-
             m_thread_id = other.m_thread_id;
             other.m_thread_id = native_thread_id{};
 
             return *this;
         }
     private:
-        null_handle m_handle{};
-        thread_worker m_worker;
+        modern_handle_type m_handle{};
         native_thread_id m_thread_id{};
 
-        static DWORD __stdcall thread_adapter(void* args)
+        static DWORD __stdcall thread_adapter(void* state)
         {
-            auto * const that = static_cast<thread<WORKER>>(args);
-            if (that == nullptr)
-                return 1;
-
-            auto worker = that.m_worker;
+            auto const worker = static_cast<thread_worker>(state);  // NOLINT(clang-diagnostic-microsoft-cast)
             if (worker == nullptr)
-                return 0;
+                return 1;
             worker();
             return 0;
         }
     };
+
+    /// <summary>
+    /// starts a new thread running <paramref name="worker"/>
+    /// </summary>
+    /// <typeparam name="WORKER">runnable type</typeparam>
+    /// <param name="worker">runnable object to execute in a new thread</param>
+    /// <returns>the running thread</returns>
+    /// <exception cref="windows_exception">thrown if unable to create thread</exception>
+    template <typename WORKER>
+    auto start_thread(WORKER worker)
+    {
+        static_assert(std::is_invocable<decltype(worker)>::value, "WORKER must be invokable");
+        static_assert(std::is_convertible<decltype(worker), thread::thread_worker>::value, "WORKER must be assignable to thread_worker");
+        thread new_thread;
+        if (!new_thread.start(worker))
+            throw windows_exception();
+        return new_thread;
+    }
+
+    /// <summary>
+    /// starts a new thread running <paramref name="worker"/> taking <paramref name="parameter"/>
+    /// </summary>
+    /// <param name="worker">worker to run in new thread</param>
+    /// <param name="parameter">parameter passed to thread</param>
+    /// <returns>the running thread</returns>
+    /// <exception cref="windows_exception">thrown if unable to create thread</exception>
+    inline auto start_thread(thread::thread_proc const worker, thread::thread_parameter const parameter)
+    {
+        thread new_thread;
+        if (!new_thread.start(worker, parameter))
+            throw windows_exception();
+        return new_thread;
+    }
+
 }
 
 

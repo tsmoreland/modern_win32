@@ -11,7 +11,9 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+#pragma warning(push, 2)
 #include <gtest/gtest.h>
+#pragma warning(pop)
 #include <modern_win32/threading/slim_lock.h>
 #include "context.h"
 

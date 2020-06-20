@@ -15,6 +15,7 @@
 #define __MODERN_WIN32_SYSTEM_WINDOWS_UNIQUE_HANDLE_H__
 #include <tuple>
 #include <utility>
+#include <compare>
 
 namespace modern_win32
 {
@@ -25,8 +26,9 @@ namespace modern_win32
     template <typename TRAITS>
     class unique_handle final
     {
-        using native_handle_type = typename TRAITS::native_handle_type;
     public:
+        using native_handle_type = typename TRAITS::native_handle_type;
+
         explicit unique_handle(native_handle_type handle = TRAITS::invalid())
             : m_handle(handle)
         {
@@ -57,7 +59,7 @@ namespace modern_win32
         [[nodiscard]] native_handle_type release() noexcept
         {
             auto const handle = m_handle;
-            static_cast<void>(reset());
+            m_handle = TRAITS::invalid();
             return handle;
         }
         /// <summary>
@@ -86,6 +88,11 @@ namespace modern_win32
         [[nodiscard]] explicit operator bool() const noexcept
         {
             return m_handle != TRAITS::invalid();
+        }
+
+        static constexpr auto invalid() noexcept
+        {
+            return TRAITS::invalid();
         }
 
 #       if __cplusplus > 201703L || _MSVC_LANG > 201703L
@@ -121,6 +128,11 @@ namespace modern_win32
 
 #       endif
 
+        unique_handle& operator=(native_handle_type const handle)
+        {
+            static_cast<void>(reset(handle));
+            return *this;
+        }
         unique_handle& operator=(unique_handle const& other) = delete;
         unique_handle& operator=(unique_handle&& other) noexcept
         {

@@ -103,7 +103,7 @@ if(MSVC)
             /permissive-;
             /std:c++latest;
             /sdl;
-            /W3;
+            /W4;
             ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT};
             ${DEFAULT_CXX_EXCEPTION_HANDLING}
         )
@@ -120,7 +120,7 @@ if(MSVC)
             /permissive-;
             /std:c++latest;
             /sdl;
-            /W3;
+            /W4;
             ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT};
             ${DEFAULT_CXX_EXCEPTION_HANDLING}
         )
