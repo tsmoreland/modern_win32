@@ -18,16 +18,18 @@
 #include <modern_win32/threading/thread.h>
 #include <modern_win32/threading/event.h>
 #include "context.h"
+#include <vector>
 
 using std::chrono::milliseconds;
 using namespace modern_win32::threading;
 
 using util::test::context;
-constexpr auto TEST_TIMOUT = std::chrono::milliseconds(2250);
+constexpr auto TEST_TIMOUT = std::chrono::milliseconds(250);
 
 TEST(thread, start_launches_thread)
 {
-    context ctx{TEST_TIMOUT};
+    //context ctx{TEST_TIMOUT};
+    context ctx{milliseconds(30000)};
     manual_reset_event thread_exit(false);
     auto parameter = std::make_tuple(&ctx, &thread_exit);
     thread task = start_thread(
@@ -45,7 +47,6 @@ TEST(thread, start_launches_thread)
             return 0UL;
         }, &parameter);
 
-    EXPECT_TRUE(thread_exit.wait_one(milliseconds(250)));
     ASSERT_TRUE(ctx.complete && !ctx.get_timed_out());
 }
 
@@ -67,6 +68,52 @@ TEST(thread, start_launches_anonymous_thread_start)
     thread const task = start_thread(&worker);
     task.join();
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
     ASSERT_TRUE(ctx.complete && !ctx.get_timed_out());
 }
+
+TEST(thread, is_running_true_for_running_thread)
+{
+    context ctx{TEST_TIMOUT};
+    manual_reset_event thread_started(false);
+    manual_reset_event thread_exit(false);
+    auto worker = modern_win32::threading::anonymous_thread_start(
+        [&ctx, &thread_exit, &thread_started]()
+        {
+            EXPECT_TRUE(thread_started.set());
+            ctx.complete = true;
+            EXPECT_TRUE(thread_exit.wait_one());
+        });
+
+    thread const task = start_thread(&worker);
+    EXPECT_TRUE(thread_started.wait_one());
+    std::this_thread::sleep_for(milliseconds(15)); // by time for thread to start
+    ASSERT_TRUE(task.is_running());
+
+    EXPECT_TRUE(thread_exit.set());
+    EXPECT_TRUE(ctx.complete && !ctx.get_timed_out());
+}
+
+TEST(thread, join_waits_for_thread_exit)
+{
+    context ctx{TEST_TIMOUT};
+    auto worker = context::get_anonymous_thread_start(ctx);
+    thread const task = start_thread(&worker);
+    EXPECT_TRUE(task.is_running());
+
+    task.join();
+
+    ASSERT_FALSE(task.is_running());
+    EXPECT_TRUE(ctx.complete && !ctx.get_timed_out());
+}
+
+TEST(thread, start_launches_unique_anonymous_thread_start)
+{
+    context ctx{TEST_TIMOUT};
+    thread task(context::get_custom_thread_start(ctx));
+
+    task.start();
+    task.join();
+
+    ASSERT_TRUE(ctx.complete && !ctx.get_timed_out());
+}
+

@@ -14,12 +14,13 @@
 #ifndef __MODERN_WIN32_CONCURRENCY_SYNCHRONIZATION_EVENT_H__
 #define __MODERN_WIN32_CONCURRENCY_SYNCHRONIZATION_EVENT_H__
 
+#ifdef _WIN32
+
 #include <chrono>
 #include <stdexcept>
 #include <modern_win32/null_handle.h>
 #include <modern_win32/template_utilities.h>
 
-#ifdef _WIN32
 
 #include <Windows.h>
 #include <modern_win32/windows_exception.h>

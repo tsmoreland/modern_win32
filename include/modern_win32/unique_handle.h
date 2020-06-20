@@ -13,6 +13,8 @@
 
 #ifndef __MODERN_WIN32_SYSTEM_WINDOWS_UNIQUE_HANDLE_H__
 #define __MODERN_WIN32_SYSTEM_WINDOWS_UNIQUE_HANDLE_H__
+#ifdef _WIN32
+
 #include <tuple>
 #include <utility>
 #include <compare>
@@ -208,4 +210,5 @@ namespace modern_win32
 
 }
 
+#endif
 #endif

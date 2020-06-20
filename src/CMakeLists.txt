@@ -12,12 +12,14 @@ set(ALL_FILES
 
 set (ALL_HEADERS
     "../include/modern_win32/threading/event.h"
-    "../include/modern_win32/threading/slim_lock.h"
-    "../include/modern_win32/threading/thread.h"
     "../include/modern_win32/invalid_handle.h"
     "../include/modern_win32/module_handle.h"
+    "../include/modern_win32/naive_stack_allocator.h"
     "../include/modern_win32/null_handle.h"
     "../include/modern_win32/template_utilities.h"
+    "../include/modern_win32/threading/slim_lock.h"
+    "../include/modern_win32/threading/thread.h"
+    "../include/modern_win32/threading/thread_start.h"
     "../include/modern_win32/unique_handle.h"
     "../include/modern_win32/windows_exception.h"
 )

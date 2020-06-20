@@ -13,6 +13,7 @@
 
 #ifndef __MODERN_WIN32_THREADING_THREAD_START_H__
 #define __MODERN_WIN32_THREADING_THREAD_START_H__
+#ifdef _WIN32
 
 #include <Windows.h>
 #include <any>
@@ -81,5 +82,5 @@ namespace modern_win32::threading
 
 }
 
-
+#endif
 #endif

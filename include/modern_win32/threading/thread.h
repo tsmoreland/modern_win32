@@ -13,11 +13,14 @@
 
 #ifndef __MODERN_WIN32_THREADING_THREAD_H__
 #define __MODERN_WIN32_THREADING_THREAD_H__
+#ifdef _WIN32
 
 #include <modern_win32/null_handle.h>
 #include <modern_win32/module_handle.h>
 #include <modern_win32/windows_exception.h>
 #include <modern_win32/threading/thread_start.h>
+#include <modern_win32/naive_stack_allocator.h>
+#include <modern_win32/string_conversion.h>
 #include <chrono>
 
 namespace modern_win32::threading
@@ -34,6 +37,13 @@ namespace modern_win32::threading
         using thread_proc = DWORD (*)(thread_parameter);
         using native_thread_id = DWORD;
 
+        explicit thread(std::unique_ptr<thread_start> worker)
+            : m_handle(thread_handle::invalid())
+            , m_thread_start(std::move(worker))
+        {
+            if (m_thread_start == nullptr)
+                throw std::invalid_argument("provided thread_start is null");
+        }
         explicit thread(modern_handle_type&& handle)
             : m_handle(handle.release())
         {
@@ -55,34 +65,72 @@ namespace modern_win32::threading
         /// Sets the description (or name) of the thread represented by this objet to <parmref name="name"/>
         /// </summary>
         /// <param name="name">the name to apply to the thread represented by this object</param>
-        void set_name(wchar_t const* name) const
+        /// <returns>true on success; otherwise, false</returns>
+        /// <remarks>only works on Windows Server 2016+ or Windows 10 1607+</remarks>
+        [[nodiscard]] bool set_name(wchar_t const* name) const
         {
             if (!is_running())
-                return;
+                return false;
 
             using set_thread_description_delegate = HRESULT (WINAPI *)(HANDLE, PCWSTR);
             auto const maybe_kernel_base = get_module("KernelBase.dll");
             if (!maybe_kernel_base.has_value())
-                return;
+                return false;
 
             auto const& kernel_base = maybe_kernel_base.value();
 
             if (!static_cast<bool>(kernel_base))
-                return;
+                return false;
 
             auto const set_name_delegate = reinterpret_cast<set_thread_description_delegate>(GetProcAddress(kernel_base.get(), "SetThreadDescription"));
             if (set_name_delegate == nullptr)
-                return;
+                return false;
 
-            set_name_delegate(m_handle.get(), name);
+            auto const hr = set_name_delegate(m_handle.get(), name);
+            return SUCCEEDED(hr);
         }
+
         /// <summary>
         /// Sets the description (or name) of the thread represented by this objet to <parmref name="name"/>
         /// </summary>
         /// <param name="name">the name to apply to the thread represented by this object</param>
-        void set_name(char const* name) const
+        /// <returns>true on success; otherwise, false</returns>
+        /// <remarks>only works on Windows Server 2016+ or Windows 10 1607+</remarks>
+        [[nodiscard]] bool set_name(char const* name) const
         {
-            std::wstring wide_name(std::size(name));
+            auto const wide_name = convert::to_wstring<naive_stack_allocator<wchar_t>>(name);
+            return set_name(wide_name.c_str());
+        }
+
+        /// <summary>
+        /// returns the current name for the thread represented by this object
+        /// </summary>
+        /// <returns>optional containing the thread name on success; otherwise <see cref="std::nullopt"/></returns>
+        /// <remarks>only works on Windows Server 2016+ or Windows 10 1607+</remarks>
+        [[nodiscard]] std::optional<std::wstring> get_name() const
+        {
+            if (!is_running())
+                return std::nullopt;
+
+            using get_thread_description_delegate = HRESULT (WINAPI *)(HANDLE, PWSTR*);
+            auto const maybe_kernel_base = get_module("KernelBase.dll");
+            if (!maybe_kernel_base.has_value())
+                return std::nullopt;
+
+            auto const& kernel_base = maybe_kernel_base.value();
+            auto const get_name_delegate = reinterpret_cast<get_thread_description_delegate>(GetProcAddress(kernel_base.get(), "GetThreadDescription"));
+            if (get_name_delegate == nullptr)
+                return std::nullopt;
+
+            PWSTR data{};
+            if (auto const hr = get_name_delegate(m_handle.get(), &data); SUCCEEDED(hr))
+            {
+                std::wstring name(data);
+                LocalFree(data);
+                return name;
+            }
+
+            return std::nullopt;
         }
 
         /// <summary>
@@ -99,9 +147,9 @@ namespace modern_win32::threading
         [[nodiscard]] bool start_stateless(WORKER worker) 
         {
             static_assert(std::is_convertible<decltype(worker), thread_worker>::value, "WORKER must be assignable to thread_worker");
-            return is_running()
-                ? false
-                : m_handle.reset(CreateThread(nullptr, 0, thread_adapter, static_cast<thread_worker>(worker), 0, &m_thread_id));  // NOLINT(clang-diagnostic-microsoft-cast)
+            if (is_running() || m_thread_start != nullptr)
+                return false;
+            return m_handle.reset(CreateThread(nullptr, 0, thread_adapter, static_cast<thread_worker>(worker), 0, &m_thread_id));  // NOLINT(clang-diagnostic-microsoft-cast)
         }
         /// <summary>
         /// starts the thread using <paramref name="worker"/> if not already running
@@ -112,9 +160,9 @@ namespace modern_win32::threading
         /// <returns>true if thread is started; otherwise, false</returns>
         [[nodiscard]] bool start(thread_proc const worker, thread_parameter const parameter) 
         {
-            return is_running()
-                ? false
-                : m_handle.reset(CreateThread(nullptr, 0, worker, parameter, 0, &m_thread_id));  // NOLINT(clang-diagnostic-microsoft-cast)
+            if (is_running() || m_thread_start != nullptr)
+                return false;
+            return m_handle.reset(CreateThread(nullptr, 0, worker, parameter, 0, &m_thread_id));  // NOLINT(clang-diagnostic-microsoft-cast)
         }
         /// <summary>
         /// starts the thread using <paramref name="worker"/> if not already running
@@ -126,9 +174,20 @@ namespace modern_win32::threading
         /// </remarks>
         [[nodiscard]] bool start(thread_start* const worker) 
         {
-            return is_running()
-                ? false
-                : m_handle.reset(CreateThread(nullptr, 0, thread_start::thread_proc, static_cast<thread_parameter>(worker), 0, &m_thread_id));  // NOLINT(clang-diagnostic-microsoft-cast)
+            if (is_running() || m_thread_start != nullptr)
+                return false;
+
+            return m_handle.reset(CreateThread(nullptr, 0, thread_start::thread_proc, static_cast<thread_parameter>(worker), 0, &m_thread_id));  // NOLINT(clang-diagnostic-microsoft-cast)
+        }
+        /// <summary>
+        /// starts the thread usnig provided thread_start
+        /// </summary>
+        /// <returns>true if thread is started; otherwise, false</returns>
+        bool start()
+        {
+            if (is_running() || m_thread_start == nullptr)
+                return false;
+            return m_handle.reset(CreateThread(nullptr, 0, thread_start::thread_proc, m_thread_start.get(), 0, &m_thread_id));  // NOLINT(clang-diagnostic-microsoft-cast)
         }
         void join() const
         {
@@ -184,6 +243,7 @@ namespace modern_win32::threading
     private:
         modern_handle_type m_handle{};
         native_thread_id m_thread_id{};
+        std::unique_ptr<thread_start> m_thread_start;
 
         static DWORD __stdcall thread_adapter(void* state)
         {
@@ -247,5 +307,5 @@ namespace modern_win32::threading
 
 }
 
-
+#endif
 #endif

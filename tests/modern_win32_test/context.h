@@ -76,8 +76,27 @@ namespace util::test
                 [&ctx]()
                 {
                     ctx.complete = true;
-                    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+                    std::this_thread::sleep_for(std::chrono::milliseconds(50));
                 });
+        }
+        [[nodiscard]] static auto get_custom_thread_start(context& ctx)
+        {
+            class custom_thread_start final : public modern_win32::threading::thread_start
+            {
+            public:
+                explicit custom_thread_start(context& ctx)
+                    : m_context(ctx)
+                {
+                }
+                void operator()() override
+                {
+                    m_context.complete = true;
+                }
+            private:
+                context& m_context;
+            };
+
+            return std::make_unique<custom_thread_start>(ctx);
         }
 
         __declspec(property(get = get_complete, put = set_complete)) bool complete;

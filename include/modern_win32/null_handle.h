@@ -13,10 +13,10 @@
 
 #ifndef __MODERN_WIN32_SYSTEM_WINDOWS_NULL_HANDLE_H__
 #define __MODERN_WIN32_SYSTEM_WINDOWS_NULL_HANDLE_H__
+#ifdef _WIN32
 
 #include <modern_win32/unique_handle.h>
 
-#ifdef _WIN32
 
 #include <Windows.h>
 

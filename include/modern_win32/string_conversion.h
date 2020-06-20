@@ -13,6 +13,7 @@
 
 #ifndef __MODERN_WIN32_STRING_CONVERSION_H__
 #define __MODERN_WIN32_STRING_CONVERSION_H__
+#ifdef _WIN32
 
 #include <Windows.h>
 #include <string>
@@ -22,42 +23,48 @@
 namespace modern_win32::convert
 {
 
-    [[nodiscard]] inline std::wstring to_wstring(char const* value)
+    template <class ALLOC = std::allocator<wchar_t>>
+    [[nodiscard]] inline std::basic_string<wchar_t, std::char_traits<wchar_t>, ALLOC> to_wstring(char const* value)
     {
+        using string_custom_alloc = std::basic_string<wchar_t, std::char_traits<wchar_t>, ALLOC>;
         if (value == nullptr)
-            return L""s;
+            return L"";
 
         std::string_view const value_view{value};
-        auto const size_needed = MultiByteToWideChar(CP_UTF8, 0, value, value_view.size(), nullptr, 0);
+        auto const size_needed = MultiByteToWideChar(CP_UTF8, 0, value, static_cast<int>(value_view.size()), nullptr, 0);
 
-        std::wstring output(static_cast<std::wstring::size_type>(size_needed), 0);
-        if (0 != MultiByteToWideChar(CP_UTF8, 0, value, value_view.size(), &output[0], static_cast<std::wstring::size_type>(size_needed)))
+        string_custom_alloc output(static_cast<typename string_custom_alloc::size_type>(size_needed), 0);
+        if (0 != MultiByteToWideChar(CP_UTF8, 0, value, static_cast<int>(value_view.size()), &output[0], static_cast<std::wstring::size_type>(size_needed)))
             throw modern_win32::windows_exception();
         return output;
     }
 
-    [[nodiscard]] constexpr std::wstring to_wstring(std::string const& value)
+    template <class ALLOC = std::allocator<wchar_t>>
+    [[nodiscard]] constexpr std::basic_string<wchar_t, std::char_traits<wchar_t>, ALLOC> to_wstring(std::string const& value)
     {
-        return to_wstring(value.c_str());
+        return to_wstring<ALLOC>(value.c_str());
     }
 
-    [[nodiscard]] inline std::string to_string(wchar_t const* value)
+    template <class ALLOC = std::allocator<char>>
+    [[nodiscard]] std::basic_string<char, std::char_traits<char>, ALLOC> to_string(wchar_t const* value)
     {
+        using string_custom_alloc = std::basic_string<char, std::char_traits<char>, ALLOC>;
         if (value == nullptr)
             return "";
 
         std::wstring_view const value_view(value);
-        auto const size_neeed = WideCharToMultiByte(CP_UTF8, 0, value, value_view.size(), nullptr, 0, nullptr, nullptr);
+        auto const size_needed = WideCharToMultiByte(CP_UTF8, 0, value, static_cast<int>(value_view.size()), nullptr, 0, nullptr, nullptr);
 
-        std::string output(static_cast<std::wstring::size_type>(size_needed), 0);
-        if (0 != WideCharToMultiByte(CP_UTF8, 0, value, value_view.size(), &output[0], static_cast<std::wstring::size_type>(size_needed), nullptr, nullptr))
+        string_custom_alloc output(static_cast<typename string_custom_alloc::size_type>(size_needed), 0);
+        if (0 != WideCharToMultiByte(CP_UTF8, 0, value, static_cast<int>(value_view.size()), &output[0], static_cast<std::wstring::size_type>(size_needed), nullptr, nullptr))
             throw modern_win32::windows_exception();
         return output;
     }
 
-    [[nodiscard]] constexpr std::string to_string(std::wstring const& value)
+    template <class ALLOC = std::allocator<char>>
+    [[nodiscard]] constexpr std::basic_string<char, std::char_traits<char>, ALLOC> to_string(std::wstring const& value)
     {
-        return to_string(value.c_str());
+        return to_string<ALLOC>(value.c_str());
     }
 
 #   if __cplusplus > 201703L || _MSVC_LANG > 201703L
@@ -66,4 +73,5 @@ namespace modern_win32::convert
 
 
 }
+#endif
 #endif
