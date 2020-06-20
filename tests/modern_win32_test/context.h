@@ -17,6 +17,7 @@
 #include <chrono>
 #include <future>
 #include <modern_win32/threading/event.h>
+#include <modern_win32/threading/thread_start.h>
 
 namespace util::test
 {
@@ -67,6 +68,16 @@ namespace util::test
             EXPECT_TRUE(signaled);
 
             return event.wait_one(std::chrono::milliseconds(50));
+        }
+
+        [[nodiscard]] static auto get_anonymous_thread_start(context& ctx)
+        {
+            return modern_win32::threading::anonymous_thread_start(
+                [&ctx]()
+                {
+                    ctx.complete = true;
+                    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+                });
         }
 
         __declspec(property(get = get_complete, put = set_complete)) bool complete;

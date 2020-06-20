@@ -20,12 +20,10 @@
 #include "context.h"
 
 using std::chrono::milliseconds;
-using modern_win32::threading::thread;
-using modern_win32::threading::start_thread;
-using modern_win32::threading::manual_reset_event;
+using namespace modern_win32::threading;
 
 using util::test::context;
-constexpr auto TEST_TIMOUT = std::chrono::milliseconds(250);
+constexpr auto TEST_TIMOUT = std::chrono::milliseconds(2250);
 
 TEST(thread, start_launches_thread)
 {
@@ -33,7 +31,7 @@ TEST(thread, start_launches_thread)
     manual_reset_event thread_exit(false);
     auto parameter = std::make_tuple(&ctx, &thread_exit);
     thread task = start_thread(
-        [](thread::thread_parameter state) -> DWORD
+        [](thread::thread_parameter const state) -> DWORD
         {
             auto const* param = static_cast<std::tuple<context*, manual_reset_event*>*>(state);
             EXPECT_NE(param, nullptr);
@@ -48,5 +46,27 @@ TEST(thread, start_launches_thread)
         }, &parameter);
 
     EXPECT_TRUE(thread_exit.wait_one(milliseconds(250)));
+    ASSERT_TRUE(ctx.complete && !ctx.get_timed_out());
+}
+
+TEST(thread, anonymous_thread_start_runs_lambda)
+{
+    context ctx{TEST_TIMOUT};
+    auto worker = context::get_anonymous_thread_start(ctx);
+    thread_start& generic_worker = worker;
+    generic_worker();
+
+    ASSERT_TRUE(ctx.complete && !ctx.get_timed_out());
+}
+
+TEST(thread, start_launches_anonymous_thread_start)
+{
+    context ctx{TEST_TIMOUT};
+    auto worker = context::get_anonymous_thread_start(ctx);
+
+    thread const task = start_thread(&worker);
+    task.join();
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
     ASSERT_TRUE(ctx.complete && !ctx.get_timed_out());
 }

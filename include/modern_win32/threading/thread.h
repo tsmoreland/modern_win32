@@ -17,6 +17,7 @@
 #include <modern_win32/null_handle.h>
 #include <modern_win32/module_handle.h>
 #include <modern_win32/windows_exception.h>
+#include <modern_win32/threading/thread_start.h>
 #include <chrono>
 
 namespace modern_win32::threading
@@ -50,6 +51,10 @@ namespace modern_win32::threading
         thread(thread const&) = delete;
         ~thread() = default;
 
+        /// <summary>
+        /// Sets the description (or name) of the thread represented by this objet to <parmref name="name"/>
+        /// </summary>
+        /// <param name="name">the name to apply to the thread represented by this object</param>
         void set_name(wchar_t const* name) const
         {
             if (!is_running())
@@ -72,29 +77,63 @@ namespace modern_win32::threading
             set_name_delegate(m_handle.get(), name);
         }
         /// <summary>
+        /// Sets the description (or name) of the thread represented by this objet to <parmref name="name"/>
+        /// </summary>
+        /// <param name="name">the name to apply to the thread represented by this object</param>
+        void set_name(char const* name) const
+        {
+            std::wstring wide_name(std::size(name));
+        }
+
+        /// <summary>
         /// starts the thread using <paramref name="worker"/> if not already running
         /// </summary>
         /// <typeparam name="WORKER"></typeparam>
         /// <param name="worker">must be castable to thread_worker</param>
         /// <returns>true if thread is started; otherwise, false</returns>
+        /// <remarks>
+        /// thread is referred to as stateless because it cannot capture any variables (if using lambda)
+        /// nor can it be passed state
+        /// </remarks>
         template <typename WORKER>
-        [[nodiscard]] bool start(WORKER worker) 
+        [[nodiscard]] bool start_stateless(WORKER worker) 
         {
             static_assert(std::is_convertible<decltype(worker), thread_worker>::value, "WORKER must be assignable to thread_worker");
             return is_running()
                 ? false
                 : m_handle.reset(CreateThread(nullptr, 0, thread_adapter, static_cast<thread_worker>(worker), 0, &m_thread_id));  // NOLINT(clang-diagnostic-microsoft-cast)
         }
+        /// <summary>
+        /// starts the thread using <paramref name="worker"/> if not already running
+        /// </summary>
+        /// <typeparam name="WORKER"></typeparam>
+        /// <param name="worker">method to execute in new thread, must return DWORD and take thread_parameter</param>
+        /// <param name="parameter">parameter to use in thread creation</param>
+        /// <returns>true if thread is started; otherwise, false</returns>
         [[nodiscard]] bool start(thread_proc const worker, thread_parameter const parameter) 
         {
             return is_running()
                 ? false
                 : m_handle.reset(CreateThread(nullptr, 0, worker, parameter, 0, &m_thread_id));  // NOLINT(clang-diagnostic-microsoft-cast)
         }
+        /// <summary>
+        /// starts the thread using <paramref name="worker"/> if not already running
+        /// </summary>
+        /// <param name="worker"><see cref="thread_start"/> used to run the thread</param>
+        /// <returns>true if thread is started; otherwise, false</returns>
+        /// <remarks>
+        /// thread does not maintain lifetime of thread_start it is up to the caller to ensure that object exists until the thread completes
+        /// </remarks>
+        [[nodiscard]] bool start(thread_start* const worker) 
+        {
+            return is_running()
+                ? false
+                : m_handle.reset(CreateThread(nullptr, 0, thread_start::thread_proc, static_cast<thread_parameter>(worker), 0, &m_thread_id));  // NOLINT(clang-diagnostic-microsoft-cast)
+        }
         void join() const
         {
             if (is_running())
-                WaitForSingleObject(m_handle.get(), 0);
+                WaitForSingleObject(m_handle.get(), INFINITE);
         }
         [[nodiscard]] bool join(std::chrono::milliseconds const& timeout) const
         {
@@ -112,9 +151,20 @@ namespace modern_win32::threading
             return result == WAIT_OBJECT_0;
         }
 
+        /// <summary>
+        /// returns running state of the thread represented by this object
+        /// </summary>
+        /// <returns>true if thread is still active; otherwise, false</returns>
+        /// <exception cref="windows_exceptionl">thrown if Win32 API GetExitCodeThread returns zero</exception>
         [[nodiscard]] bool is_running() const
         {
-            return static_cast<bool>(m_handle);
+            if (!static_cast<bool>(m_handle))
+                return false;
+
+            DWORD exit_code;
+            if (GetExitCodeThread(m_handle.get(), &exit_code) != TRUE)
+                throw windows_exception();
+            return exit_code == STILL_ACTIVE;
         }
 
         thread& operator=(thread const&) = delete;
@@ -153,7 +203,7 @@ namespace modern_win32::threading
     /// <returns>the running thread</returns>
     /// <exception cref="windows_exception">thrown if unable to create thread</exception>
     template <typename WORKER>
-    auto start_thread(WORKER worker)
+    auto start_stateless_thread(WORKER worker)
     {
         static_assert(std::is_invocable<decltype(worker)>::value, "WORKER must be invokable");
         static_assert(std::is_convertible<decltype(worker), thread::thread_worker>::value, "WORKER must be assignable to thread_worker");
@@ -174,6 +224,23 @@ namespace modern_win32::threading
     {
         thread new_thread;
         if (!new_thread.start(worker, parameter))
+            throw windows_exception();
+        return new_thread;
+    }
+
+    /// <summary>
+    /// starts the thread using <paramref name="worker"/> if not already running
+    /// </summary>
+    /// <param name="worker"><see cref="thread_start"/> used to run the thread</param>
+    /// <returns>the running thread</returns>
+    /// <exception cref="windows_exception">thrown if unable to create thread</exception>
+    /// <remarks>
+    /// thread does not maintain lifetime of thread_start it is up to the caller to ensure that object exists until the thread completes
+    /// </remarks>
+    inline auto start_thread(thread_start* const worker)
+    {
+        thread new_thread;
+        if (!new_thread.start(worker))
             throw windows_exception();
         return new_thread;
     }

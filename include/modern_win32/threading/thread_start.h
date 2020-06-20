@@ -20,47 +20,61 @@
 
 namespace modern_win32::threading
 {
-    class thread_start_base
+    class thread_start
     {
     public:
-        using thread_parameter = void*;
-
-        thread_start_base() = default;
-        thread_start_base(thread_start_base&& other) noexcept = default;
-        thread_start_base(thread_start_base const&) = delete;
-        virtual ~thread_start_base() = default;
-
-        thread_start_base& operator=(thread_start_base const&) = delete;
-        thread_start_base& operator=(thread_start_base&&) noexcept = default;
-        virtual DWORD run(thread_parameter const parameter) = 0;
-
-        DWORD operator(thread_parameter const parameter)
+        thread_start() = default;
+        explicit thread_start(std::any state) 
+            : m_state(std::move(state))
         {
-            return run(parameter);
         }
+        thread_start(thread_start&& other) noexcept = default;
+        thread_start(thread_start const&) = delete;
+        virtual ~thread_start() = default;
+
+        thread_start& operator=(thread_start const&) = delete;
+        thread_start& operator=(thread_start&&) noexcept = default;
+        virtual void operator()() = 0;
+
+        friend class thread;
     protected:
+        [[nodiscard]] std::any const& get_state() const
+        {
+            return m_state;
+        }
+    private:
         std::any m_state;
+
+        using thread_parameter = void*;
+        static DWORD thread_proc(thread_parameter const this_ptr)
+        {
+            auto * that = static_cast<thread_start*>(this_ptr);
+            if (that == nullptr)
+                return 1;
+            that->operator()();
+            return 0;
+        }
     };
 
     template <typename WORKER>
-    class thread_start final : public thread_start_base
+    class anonymous_thread_start final : public thread_start
     {
     public:
-        explicit thread_start(WORKER worker) 
-        {
-            m_state = worker;
-        }
-
-        explicit thread_start(thread_start_base&& other)
-            : thread_start_base(std::move(other))
+        explicit anonymous_thread_start(WORKER worker) 
+            : thread_start(std::move(worker))
         {
         }
-        explicit thread_start(thread_start_base const& threadStartBase) = delete;
 
-        DWORD run(thread_parameter const parameter) final
+        explicit anonymous_thread_start(thread_start&& other)
+            : thread_start(std::move(other))
         {
-            auto worker = std::any_cast<WORKER>(m_state);
-            return worker();
+        }
+        explicit anonymous_thread_start(thread_start const& threadStartBase) = delete;
+
+        void operator()() override
+        {
+            auto worker = std::any_cast<WORKER>(get_state());
+            worker();
         }
     };
 
