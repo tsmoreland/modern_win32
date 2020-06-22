@@ -27,6 +27,10 @@ namespace modern_win32::threading
 {
     using thread_handle = null_handle;
 
+    bool set_thread_name(thread_handle::native_handle_type const handle, wchar_t const* name);
+    bool set_thread_name(thread_handle::native_handle_type const handle, char const* name);
+    std::optional<std::wstring> get_thread_name(thread_handle::native_handle_type const handle);
+
     class thread final
     {
     public:
@@ -64,46 +68,6 @@ namespace modern_win32::threading
         /// <summary>
         /// Sets the description (or name) of the thread represented by this objet to <parmref name="name"/>
         /// </summary>
-        /// <param name="handle">native handle for the thread</param>
-        /// <param name="name">the name to apply to the thread represented by this object</param>
-        /// <returns>true on success; otherwise, false</returns>
-        /// <remarks>only works on Windows Server 2016+ or Windows 10 1607+</remarks>
-        [[nodiscard]] static bool set_name(native_handle_type const handle, wchar_t const* name) 
-        {
-            using set_thread_description_delegate = HRESULT (WINAPI *)(HANDLE, PCWSTR);
-            auto const maybe_kernel_base = get_module("KernelBase.dll");
-            if (!maybe_kernel_base.has_value())
-                return false;
-
-            auto const& kernel_base = maybe_kernel_base.value();
-
-            if (!static_cast<bool>(kernel_base))
-                return false;
-
-            auto const set_name_delegate = reinterpret_cast<set_thread_description_delegate>(GetProcAddress(kernel_base.get(), "SetThreadDescription"));
-            if (set_name_delegate == nullptr)
-                return false;
-
-            auto const hr = set_name_delegate(handle, name);
-            return SUCCEEDED(hr);
-        }
-
-        /// <summary>
-        /// Sets the description (or name) of the thread represented by this objet to <parmref name="name"/>
-        /// </summary>
-        /// <param name="handle">native handle for the thread</param>
-        /// <param name="name">the name to apply to the thread represented by this object</param>
-        /// <returns>true on success; otherwise, false</returns>
-        /// <remarks>only works on Windows Server 2016+ or Windows 10 1607+</remarks>
-        [[nodiscard]] static bool set_name(native_handle_type const handle, char const* name) 
-        {
-            auto const wide_name = convert::to_wstring<naive_stack_allocator<wchar_t>>(name);
-            return set_name(handle, wide_name.c_str());
-        }
-
-        /// <summary>
-        /// Sets the description (or name) of the thread represented by this objet to <parmref name="name"/>
-        /// </summary>
         /// <param name="name">the name to apply to the thread represented by this object</param>
         /// <returns>true on success; otherwise, false</returns>
         /// <remarks>only works on Windows Server 2016+ or Windows 10 1607+</remarks>
@@ -111,7 +75,7 @@ namespace modern_win32::threading
         {
             if (!is_running())
                 return false;
-            return set_name(m_handle.get(), name);
+            return set_thread_name(m_handle.get(), name);
         }
 
         /// <summary>
@@ -124,37 +88,9 @@ namespace modern_win32::threading
         {
             if (!is_running())
                 return false;
-            return set_name(m_handle.get(), name);
+            return set_thread_name(m_handle.get(), name);
         }
 
-        /// <summary>
-        /// returns the current name for the thread represented by this object
-        /// </summary>
-        /// <param name="handle">native handle for the thread</param>
-        /// <returns>optional containing the thread name on success; otherwise <see cref="std::nullopt"/></returns>
-        /// <remarks>only works on Windows Server 2016+ or Windows 10 1607+</remarks>
-        [[nodiscard]] static std::optional<std::wstring> get_name(native_handle_type const handle) 
-        {
-            using get_thread_description_delegate = HRESULT (WINAPI *)(HANDLE, PWSTR*);
-            auto const maybe_kernel_base = get_module("KernelBase.dll");
-            if (!maybe_kernel_base.has_value())
-                return std::nullopt;
-
-            auto const& kernel_base = maybe_kernel_base.value();
-            auto const get_name_delegate = reinterpret_cast<get_thread_description_delegate>(GetProcAddress(kernel_base.get(), "GetThreadDescription"));
-            if (get_name_delegate == nullptr)
-                return std::nullopt;
-
-            PWSTR data{};
-            if (auto const hr = get_name_delegate(handle, &data); SUCCEEDED(hr))
-            {
-                std::wstring name(data);
-                LocalFree(data);
-                return name;
-            }
-
-            return std::nullopt;
-        }
         /// <summary>
         /// returns the current name for the thread represented by this object
         /// </summary>
@@ -164,7 +100,7 @@ namespace modern_win32::threading
         {
             if (!is_running())
                 return std::nullopt;
-            return get_name(m_handle.get());
+            return get_thread_name(m_handle.get());
         }
 
         /// <summary>
@@ -337,6 +273,75 @@ namespace modern_win32::threading
         if (!new_thread.start(worker))
             throw windows_exception();
         return new_thread;
+    }
+
+    /// <summary>
+    /// Sets the description (or name) of the thread represented by this objet to <parmref name="name"/>
+    /// </summary>
+    /// <param name="handle">native handle for the thread</param>
+    /// <param name="name">the name to apply to the thread represented by this object</param>
+    /// <returns>true on success; otherwise, false</returns>
+    /// <remarks>only works on Windows Server 2016+ or Windows 10 1607+</remarks>
+    [[nodiscard]] inline bool set_thread_name(thread_handle::native_handle_type const handle, wchar_t const* name) 
+    {
+        using set_thread_description_delegate = HRESULT (WINAPI *)(HANDLE, PCWSTR);
+        auto const maybe_kernel_base = get_module("KernelBase.dll");
+        if (!maybe_kernel_base.has_value())
+            return false;
+
+        auto const& kernel_base = maybe_kernel_base.value();
+
+        if (!static_cast<bool>(kernel_base))
+            return false;
+
+        auto const set_name_delegate = reinterpret_cast<set_thread_description_delegate>(GetProcAddress(kernel_base.get(), "SetThreadDescription"));
+        if (set_name_delegate == nullptr)
+            return false;
+
+        auto const hr = set_name_delegate(handle, name);
+        return SUCCEEDED(hr);
+    }
+
+    /// <summary>
+    /// Sets the description (or name) of the thread represented by this objet to <parmref name="name"/>
+    /// </summary>
+    /// <param name="handle">native handle for the thread</param>
+    /// <param name="name">the name to apply to the thread represented by this object</param>
+    /// <returns>true on success; otherwise, false</returns>
+    /// <remarks>only works on Windows Server 2016+ or Windows 10 1607+</remarks>
+    [[nodiscard]] inline bool set_thread_name(thread_handle::native_handle_type const handle, char const* name) 
+    {
+        auto const wide_name = convert::to_wstring<naive_stack_allocator<wchar_t>>(name);
+        return set_thread_name(handle, wide_name.c_str());
+    }
+
+    /// <summary>
+    /// returns the current name for the thread represented by this object
+    /// </summary>
+    /// <param name="handle">native handle for the thread</param>
+    /// <returns>optional containing the thread name on success; otherwise <see cref="std::nullopt"/></returns>
+    /// <remarks>only works on Windows Server 2016+ or Windows 10 1607+</remarks>
+    [[nodiscard]] inline std::optional<std::wstring> get_thread_name(thread_handle::native_handle_type const handle) 
+    {
+        using get_thread_description_delegate = HRESULT (WINAPI *)(HANDLE, PWSTR*);
+        auto const maybe_kernel_base = get_module("KernelBase.dll");
+        if (!maybe_kernel_base.has_value())
+            return std::nullopt;
+
+        auto const& kernel_base = maybe_kernel_base.value();
+        auto const get_name_delegate = reinterpret_cast<get_thread_description_delegate>(GetProcAddress(kernel_base.get(), "GetThreadDescription"));
+        if (get_name_delegate == nullptr)
+            return std::nullopt;
+
+        PWSTR data{};
+        if (auto const hr = get_name_delegate(handle, &data); SUCCEEDED(hr))
+        {
+            std::wstring name(data);
+            LocalFree(data);
+            return name;
+        }
+
+        return std::nullopt;
     }
 
 }
