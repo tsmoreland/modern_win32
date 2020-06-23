@@ -19,8 +19,6 @@
 #include <Windows.h>
 #include <synchapi.h>
 
-#else
-
 #endif
 
 #include <shared_mutex>
@@ -123,15 +121,6 @@ namespace modern_win32::threading
 
             return *this;
         }
-    protected:
-
-        void enter_exclusive_lock() noexcept { AcquireSRWLockExclusive(&m_lock); }
-
-        void enter_shared_lock() noexcept { AcquireSRWLockShared(&m_lock); }
-
-        bool try_enter_exclusive_lock() noexcept { return TryAcquireSRWLockExclusive(&m_lock) == TRUE; }
-        bool try_enter_shared_lock() noexcept { return TryAcquireSRWLockShared(&m_lock) == TRUE; }
-
     private:
         SRWLOCK m_lock{};
     };
@@ -141,6 +130,10 @@ namespace modern_win32::threading
     using slim_lock = std::shared_mutex;
 
 #endif
+
+    using shared_slim_lock = std::shared_lock<slim_lock>;
+    using unique_slim_lock = std::unique_lock<slim_lock>;
+    using slim_lock_guard = std::lock_guard<slim_lock>;
 
 }
 
