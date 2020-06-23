@@ -26,7 +26,7 @@ namespace modern_win32
         return 2048 / sizeof(TYPE);
     }
 
-    template <class TYPE>
+    template <class TYPE, size_t CAPACITY = calculate_capacity<TYPE>()>
     class naive_stack_allocator final
     {
     public:
@@ -34,7 +34,7 @@ namespace modern_win32
             "The C++ Standard forbids containers of const elements "
             "because allocator<const T> is ill-formed.");
 
-        static constexpr std::size_t CAPACITY = calculate_capacity<TYPE>();
+        //static constexpr std::size_t CAPACITY = calculate_capacity<TYPE>();
         using value_type = TYPE;
 
         explicit naive_stack_allocator() noexcept
@@ -42,9 +42,8 @@ namespace modern_win32
         {
         }
         template <class ALTERNATE_TYPE>
-        naive_stack_allocator (naive_stack_allocator<ALTERNATE_TYPE> const&) noexcept
+        explicit naive_stack_allocator (naive_stack_allocator<ALTERNATE_TYPE, CAPACITY> const&) noexcept
         {
-            
         }
 
         [[nodiscard]] TYPE* allocate(std::size_t const size)
@@ -64,20 +63,27 @@ namespace modern_win32
             if (value_ptr >= m_buffer + CAPACITY || value_ptr < m_buffer)
                 m_allocator.deallocate(value_ptr, size);
         }
+
+        template<class OTHER>
+        struct rebind
+        {
+            using other = naive_stack_allocator<OTHER, CAPACITY>;
+        };
+
     private:
         TYPE m_buffer[CAPACITY]{};
         std::allocator<TYPE> m_allocator;
         std::size_t m_position{};
     };
 
-    template <class T, class U>
-    constexpr bool operator== (const naive_stack_allocator<T>&, const naive_stack_allocator<U>&) noexcept
+    template <class T, class U, size_t CAPACITY>
+    constexpr bool operator== (const naive_stack_allocator<T, CAPACITY>&, const naive_stack_allocator<U, CAPACITY>&) noexcept
     {
         return true;
     }
 
-    template <class T, class U>
-    constexpr bool operator!= (const naive_stack_allocator<T>&, const naive_stack_allocator<U>&) noexcept
+    template <class T, class U, size_t CAPACITY>
+    constexpr bool operator!= (const naive_stack_allocator<T, CAPACITY>&, const naive_stack_allocator<U, CAPACITY>&) noexcept
     {
         return false;
     }

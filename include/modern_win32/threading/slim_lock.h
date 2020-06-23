@@ -19,11 +19,10 @@
 #include <Windows.h>
 #include <synchapi.h>
 
-#else
-
 #endif
 
 #include <shared_mutex>
+#include <modern_win32/modern_win32_export.h>
 
 namespace modern_win32::threading
 {
@@ -39,98 +38,51 @@ namespace modern_win32::threading
         using native_handle_type = PSRWLOCK;
 
     public:
-        explicit slim_lock() 
-        {
-            InitializeSRWLock(&m_lock);
-        }
-        slim_lock(slim_lock const&) = delete;
-        slim_lock(slim_lock&& other) noexcept 
-            : m_lock(other.m_lock)
-        {
-            other.m_lock = SRWLOCK{};
-            InitializeSRWLock(&other.m_lock);
-        }
+        MODERN_WIN32_EXPORT explicit slim_lock();
+        MODERN_WIN32_EXPORT slim_lock(slim_lock const&) = delete;
+        MODERN_WIN32_EXPORT slim_lock(slim_lock&& other) noexcept;
         ~slim_lock() noexcept = default;
 
         /// <summary>
         /// Acquires a slim reader/writer (SRW) lock in exclusive mode.
         /// </summary>
-        void lock() noexcept
-        {
-            AcquireSRWLockExclusive(&m_lock);
-        }
+        MODERN_WIN32_EXPORT void lock() noexcept;
+
         /// <summary>
         /// Attempts to acquire a slim reader/writer (SRW) lock in exclusive mode. If the call is successful, the calling thread takes ownership of the lock.
         /// </summary>
         /// <returns>true if lock has been obtained; otherwise, false</returns>
-        [[nodiscard]] bool try_lock() noexcept
-        {
-            return TryAcquireSRWLockExclusive(&m_lock) != 0;
-        }
+        [[nodiscard]] MODERN_WIN32_EXPORT bool try_lock() noexcept;
+
         /// <summary>
         /// Releases an SRW lock that was opened in exclusive mode.
         /// </summary>
-        void unlock() noexcept
-        {
-            ReleaseSRWLockExclusive(&m_lock);
-        }
+        MODERN_WIN32_EXPORT void unlock() noexcept;
+
         /// <summary>
         /// Acquires an SRW lock in shared mode.
         /// </summary>
-        void lock_shared() noexcept
-        {
-            AcquireSRWLockShared(&m_lock);
-        }
+        MODERN_WIN32_EXPORT void lock_shared() noexcept;
+
         /// <summary>
         /// Attempts to acquire a slim reader/writer (SRW) lock in shared mode. If the call is successful, the calling thread takes ownership of the lock.
         /// </summary>
         /// <returns>true if lock has been obtained; otherwise, false</returns>
-        [[nodiscard]] bool try_lock_shared() noexcept
-        {
-            return TryAcquireSRWLockShared(&m_lock) != 0;
-        }
+        [[nodiscard]] MODERN_WIN32_EXPORT bool try_lock_shared() noexcept;
+
         /// <summary>
         /// Releases an SRW lock that was opened in shared mode.
         /// </summary>
         /// <returns></returns>
-        void unlock_shared() noexcept
-        {
-            ReleaseSRWLockShared(&m_lock);
-        }
+        MODERN_WIN32_EXPORT void unlock_shared() noexcept;
 
         /// <summary>
         /// returns the underlying implementation-defined native handle object
         /// </summary>
-        [[nodiscard]] native_handle_type native_handle() noexcept
-        {
-            return &m_lock;
-        }
+        [[nodiscard]] native_handle_type native_handle() noexcept;
 
         slim_lock& operator=(slim_lock const&) = delete;
-        slim_lock& operator=(slim_lock&& other) noexcept 
-        {
-            if (this == &other)
-                return *this;
-
-            // TODO: add method to check if locked and unlock appropriate type, this may be handled along with recursive support
-            unlock();
-            unlock_shared();
-
-            m_lock = other.m_lock;
-            
-            other.m_lock = SRWLOCK{};
-            InitializeSRWLock(&other.m_lock);
-
-            return *this;
-        }
-    protected:
-
-        void enter_exclusive_lock() noexcept { AcquireSRWLockExclusive(&m_lock); }
-
-        void enter_shared_lock() noexcept { AcquireSRWLockShared(&m_lock); }
-
-        bool try_enter_exclusive_lock() noexcept { return TryAcquireSRWLockExclusive(&m_lock) == TRUE; }
-        bool try_enter_shared_lock() noexcept { return TryAcquireSRWLockShared(&m_lock) == TRUE; }
+        MODERN_WIN32_EXPORT slim_lock& operator=(slim_lock&& other) noexcept;
 
     private:
         SRWLOCK m_lock{};
@@ -141,6 +93,10 @@ namespace modern_win32::threading
     using slim_lock = std::shared_mutex;
 
 #endif
+
+    using shared_slim_lock = std::shared_lock<slim_lock>;
+    using unique_slim_lock = std::unique_lock<slim_lock>;
+    using slim_lock_guard = std::lock_guard<slim_lock>;
 
 }
 

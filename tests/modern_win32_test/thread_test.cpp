@@ -111,7 +111,7 @@ TEST(thread, is_running_false_after_exit)
 {
     context ctx{TEST_TIMOUT};
     thread task(context::get_custom_thread_start(ctx));
-    task.start();
+    static_cast<void>(task.start());
     task.join();
 
     ASSERT_FALSE(task.is_running());
@@ -136,7 +136,7 @@ TEST(thread, start_launches_unique_anonymous_thread_start)
     context ctx{TEST_TIMOUT};
     thread task(context::get_custom_thread_start(ctx));
 
-    task.start();
+    static_cast<void>(task.start());
     task.join();
 
     ASSERT_TRUE(ctx.complete && !ctx.get_timed_out());
