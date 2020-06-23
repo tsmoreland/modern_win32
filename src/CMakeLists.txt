@@ -2,17 +2,17 @@ project(modern_win32 CXX)
 
 # Source groups
 set(no_group_source_files
-    "modern_win32/modern_win32.cpp"
+    "modern_win32/threading/slim_lock.cpp"
+    "modern_win32/threading/thread.cpp"
 )
 source_group("" FILES ${no_group_source_files})
 
-set(ALL_FILES
-    ${no_group_source_files}
-)
+set(ALL_FILES ${no_group_source_files})
 
 set (ALL_HEADERS
     "../include/modern_win32/threading/event.h"
     "../include/modern_win32/invalid_handle.h"
+    "../include/modern_win32/modern_win32_export.h"
     "../include/modern_win32/module_handle.h"
     "../include/modern_win32/naive_stack_allocator.h"
     "../include/modern_win32/null_handle.h"
@@ -26,9 +26,7 @@ set (ALL_HEADERS
 
 # Target
 
-add_library(${PROJECT_NAME} SHARED 
-    ${ALL_FILES} ${ALL_HEADERS}
-)
+add_library(${PROJECT_NAME} SHARED ${ALL_FILES})
 
 include(GenerateExportHeader)
 generate_export_header(${PROJECT_NAME})
@@ -74,6 +72,7 @@ if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         "_CONSOLE;"
         "UNICODE;"
         "_UNICODE"
+        "MODERN_WIN32_EXPORTS"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
     target_compile_definitions(${PROJECT_NAME} PRIVATE
@@ -87,6 +86,7 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         "_CONSOLE;"
         "UNICODE;"
         "_UNICODE"
+        "MODERN_WIN32_EXPORTS"
     )
 endif()
 

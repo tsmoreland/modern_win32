@@ -16,20 +16,42 @@
 #ifdef _WIN32
 
 #include <modern_win32/null_handle.h>
-#include <modern_win32/module_handle.h>
-#include <modern_win32/windows_exception.h>
 #include <modern_win32/threading/thread_start.h>
-#include <modern_win32/naive_stack_allocator.h>
-#include <modern_win32/string_conversion.h>
+#include <modern_win32/windows_exception.h>
+#include <modern_win32/modern_win32_export.h>
 #include <chrono>
+#include <string>
+#include <optional>
 
 namespace modern_win32::threading
 {
     using thread_handle = null_handle;
 
-    bool set_thread_name(thread_handle::native_handle_type const handle, wchar_t const* name);
-    bool set_thread_name(thread_handle::native_handle_type const handle, char const* name);
-    std::optional<std::wstring> get_thread_name(thread_handle::native_handle_type const handle);
+    /// <summary>
+    /// Sets the description (or name) of the thread represented by this objet to <parmref name="name"/>
+    /// </summary>
+    /// <param name="handle">native handle for the thread</param>
+    /// <param name="name">the name to apply to the thread represented by this object</param>
+    /// <returns>true on success; otherwise, false</returns>
+    /// <remarks>only works on Windows Server 2016+ or Windows 10 1607+</remarks>
+    [[nodiscard]] MODERN_WIN32_EXPORT bool set_thread_name(thread_handle::native_handle_type const handle, wchar_t const* name);
+
+    /// <summary>
+    /// Sets the description (or name) of the thread represented by this objet to <parmref name="name"/>
+    /// </summary>
+    /// <param name="handle">native handle for the thread</param>
+    /// <param name="name">the name to apply to the thread represented by this object</param>
+    /// <returns>true on success; otherwise, false</returns>
+    /// <remarks>only works on Windows Server 2016+ or Windows 10 1607+</remarks>
+    [[nodiscard]] MODERN_WIN32_EXPORT bool set_thread_name(thread_handle::native_handle_type const handle, char const* name);
+
+    /// <summary>
+    /// returns the current name for the thread represented by this object
+    /// </summary>
+    /// <param name="handle">native handle for the thread</param>
+    /// <returns>optional containing the thread name on success; otherwise <see cref="std::nullopt"/></returns>
+    /// <remarks>only works on Windows Server 2016+ or Windows 10 1607+</remarks>
+    [[nodiscard]] MODERN_WIN32_EXPORT std::optional<std::wstring> get_thread_name(thread_handle::native_handle_type const handle);
 
     class thread final
     {
@@ -41,27 +63,10 @@ namespace modern_win32::threading
         using thread_proc = DWORD (*)(thread_parameter);
         using native_thread_id = DWORD;
 
-        explicit thread(std::unique_ptr<thread_start> worker)
-            : m_handle(thread_handle::invalid())
-            , m_thread_start(std::move(worker))
-        {
-            if (m_thread_start == nullptr)
-                throw std::invalid_argument("provided thread_start is null");
-        }
-        explicit thread(modern_handle_type&& handle)
-            : m_handle(handle.release())
-        {
-        }
-        explicit thread(native_handle_type const& handle = thread_handle::invalid())
-            : m_handle(handle)
-        {
-        }
-        thread(thread&& other) noexcept
-            : m_handle{other.m_handle.release()}
-            , m_thread_id{other.m_thread_id}
-        {
-            other.m_thread_id = native_thread_id{};
-        }
+        MODERN_WIN32_EXPORT explicit thread(std::unique_ptr<thread_start> worker);
+        MODERN_WIN32_EXPORT explicit thread(modern_handle_type&& handle);
+        MODERN_WIN32_EXPORT explicit thread(native_handle_type const& handle = thread_handle::invalid());
+        MODERN_WIN32_EXPORT thread(thread&& other) noexcept;
         thread(thread const&) = delete;
         ~thread() = default;
 
@@ -71,12 +76,7 @@ namespace modern_win32::threading
         /// <param name="name">the name to apply to the thread represented by this object</param>
         /// <returns>true on success; otherwise, false</returns>
         /// <remarks>only works on Windows Server 2016+ or Windows 10 1607+</remarks>
-        [[nodiscard]] bool set_name(wchar_t const* name) const
-        {
-            if (!is_running())
-                return false;
-            return set_thread_name(m_handle.get(), name);
-        }
+        [[nodiscard]] MODERN_WIN32_EXPORT bool set_name(wchar_t const* name) const;
 
         /// <summary>
         /// Sets the description (or name) of the thread represented by this objet to <parmref name="name"/>
@@ -84,24 +84,14 @@ namespace modern_win32::threading
         /// <param name="name">the name to apply to the thread represented by this object</param>
         /// <returns>true on success; otherwise, false</returns>
         /// <remarks>only works on Windows Server 2016+ or Windows 10 1607+</remarks>
-        [[nodiscard]] bool set_name(char const* name) const
-        {
-            if (!is_running())
-                return false;
-            return set_thread_name(m_handle.get(), name);
-        }
+        [[nodiscard]] MODERN_WIN32_EXPORT bool set_name(char const* name) const;
 
         /// <summary>
         /// returns the current name for the thread represented by this object
         /// </summary>
         /// <returns>optional containing the thread name on success; otherwise <see cref="std::nullopt"/></returns>
         /// <remarks>only works on Windows Server 2016+ or Windows 10 1607+</remarks>
-        [[nodiscard]] std::optional<std::wstring> get_name() const
-        {
-            if (!is_running())
-                return std::nullopt;
-            return get_thread_name(m_handle.get());
-        }
+        [[nodiscard]] MODERN_WIN32_EXPORT std::optional<std::wstring> get_name() const;
 
         /// <summary>
         /// starts the thread using <paramref name="worker"/> if not already running
@@ -128,12 +118,8 @@ namespace modern_win32::threading
         /// <param name="worker">method to execute in new thread, must return DWORD and take thread_parameter</param>
         /// <param name="parameter">parameter to use in thread creation</param>
         /// <returns>true if thread is started; otherwise, false</returns>
-        [[nodiscard]] bool start(thread_proc const worker, thread_parameter const parameter) 
-        {
-            if (is_running() || m_thread_start != nullptr)
-                return false;
-            return m_handle.reset(CreateThread(nullptr, 0, worker, parameter, 0, &m_thread_id));  // NOLINT(clang-diagnostic-microsoft-cast)
-        }
+        [[nodiscard]] MODERN_WIN32_EXPORT bool start(thread_proc const worker, thread_parameter const parameter);
+
         /// <summary>
         /// starts the thread using <paramref name="worker"/> if not already running
         /// </summary>
@@ -142,87 +128,40 @@ namespace modern_win32::threading
         /// <remarks>
         /// thread does not maintain lifetime of thread_start it is up to the caller to ensure that object exists until the thread completes
         /// </remarks>
-        [[nodiscard]] bool start(thread_start* const worker) 
-        {
-            if (is_running() || m_thread_start != nullptr)
-                return false;
+        [[nodiscard]] MODERN_WIN32_EXPORT bool start(thread_start* const worker);
 
-            return m_handle.reset(CreateThread(nullptr, 0, thread_start::thread_proc, static_cast<thread_parameter>(worker), 0, &m_thread_id));  // NOLINT(clang-diagnostic-microsoft-cast)
-        }
         /// <summary>
         /// starts the thread usnig provided thread_start
         /// </summary>
         /// <returns>true if thread is started; otherwise, false</returns>
-        bool start()
-        {
-            if (is_running() || m_thread_start == nullptr)
-                return false;
-            return m_handle.reset(CreateThread(nullptr, 0, thread_start::thread_proc, m_thread_start.get(), 0, &m_thread_id));  // NOLINT(clang-diagnostic-microsoft-cast)
-        }
-        void join() const
-        {
-            if (is_running())
-                WaitForSingleObject(m_handle.get(), INFINITE);
-        }
-        [[nodiscard]] bool join(std::chrono::milliseconds const& timeout) const
-        {
-            if (!is_running())
-                return false;
+        [[nodiscard]] MODERN_WIN32_EXPORT bool start();
 
-            auto const native_timeout = timeout.count() > static_cast<std::chrono::milliseconds::rep>(INFINITE)
-                ? INFINITE
-                : static_cast<DWORD>(timeout.count());
+        /// <summary>
+        /// Blocks the calling thread until the thread represented by this instance terminates.
+        /// </summary>
+        MODERN_WIN32_EXPORT void join() const;
 
-            auto const result = WaitForSingleObject(m_handle.get(), native_timeout);
-            if (result == WAIT_FAILED)
-                throw windows_exception();
-
-            return result == WAIT_OBJECT_0;
-        }
+        /// <summary>
+        /// Blocks the calling thread until the thread represented by this instance terminates
+        /// or the specified time elapses
+        /// </summary>
+        [[nodiscard]] MODERN_WIN32_EXPORT bool join(std::chrono::milliseconds const& timeout) const;
 
         /// <summary>
         /// returns running state of the thread represented by this object
         /// </summary>
         /// <returns>true if thread is still active; otherwise, false</returns>
         /// <exception cref="windows_exceptionl">thrown if Win32 API GetExitCodeThread returns zero</exception>
-        [[nodiscard]] bool is_running() const
-        {
-            if (!static_cast<bool>(m_handle))
-                return false;
-
-            DWORD exit_code;
-            if (GetExitCodeThread(m_handle.get(), &exit_code) != TRUE)
-                throw windows_exception();
-            return exit_code == STILL_ACTIVE;
-        }
+        [[nodiscard]] MODERN_WIN32_EXPORT bool is_running() const;
 
         thread& operator=(thread const&) = delete;
-        thread& operator=(thread&& other) noexcept 
-        {
-            if (this == &other)
-                return *this;
-
-            std::swap(m_handle, other.m_handle);
-            static_cast<void>(other.m_handle.reset());
-
-            m_thread_id = other.m_thread_id;
-            other.m_thread_id = native_thread_id{};
-
-            return *this;
-        }
+        MODERN_WIN32_EXPORT thread& operator=(thread&& other) noexcept; 
     private:
         modern_handle_type m_handle{};
         native_thread_id m_thread_id{};
         std::unique_ptr<thread_start> m_thread_start;
 
-        static DWORD __stdcall thread_adapter(void* state)
-        {
-            auto const worker = static_cast<thread_worker>(state);  // NOLINT(clang-diagnostic-microsoft-cast)
-            if (worker == nullptr)
-                return 1;
-            worker();
-            return 0;
-        }
+        static DWORD __stdcall thread_adapter(void* state);
     };
 
     /// <summary>
@@ -250,13 +189,7 @@ namespace modern_win32::threading
     /// <param name="parameter">parameter passed to thread</param>
     /// <returns>the running thread</returns>
     /// <exception cref="windows_exception">thrown if unable to create thread</exception>
-    inline auto start_thread(thread::thread_proc const worker, thread::thread_parameter const parameter)
-    {
-        thread new_thread;
-        if (!new_thread.start(worker, parameter))
-            throw windows_exception();
-        return new_thread;
-    }
+    [[nodiscard]] MODERN_WIN32_EXPORT thread start_thread(thread::thread_proc const worker, thread::thread_parameter const parameter);
 
     /// <summary>
     /// starts the thread using <paramref name="worker"/> if not already running
@@ -267,82 +200,7 @@ namespace modern_win32::threading
     /// <remarks>
     /// thread does not maintain lifetime of thread_start it is up to the caller to ensure that object exists until the thread completes
     /// </remarks>
-    inline auto start_thread(thread_start* const worker)
-    {
-        thread new_thread;
-        if (!new_thread.start(worker))
-            throw windows_exception();
-        return new_thread;
-    }
-
-    /// <summary>
-    /// Sets the description (or name) of the thread represented by this objet to <parmref name="name"/>
-    /// </summary>
-    /// <param name="handle">native handle for the thread</param>
-    /// <param name="name">the name to apply to the thread represented by this object</param>
-    /// <returns>true on success; otherwise, false</returns>
-    /// <remarks>only works on Windows Server 2016+ or Windows 10 1607+</remarks>
-    [[nodiscard]] inline bool set_thread_name(thread_handle::native_handle_type const handle, wchar_t const* name) 
-    {
-        using set_thread_description_delegate = HRESULT (WINAPI *)(HANDLE, PCWSTR);
-        auto const maybe_kernel_base = get_module("KernelBase.dll");
-        if (!maybe_kernel_base.has_value())
-            return false;
-
-        auto const& kernel_base = maybe_kernel_base.value();
-
-        if (!static_cast<bool>(kernel_base))
-            return false;
-
-        auto const set_name_delegate = reinterpret_cast<set_thread_description_delegate>(GetProcAddress(kernel_base.get(), "SetThreadDescription"));
-        if (set_name_delegate == nullptr)
-            return false;
-
-        auto const hr = set_name_delegate(handle, name);
-        return SUCCEEDED(hr);
-    }
-
-    /// <summary>
-    /// Sets the description (or name) of the thread represented by this objet to <parmref name="name"/>
-    /// </summary>
-    /// <param name="handle">native handle for the thread</param>
-    /// <param name="name">the name to apply to the thread represented by this object</param>
-    /// <returns>true on success; otherwise, false</returns>
-    /// <remarks>only works on Windows Server 2016+ or Windows 10 1607+</remarks>
-    [[nodiscard]] inline bool set_thread_name(thread_handle::native_handle_type const handle, char const* name) 
-    {
-        auto const wide_name = convert::to_wstring<naive_stack_allocator<wchar_t>>(name);
-        return set_thread_name(handle, wide_name.c_str());
-    }
-
-    /// <summary>
-    /// returns the current name for the thread represented by this object
-    /// </summary>
-    /// <param name="handle">native handle for the thread</param>
-    /// <returns>optional containing the thread name on success; otherwise <see cref="std::nullopt"/></returns>
-    /// <remarks>only works on Windows Server 2016+ or Windows 10 1607+</remarks>
-    [[nodiscard]] inline std::optional<std::wstring> get_thread_name(thread_handle::native_handle_type const handle) 
-    {
-        using get_thread_description_delegate = HRESULT (WINAPI *)(HANDLE, PWSTR*);
-        auto const maybe_kernel_base = get_module("KernelBase.dll");
-        if (!maybe_kernel_base.has_value())
-            return std::nullopt;
-
-        auto const& kernel_base = maybe_kernel_base.value();
-        auto const get_name_delegate = reinterpret_cast<get_thread_description_delegate>(GetProcAddress(kernel_base.get(), "GetThreadDescription"));
-        if (get_name_delegate == nullptr)
-            return std::nullopt;
-
-        PWSTR data{};
-        if (auto const hr = get_name_delegate(handle, &data); SUCCEEDED(hr))
-        {
-            std::wstring name(data);
-            LocalFree(data);
-            return name;
-        }
-
-        return std::nullopt;
-    }
+    [[nodiscard]] MODERN_WIN32_EXPORT thread start_thread(thread_start* const worker);
 
 }
 

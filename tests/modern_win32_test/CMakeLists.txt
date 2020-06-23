@@ -10,11 +10,11 @@ add_executable(${TEST_PROJECT_NAME} ${TEST_SOURCES}
     "event_test.cpp" 
     "slim_lock_test.cpp" 
     "context.cpp" 
-    "context.h"
     "thread_test.cpp"
 )
 
 add_test(NAME ${TEST_PROJECT_NAME} COMMAND ${TEST_PROJECT_NAME})
+
 
 set_target_properties(${TEST_PROJECT_NAME} PROPERTIES
     VS_GLOBAL_KEYWORD "Win32Proj"
@@ -23,7 +23,7 @@ use_props(${TEST_PROJECT_NAME} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PRO
 
 # use this if/when utils exports something
 # target_link_libraries(${TEST_PROJECT_NAME} PUBLIC ${CMAKE_PROJECT_NAME}_lib GTest::GTest GTest::Main)
-target_link_libraries(${TEST_PROJECT_NAME} PUBLIC GTest::GTest GTest::Main)
+target_link_libraries(${TEST_PROJECT_NAME} PUBLIC ${CMAKE_PROJECT_NAME} GTest::GTest GTest::Main)
 
 set_target_properties(${TEST_PROJECT_NAME} PROPERTIES
 	INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
