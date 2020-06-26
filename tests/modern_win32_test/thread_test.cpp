@@ -142,3 +142,40 @@ TEST(thread, start_launches_unique_anonymous_thread_start)
     ASSERT_TRUE(ctx.complete && !ctx.get_timed_out());
 }
 
+TEST(thread, set_thread_updates_description)
+{
+    // arrange
+    std::wstring const expected_name{L"set_thread_updates_description"};
+    EXPECT_TRUE(set_thread_name(GetCurrentThread(), expected_name.c_str()));
+
+    // act
+    PWSTR actual_name{};
+    EXPECT_TRUE(SUCCEEDED(GetThreadDescription(GetCurrentThread(), &actual_name)));
+
+    // assert
+    ASSERT_EQ(expected_name, actual_name);
+}
+
+TEST(thread, get_thread_name_returns_value)
+{
+    // arrange
+    std::wstring const expected_name{L"get_thread_name_returns_value"};
+    EXPECT_TRUE(SUCCEEDED(SetThreadDescription(GetCurrentThread(), expected_name.c_str())));
+
+    // act
+    auto const maybe_actual_name = get_thread_name(GetCurrentThread());
+
+    ASSERT_TRUE(maybe_actual_name.has_value());
+}
+
+TEST(thread, get_thread_name_returns_correct_value)
+{
+    // arrange
+    std::wstring const expected_name{L"get_thread_name_returns_correct_value-name"};
+    EXPECT_TRUE(SUCCEEDED(SetThreadDescription(GetCurrentThread(), expected_name.c_str())));
+
+    // act
+    auto const maybe_actual_name = get_thread_name(GetCurrentThread());
+
+    ASSERT_EQ(expected_name, maybe_actual_name.value());
+}
