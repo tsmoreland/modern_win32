@@ -88,6 +88,11 @@ namespace modern_win32
         return false;
     }
 
+    template <typename TCHAR>
+    using naive_basic_string = std::basic_string<TCHAR, std::char_traits<TCHAR>, naive_stack_allocator<TCHAR, 64>>;
+    using naive_string = naive_basic_string<char>;
+    using naive_wstring = naive_basic_string<wchar_t>;
+
 }
 
 #endif

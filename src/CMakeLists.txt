@@ -4,14 +4,17 @@ project(modern_win32 CXX)
 set(no_group_source_files
     "modern_win32/threading/slim_lock.cpp"
     "modern_win32/threading/thread.cpp"
+    "modern_win32/guid.cpp"
 )
 source_group("" FILES ${no_group_source_files})
 
 set(ALL_FILES ${no_group_source_files})
 
 set (ALL_HEADERS
+    "../include/modern_win32/com_exception.h"
     "../include/modern_win32/threading/event.h"
     "../include/modern_win32/invalid_handle.h"
+    "../include/modern_win32/guid.h"
     "../include/modern_win32/modern_win32_export.h"
     "../include/modern_win32/module_handle.h"
     "../include/modern_win32/naive_stack_allocator.h"
