@@ -16,39 +16,36 @@
 #include <ostream>
 #ifdef _WIN32
 
-
 #include <Windows.h>
 #include <string_view>
+#include <modern_win32/modern_win32_export.h>
 
 namespace modern_win32
 {
     class guid final
     {
     public:
-        explicit guid();
-        explicit guid(GUID const& value) noexcept;
-        explicit guid(char const* value);
-        explicit guid(wchar_t const* value);
+        MODERN_WIN32_EXPORT explicit guid();
+        MODERN_WIN32_EXPORT explicit guid(GUID const& value) noexcept;
+        MODERN_WIN32_EXPORT explicit guid(char const* value);
+        MODERN_WIN32_EXPORT explicit guid(wchar_t const* value);
 
-        [[nodiscard]] GUID get() const noexcept;
+        MODERN_WIN32_EXPORT [[nodiscard]] GUID get() const noexcept;
 
-        static guid& empty();
+        MODERN_WIN32_EXPORT static guid& empty();
 
-        void swap(guid& other) noexcept;
-        [[nodiscard]] bool operator==(guid const& other) const noexcept;
-        [[nodiscard]] bool operator!=(guid const& other) const noexcept;
+        MODERN_WIN32_EXPORT void swap(guid& other) noexcept;
+        MODERN_WIN32_EXPORT [[nodiscard]] friend bool operator==(guid const& left, guid const& right) noexcept;
+        MODERN_WIN32_EXPORT [[nodiscard]] friend bool operator!=(guid const& left, guid const& right) noexcept;
 
         friend std::ostream& operator<<(std::ostream& os, const guid& obj);
     private:
         GUID m_value{};
     };
 
-    [[nodiscard]] std::string to_string(guid const& uid);
-    void swap(guid& left, guid&right) noexcept;
-    [[nodiscard]] bool operator==(guid const& left, guid const& right) noexcept;
-    [[nodiscard]] bool operator!=(guid const& left, guid const& right) noexcept;
-
-    [[nodiscard]] guid new_guid() noexcept;
+    MODERN_WIN32_EXPORT [[nodiscard]] std::string to_string(guid const& uid);
+    MODERN_WIN32_EXPORT void swap(guid& left, guid&right) noexcept;
+    MODERN_WIN32_EXPORT [[nodiscard]] guid new_guid() noexcept;
 
 }
 

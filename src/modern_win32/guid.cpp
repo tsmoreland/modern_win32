@@ -15,34 +15,23 @@
 #include <algorithm>
 #include <memory>
 #include <modern_win32/com_exception.h>
-#include <modern_win32/module_handle.h>
+#include <modern_win32/naive_stack_allocator.h>
+#include <rpc.h>
+
+#pragma comment(lib, "rpcrt4.lib")
 
 namespace modern_win32
 {
 
-template <typename TCHAR>
-GUID from_string(TCHAR const* value, char const* method_name)
+template <typename TCHAR, typename CONVERTER>
+GUID from_string(TCHAR *value, CONVERTER converter)
 {
-    if (value == nullptr)
-        throw std::invalid_argument("value is null");
-
-    auto const maybe_shell32 = get_module("Shell32.dll");
-    if (!maybe_shell32.has_value())
-        throw std::runtime_error("Unable to load Shell32.dll");
-
-    using guid_from_string = BOOL (WINAPI *)(TCHAR const*, LPGUID);
-    auto const& shell32 = maybe_shell32.value();
-    auto const guid_from_string_delegate = reinterpret_cast<guid_from_string>(GetProcAddress(shell32.get(), method_name));
-    if (guid_from_string_delegate == nullptr)
-        throw std::runtime_error("GUIDFromString method not found");
-
     GUID output;
-    if (guid_from_string_delegate(value, &output) != TRUE)
-        throw std::invalid_argument("Unable to parse value into GUID");
+    if (RPC_S_OK != converter(value, &output))
+        throw std::invalid_argument("invalid format");
 
     return output;
 }
-
 
 guid::guid() 
     : m_value(empty().get())
@@ -61,13 +50,30 @@ guid::guid(char const* value)
     if (value == nullptr)
         throw std::invalid_argument("value is null");
 
-    m_value = from_string(value, "GUIDFromStringA");
+    using char_type = typename std::remove_pointer<RPC_CSTR>::type;
+    char_type buffer[64]{};
+    memcpy_s(buffer, sizeof(buffer), value, strlen(value)*sizeof(char_type));
+    buffer[63] = '\0';
+
+    m_value = from_string(buffer,   
+        [](char_type *value, UUID* out) {
+            return UuidFromStringA(value, out);
+        });
 }
 guid::guid(wchar_t const* value)
 {
     if (value == nullptr)
         throw std::invalid_argument("value is null");
-    m_value = from_string(value, "GUIDFromStringW");
+
+    using char_type = typename std::remove_pointer<RPC_WSTR>::type;
+    char_type buffer[64]{};
+    memcpy_s(buffer, sizeof(buffer), value, wcslen(value)*sizeof(char_type));
+    buffer[63] = '\0';
+
+    m_value = from_string(buffer,
+        [](char_type *value, UUID* out) {
+            return UuidFromStringW(value, out);
+        });
 
 }
 
@@ -87,15 +93,6 @@ void guid::swap(guid& other) noexcept
     std::swap(m_value, other.m_value);
 }
 
-bool guid::operator==(guid const& other) const noexcept
-{
-    return m_value == other.m_value;
-}
-bool guid::operator!=(guid const& other) const noexcept
-{
-    return !operator==(other);
-}
-
 std::wstring to_wstring(guid const& uid)
 {
     std::wstring value{};
@@ -108,7 +105,6 @@ std::string to_string(guid const& uid)
 {
     auto value = to_wstring(uid);
     std::string value_a{};
-
 
     std::transform(std::begin(value), std::end(value), std::back_inserter(value_a),
         [](auto const& wide_char) {
@@ -126,12 +122,12 @@ void swap(guid& left, guid&right) noexcept
 }
 bool operator==(guid const& left, guid const& right) noexcept
 {
-    return left.operator==(right);
+    return left.m_value == right.m_value;
 }
 
 bool operator!=(guid const& left, guid const& right) noexcept
 {
-    return left.operator!=(right);
+    return left.m_value != right.m_value;
 }
 std::ostream& operator<<(std::ostream& os, const guid& obj)
 {
