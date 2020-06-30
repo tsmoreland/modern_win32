@@ -58,9 +58,9 @@ namespace modern_win32
         GUID m_value{};
     };
 
-    MODERN_WIN32_EXPORT [[nodiscard]] std::string to_string(guid const& uid);
+    [[nodiscard]] MODERN_WIN32_EXPORT std::string to_string(guid const& uid);
     MODERN_WIN32_EXPORT void swap(guid& left, guid&right) noexcept;
-    MODERN_WIN32_EXPORT [[nodiscard]] guid new_guid() noexcept;
+    [[nodiscard]] MODERN_WIN32_EXPORT guid new_guid() noexcept;
 
 }
 
