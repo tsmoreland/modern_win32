@@ -22,23 +22,38 @@
 
 namespace modern_win32
 {
-    class guid final
+    class MODERN_WIN32_EXPORT guid final
     {
     public:
-        MODERN_WIN32_EXPORT explicit guid();
-        MODERN_WIN32_EXPORT explicit guid(GUID const& value) noexcept;
-        MODERN_WIN32_EXPORT explicit guid(char const* value);
-        MODERN_WIN32_EXPORT explicit guid(wchar_t const* value);
+        explicit guid();
+        explicit guid(GUID const& value) noexcept;
+        explicit guid(char const* value);
+        explicit guid(wchar_t const* value);
 
-        MODERN_WIN32_EXPORT [[nodiscard]] GUID get() const noexcept;
+        [[nodiscard]] GUID get() const noexcept;
 
-        MODERN_WIN32_EXPORT static guid& empty();
+        static guid& empty();
 
-        MODERN_WIN32_EXPORT void swap(guid& other) noexcept;
-        MODERN_WIN32_EXPORT [[nodiscard]] friend bool operator==(guid const& left, guid const& right) noexcept;
-        MODERN_WIN32_EXPORT [[nodiscard]] friend bool operator!=(guid const& left, guid const& right) noexcept;
+        void swap(guid& other) noexcept;
+        MODERN_WIN32_EXPORT friend bool operator==(guid const& left, guid const& right) noexcept;
+        MODERN_WIN32_EXPORT friend bool operator!=(guid const& left, guid const& right) noexcept;
+
+        MODERN_WIN32_EXPORT friend bool operator==(GUID const& left, guid const& right) noexcept;
+        MODERN_WIN32_EXPORT friend bool operator!=(GUID const& left, guid const& right) noexcept;
+
+        MODERN_WIN32_EXPORT friend bool operator==(guid const& left, GUID const& right) noexcept;
+        MODERN_WIN32_EXPORT friend bool operator!=(guid const& left, GUID const& right) noexcept;
 
         friend std::ostream& operator<<(std::ostream& os, const guid& obj);
+
+        explicit operator GUID() const
+        {
+            return m_value;
+        }
+        explicit operator bool() const
+        {
+            return *this != empty();
+        }
     private:
         GUID m_value{};
     };

@@ -50,7 +50,7 @@ guid::guid(char const* value)
     if (value == nullptr)
         throw std::invalid_argument("value is null");
 
-    using char_type = typename std::remove_pointer<RPC_CSTR>::type;
+    using char_type = std::remove_pointer<RPC_CSTR>::type;
     char_type buffer[64]{};
     memcpy_s(buffer, sizeof(buffer), value, strlen(value)*sizeof(char_type));
     buffer[63] = '\0';
@@ -65,7 +65,7 @@ guid::guid(wchar_t const* value)
     if (value == nullptr)
         throw std::invalid_argument("value is null");
 
-    using char_type = typename std::remove_pointer<RPC_WSTR>::type;
+    using char_type = std::remove_pointer<RPC_WSTR>::type;
     char_type buffer[64]{};
     memcpy_s(buffer, sizeof(buffer), value, wcslen(value)*sizeof(char_type));
     buffer[63] = '\0';
@@ -129,6 +129,26 @@ bool operator!=(guid const& left, guid const& right) noexcept
 {
     return left.m_value != right.m_value;
 }
+
+bool operator==(GUID const& left, guid const& right) noexcept
+{
+    return left == right.m_value;
+}
+
+bool operator!=(GUID const& left, guid const& right) noexcept
+{
+    return left != right.m_value;
+}
+bool operator==(guid const& left, GUID const& right) noexcept
+{
+    return left.m_value == right;
+}
+
+bool operator!=(guid const& left, GUID const& right) noexcept
+{
+    return left.m_value != right;
+}
+
 std::ostream& operator<<(std::ostream& os, const guid& obj)
 {
     return os << to_string(obj);
