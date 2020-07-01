@@ -98,9 +98,9 @@ std::wstring to_wstring(guid const& uid)
     constexpr int NULL_TERMINATOR_SIZE = 1;
     constexpr auto GUID_LENGTH = static_cast<std::wstring::size_type>(36);
 
-    auto const size = std::size(L"{00000000-0000-0000-0000-000000000000}") + NULL_TERMINATOR_SIZE;
-    wchar_t buffer[size];
-    if (StringFromGUID2(uid.get(), buffer, static_cast<int>(size)) == 0)
+    constexpr auto SIZE = std::size(L"{00000000-0000-0000-0000-000000000000}") + NULL_TERMINATOR_SIZE;
+    wchar_t buffer[SIZE];
+    if (StringFromGUID2(uid.get(), buffer, static_cast<int>(SIZE)) == 0)
         return L"********-****-****-****-************";
 
     return std::wstring(buffer + 1, GUID_LENGTH);
