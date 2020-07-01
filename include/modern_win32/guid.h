@@ -44,7 +44,7 @@ namespace modern_win32
         MODERN_WIN32_EXPORT friend bool operator==(guid const& left, GUID const& right) noexcept;
         MODERN_WIN32_EXPORT friend bool operator!=(guid const& left, GUID const& right) noexcept;
 
-        friend std::ostream& operator<<(std::ostream& os, const guid& obj);
+        MODERN_WIN32_EXPORT friend std::ostream& operator<<(std::ostream& os, const guid& obj);
 
         explicit operator GUID() const
         {
@@ -59,6 +59,7 @@ namespace modern_win32
     };
 
     [[nodiscard]] MODERN_WIN32_EXPORT std::string to_string(guid const& uid);
+    [[nodiscard]] MODERN_WIN32_EXPORT std::wstring to_wstring(guid const& uid);
     MODERN_WIN32_EXPORT void swap(guid& left, guid&right) noexcept;
     [[nodiscard]] MODERN_WIN32_EXPORT guid new_guid() noexcept;
 
