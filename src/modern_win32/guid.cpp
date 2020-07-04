@@ -34,7 +34,7 @@ GUID from_string(TCHAR *value, CONVERTER converter)
 }
 
 guid::guid() 
-    : m_value(empty().get())
+    : m_value{}
 {
     if (auto const hr = CoCreateGuid(&m_value); FAILED(hr)) 
         throw com_exception(hr);
@@ -79,7 +79,7 @@ guid::guid(wchar_t const* value)
 
 guid& guid::empty()
 {
-    static guid empty{};
+    static guid empty(GUID{});
     return empty;
 }
 
@@ -95,11 +95,15 @@ void guid::swap(guid& other) noexcept
 
 std::wstring to_wstring(guid const& uid)
 {
-    std::wstring value{};
-    value.reserve(std::size(L"00000000-0000-0000-0000-000000000000"));
-    if (StringFromGUID2(uid.get(), &value[0], static_cast<int>(value.size())) == 0)
+    constexpr int NULL_TERMINATOR_SIZE = 1;
+    constexpr auto GUID_LENGTH = static_cast<std::wstring::size_type>(36);
+
+    constexpr auto SIZE = std::size(L"{00000000-0000-0000-0000-000000000000}") + NULL_TERMINATOR_SIZE;
+    wchar_t buffer[SIZE];
+    if (StringFromGUID2(uid.get(), buffer, static_cast<int>(SIZE)) == 0)
         return L"********-****-****-****-************";
-    return value;
+
+    return std::wstring(buffer + 1, GUID_LENGTH);
 }
 std::string to_string(guid const& uid)
 {
@@ -114,7 +118,7 @@ std::string to_string(guid const& uid)
                 ? '?'
                 : static_cast<char>(wide_char);
         });
-    return "";
+    return value_a;
 }
 void swap(guid& left, guid&right) noexcept
 {

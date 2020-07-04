@@ -70,3 +70,47 @@ TEST(guid, equals_returns_false_for_non_matching_values)
 
     ASSERT_FALSE(are_equal);
 }
+
+TEST(guid, empty_equals_expected_all_zero_value)
+{
+    guid const all_zero("00000000-0000-0000-0000-000000000000");
+
+    bool const equal = all_zero == guid::empty();
+
+    ASSERT_TRUE(equal);
+}
+
+TEST(guid, new_guid_produces_different_values) 
+{
+    guid const first = modern_win32::new_guid();
+    guid const second = modern_win32::new_guid();
+    guid const third = modern_win32::new_guid();
+
+    bool const first_equals_second  = first == second;
+    bool const second_equals_third  = second == third;
+    bool const first_equals_third  = first == third;
+
+    ASSERT_FALSE(first_equals_second);
+    ASSERT_FALSE(second_equals_third);
+    ASSERT_FALSE(first_equals_third);
+}
+
+TEST(guid, get_returns_correct_string)
+{
+    std::string const raw_value = "D6DF7ECC-05BA-4778-A6D9-3DB0ACE208C6";
+    guid const value(raw_value.c_str()); 
+
+    std::string const as_string = modern_win32::to_string(value);
+
+    ASSERT_EQ(raw_value, as_string);
+}
+
+TEST(guid, get_returns_correct_wstring)
+{
+    std::wstring const raw_value = L"D6DF7ECC-05BA-4778-A6D9-3DB0ACE208C6";
+    guid const value(raw_value.c_str()); 
+
+    std::wstring const as_string = modern_win32::to_wstring(value);
+
+    ASSERT_EQ(raw_value, as_string);
+}
