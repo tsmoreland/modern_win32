@@ -17,7 +17,10 @@
 
 #include <tuple>
 #include <utility>
+
+#if __cplusplus > 201703L || _MSVC_LANG > 201703L
 #include <compare>
+#endif
 
 namespace modern_win32
 {
@@ -98,37 +101,38 @@ namespace modern_win32
         }
 
 #       if __cplusplus > 201703L || _MSVC_LANG > 201703L
-        [[nodiscard]] auto operator<=>(unique_handle const& other) noexcept
+        friend auto operator<=>(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second) noexcept
         {
-            return m_handle <=> other.m_handle;
+            return first.m_handle <=> second.m_handle;
         }
 #       else
-        [[nodicsard]] bool operator==(unique_handle const& other)
+        friend bool operator<(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second)
         {
-            return m_handle == other.m_handle;
+            return first.m_handle < second.m_handle;
         }
-        [[nodicsard]] bool operator!=( unique_handle const& other)
+        friend bool operator>(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second)
         {
-            return !(*this == other);
+            return first.m_handle > second.m_handle;
         }
-        [[nodicsard]] bool operator<(unique_handle const& other)
+        friend bool operator<=(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second)
         {
-            return m_handle < other.m_handle;
+            return first.m_handle <= second.m_handle;
         }
-        [[nodicsard]] bool operator>(unique_handle const& other)
+        friend bool operator>=(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second)
         {
-            return m_handle > other.m_handle;
-        }
-        [[nodicsard]] bool operator<=(unique_handle const& other)
-        {
-            return m_handle <= other.m_handle;
-        }
-        [[nodicsard]] bool operator>=(unique_handle const& other)
-        {
-            return m_handle >= other.m_handle;
+            return first.m_handle >= second.m_handle;
         }
 
 #       endif
+
+        friend bool operator==(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second)
+        {
+            return first.m_handle == second.m_handle;
+        }
+        friend bool operator!=(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second)
+        {
+            return !(first == second);
+        }
 
         unique_handle& operator=(native_handle_type const handle)
         {
@@ -164,49 +168,6 @@ namespace modern_win32
 	{
 		lhs.swap(rhs);
 	}
-
-#   if __cplusplus > 201703L || _MSVC_LANG > 201703L
-
-    template <typename TRAITS>
-    [[nodiscard]] auto operator<=>(unique_handle<TRAITS> const& lhs, unique_handle<TRAITS> const& rhs)
-    {
-        return lhs.get() <=> rhs.get();
-    }
-
-#   else
-
-    template <typename TRAITS>
-    [[nodicsard]] bool operator==(unique_handle<TRAITS> const& lhs, unique_handle<TRAITS> const& rhs)
-    {
-        return lhs.get() == rhs.get()
-    }
-
-    template <typename TRAITS>
-    [[nodicsard]] bool operator!=(unique_handle<TRAITS> const& lhs, unique_handle<TRAITS> const& rhs)
-    {
-        return !(lhs.get() == rhs.get());
-    }
-    template <typename TRAITS>
-    [[nodicsard]] bool operator<(unique_handle<TRAITS> const& lhs, unique_handle<TRAITS> const& rhs)
-    {
-        return lhs.get() < rhs.get();
-    }
-    template <typename TRAITS>
-    [[nodicsard]] bool operator>(unique_handle<TRAITS> const& lhs, unique_handle<TRAITS> const& rhs)
-    {
-        return lhs.get() > rhs.get();
-    }
-    template <typename TRAITS>
-    [[nodicsard]] bool operator<=(unique_handle<TRAITS> const& lhs, unique_handle<TRAITS> const& rhs)
-    {
-        return lhs.get() <= rhs.get();
-    }
-    template <typename TRAITS>
-    [[nodicsard]] bool operator>=(unique_handle<TRAITS> const& lhs, unique_handle<TRAITS> const& rhs)
-    {
-        return lhs.get() >= rhs.get();
-    }
-#   endif
 
 }
 
