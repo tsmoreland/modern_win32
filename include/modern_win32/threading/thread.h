@@ -156,6 +156,9 @@ namespace modern_win32::threading
 
         thread& operator=(thread const&) = delete;
         thread& operator=(thread&& other) noexcept; 
+
+        MODERN_WIN32_EXPORT friend void swap(thread& lhs, thread& rhs) noexcept;
+
     private:
 #       pragma warning(push)
 #       pragma warning(disable : 4251)

@@ -37,6 +37,7 @@ thread::thread(native_handle_type const& handle /* = thread_handle::invalid() */
 thread::thread(thread&& other) noexcept
     : m_handle{other.m_handle.release()}
     , m_thread_id{other.m_thread_id}
+    , m_thread_start(std::move(other.m_thread_start))
 {
     other.m_thread_id = native_thread_id{};
 }
@@ -139,13 +140,20 @@ thread& thread::operator=(thread&& other) noexcept
     if (this == &other)
         return *this;
 
-    std::swap(m_handle, other.m_handle);
-    static_cast<void>(other.m_handle.reset());
+    std::swap(*this, other);
 
-    m_thread_id = other.m_thread_id;
+    static_cast<void>(other.m_handle.reset());
     other.m_thread_id = native_thread_id{};
 
     return *this;
+}
+
+void swap(thread& lhs, thread& rhs) noexcept
+{
+    using std::swap;
+    swap(lhs.m_handle, rhs.m_handle);
+    swap(lhs.m_thread_id, rhs.m_thread_id);
+    swap(lhs.m_thread_start, rhs.m_thread_start);
 }
 
 DWORD __stdcall thread::thread_adapter(void* state)
