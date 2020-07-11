@@ -85,6 +85,27 @@ process_thread_handle& process_information::get_process_thread_handle() noexcept
     return m_process_thread_handle;
 }
 
+bool process_information::is_running() const 
+{
+    if (!static_cast<bool>(m_process_handle))
+        return false;
+
+    auto const [isRunning, exit_code] = get_running_details(m_process_handle.native_handle());
+    static_cast<void>(exit_code);
+    return isRunning;
+}
+
+std::optional<process_information::native_process_exit_code> process_information::get_exit_code() const
+{
+    if (!static_cast<bool>(m_process_handle))
+        return std::nullopt;
+
+    auto const [isRunning, exit_code] = get_running_details(m_process_handle.native_handle());
+    return isRunning
+        ? std::nullopt
+        : std::optional(exit_code);
+}
+
 bool process_information::reset(deconstruct_type&& deconstructed)
 {
     if (*this == deconstructed)
@@ -195,6 +216,19 @@ void process_information::close()
         static_cast<void>(m_process_handle.reset());
         static_cast<void>(m_process_thread_handle.reset());
     }
+}
+
+process_information::running_details process_information::get_running_details(native_process_handle_type process_handle) 
+{
+    native_process_exit_code exit_code{};
+    auto const getExitProcessSuccess = GetExitCodeProcess(process_handle, &exit_code);
+    if (!getExitProcessSuccess)
+        throw windows_exception("Unable to get exit code for the requested process");
+
+    using std::make_tuple;
+    return exit_code == STILL_ACTIVE
+        ? make_tuple(true, 0UL)
+        : make_tuple(false, exit_code);
 }
 
 }

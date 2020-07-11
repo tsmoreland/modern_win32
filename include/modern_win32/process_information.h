@@ -17,7 +17,9 @@
 
 #include "null_handle.h"
 #include <tuple>
+#include <optional>
 #include <modern_win32/modern_win32_export.h>
+#include <modern_win32/windows_exception.h>
 
 namespace modern_win32
 {
@@ -34,6 +36,8 @@ namespace modern_win32
         using native_process_thread_handle_type = typename process_thread_handle::native_handle_type;
         using modern_handle_type = process_handle;
         using native_process_id = decltype(PROCESS_INFORMATION::dwProcessId);
+        using native_process_exit_code = unsigned long;
+        using native_process_thread_exit_code = unsigned long;
         using native_process_thread_id = decltype(PROCESS_INFORMATION::dwThreadId);
         using deconstruct_type = std::tuple<native_process_id, native_process_thread_id, process_handle::native_handle_type, process_thread_handle::native_handle_type>;
         
@@ -78,6 +82,17 @@ namespace modern_win32
         /// <summary>returns a reference to the managed process thread handle</summary
         [[nodiscard]] process_thread_handle& get_process_thread_handle() noexcept;
 
+        /// <summary>returns true if a process is currently owned and is running; otherwise, false</summary>
+        /// <exception cref="windows_exception">if an error occurs calling the Win32 API</exception>
+        [[nodiscard]] bool is_running() const;
+
+        /// <summary>
+        /// Returns the process exit code if it is no longer running; otherwise <see cref="std::nullopt"/>
+        /// </summary>
+        /// <returns>process exit code if process has exited</returns>
+        /// <exception cref="windows_exception">if an error occurs calling the Win32 API</exception>
+        [[nodiscard]] std::optional<native_process_exit_code> get_exit_code() const;
+
         /// <summary>replaces the managed object</summary>
         /// <returns>true if the replacement represents a valid process; otherwise, false</returns>
         [[nodiscard]] bool reset(deconstruct_type&& deconstructed);
@@ -114,12 +129,17 @@ namespace modern_win32
         MODERN_WIN32_EXPORT friend void swap(process_information& lhs, process_information& rhs) noexcept;
 
     private:
+        using running_details = std::tuple<bool, native_process_exit_code>;
         native_process_id m_process_id;
         native_process_thread_id m_process_thread_id;
+#       pragma warning(push)
+#       pragma warning(disable : 4251)
         process_handle m_process_handle;
         process_thread_handle m_process_thread_handle;
+#       pragma warning(pop)
         
         void close();
+        [[nodiscard]] static running_details get_running_details(native_process_handle_type process_handle);
     };
 }
 
