@@ -1,16 +1,15 @@
 project(modern_win32 CXX)
 
 # Source groups
-set(no_group_source_files
+set(source_files
     "modern_win32/threading/slim_lock.cpp"
     "modern_win32/threading/thread.cpp"
     "modern_win32/guid.cpp"
+    "modern_win32/process_information.cpp"
 )
-source_group("" FILES ${no_group_source_files})
+source_group("source files" FILES ${source_files})
 
-set(ALL_FILES ${no_group_source_files})
-
-set (ALL_HEADERS
+set (header_files
     "../include/modern_win32/com_exception.h"
     "../include/modern_win32/threading/event.h"
     "../include/modern_win32/invalid_handle.h"
@@ -27,10 +26,10 @@ set (ALL_HEADERS
     "../include/modern_win32/unique_handle.h"
     "../include/modern_win32/windows_exception.h"
 )
+source_group("header files" FILES ${header_files})
 
 # Target
-
-add_library(${PROJECT_NAME} SHARED ${ALL_FILES})
+add_library(${PROJECT_NAME} SHARED ${source_files})
 
 include(GenerateExportHeader)
 generate_export_header(${PROJECT_NAME})
@@ -41,12 +40,11 @@ set(ROOT_NAMESPACE util)
 set_target_properties(${PROJECT_NAME} PROPERTIES VS_GLOBAL_KEYWORD "Win32Proj")
 
 # Output directory
-if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        OUTPUT_DIRECTORY_DEBUG   "${CMAKE_SOURCE_DIR}/${CMAKE_VS_PLATFORM_NAME}/$<CONFIG>/"
-        OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/${CMAKE_VS_PLATFORM_NAME}/$<CONFIG>/"
-    )
-endif()
+set_target_properties(${PROJECT_NAME} PROPERTIES
+	OUTPUT_DIRECTORY_DEBUG   "${CMAKE_SOURCE_DIR}/${CMAKE_VS_PLATFORM_NAME}/$<CONFIG>/"
+	OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/${CMAKE_VS_PLATFORM_NAME}/$<CONFIG>/"
+)
+
 if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
     set_target_properties(${PROJECT_NAME} PROPERTIES
         INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
