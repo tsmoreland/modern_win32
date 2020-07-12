@@ -36,7 +36,7 @@ namespace modern_win32::threading
     template <event_type EVENT_TYPE>
     class event final
     {
-        using modern_handle_type = typename modern_win32::null_handle;
+        using modern_handle_type = modern_win32::null_handle;
     public:
         explicit event(bool const initial_state) noexcept
             : m_event{CreateEvent(nullptr, EVENT_TYPE == event_type::manual_reset, initial_state ? TRUE : FALSE, nullptr)}
