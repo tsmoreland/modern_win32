@@ -46,21 +46,21 @@ bool thread::set_name(wchar_t const* name) const
 {
     if (!is_running())
         return false;
-    return set_thread_name(m_handle.get(), name);
+    return set_thread_name(m_handle.native_handle(), name);
 }
 
 bool thread::set_name(char const* name) const
 {
     if (!is_running())
         return false;
-    return set_thread_name(m_handle.get(), name);
+    return set_thread_name(m_handle.native_handle(), name);
 }
 
 std::optional<std::wstring> thread::get_name() const
 {
     if (!is_running())
         return std::nullopt;
-    return get_thread_name(m_handle.get());
+    return get_thread_name(m_handle.native_handle());
 }
 
 
@@ -105,7 +105,7 @@ bool thread::start()
 void thread::join() const
 {
     if (is_running())
-        WaitForSingleObject(m_handle.get(), INFINITE);
+        WaitForSingleObject(m_handle.native_handle(), INFINITE);
 }
 
 bool thread::join(std::chrono::milliseconds const& timeout) const
@@ -117,7 +117,7 @@ bool thread::join(std::chrono::milliseconds const& timeout) const
         ? INFINITE
         : static_cast<DWORD>(timeout.count());
 
-    auto const result = WaitForSingleObject(m_handle.get(), native_timeout);
+    auto const result = WaitForSingleObject(m_handle.native_handle(), native_timeout);
     if (result == WAIT_FAILED)
         throw windows_exception();
 
@@ -130,7 +130,7 @@ bool thread::is_running() const
         return false;
 
     DWORD exit_code;
-    if (GetExitCodeThread(m_handle.get(), &exit_code) != TRUE)
+    if (GetExitCodeThread(m_handle.native_handle(), &exit_code) != TRUE)
         throw windows_exception();
     return exit_code == STILL_ACTIVE;
 }
@@ -177,7 +177,7 @@ bool set_thread_name(thread_handle::native_handle_type const handle, wchar_t con
     if (!static_cast<bool>(kernel_base))
         return false;
 
-    auto const set_name_delegate = reinterpret_cast<set_thread_description_delegate>(GetProcAddress(kernel_base.get(), "SetThreadDescription"));
+    auto const set_name_delegate = reinterpret_cast<set_thread_description_delegate>(GetProcAddress(kernel_base.native_handle(), "SetThreadDescription"));
     if (set_name_delegate == nullptr)
         return false;
 
@@ -199,7 +199,7 @@ std::optional<std::wstring> get_thread_name(thread_handle::native_handle_type co
         return std::nullopt;
 
     auto const& kernel_base = maybe_kernel_base.value();
-    auto const get_name_delegate = reinterpret_cast<get_thread_description_delegate>(GetProcAddress(kernel_base.get(), "GetThreadDescription"));
+    auto const get_name_delegate = reinterpret_cast<get_thread_description_delegate>(GetProcAddress(kernel_base.native_handle(), "GetThreadDescription"));
     if (get_name_delegate == nullptr)
         return std::nullopt;
 

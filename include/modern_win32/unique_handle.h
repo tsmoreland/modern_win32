@@ -53,7 +53,7 @@ namespace modern_win32
         /// as closing the handle could lead to undefined behaviour
         /// </summary>
         /// <returns>native handle type</returns>
-        [[nodiscard]] native_handle_type get() const noexcept
+        [[nodiscard]] native_handle_type native_handle() const noexcept
         {
             return m_handle;
         }

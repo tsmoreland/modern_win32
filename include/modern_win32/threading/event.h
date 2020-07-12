@@ -63,7 +63,7 @@ namespace modern_win32::threading
         // ReSharper disable once CppMemberFunctionMayBeConst it shouldn't be const because the state of the event is changing
         [[nodiscard]] bool set() noexcept
         {
-            return SetEvent(m_event.get()) != 0;
+            return SetEvent(m_event.native_handle()) != 0;
         }
         /// <summary>
         /// Sets the event object to the nonsignaled state.
@@ -72,7 +72,7 @@ namespace modern_win32::threading
         // ReSharper disable once CppMemberFunctionMayBeConst it shouldn't be const because the state of the event is changing
         [[nodiscard]] bool clear() noexcept
         {
-            return ResetEvent(m_event.get()) != 0;
+            return ResetEvent(m_event.native_handle()) != 0;
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace modern_win32::threading
         /// <exception cref="windows_exception">if wait fails</exception>
         [[nodiscard]] bool wait_one(std::chrono::milliseconds const timeout = get_infinity_in_ms()) const 
         {
-            auto const result = WaitForSingleObject(m_event.get(), convert_timeout(timeout)); 
+            auto const result = WaitForSingleObject(m_event.native_handle(), convert_timeout(timeout)); 
 
             if (result == WAIT_FAILED)
                 throw windows_exception();
@@ -203,7 +203,7 @@ namespace modern_win32::threading
         static DWORD wait(EVENTS const&... events, bool const wait_all, std::chrono::milliseconds const timeout)
         {
             modern_handle_type::native_handle_type native_handles[sizeof...(events)];
-            pack(native_handles, events..., [](auto& e) {return e.get();});
+            pack(native_handles, events..., [](auto& e) {return e.native_handle();});
 
             auto const result = WaitForMultipleObjects(sizeof...(events), native_handles, wait_all ? TRUE : FALSE, convert_timeout(timeout));
             if (result == WAIT_FAILED) 

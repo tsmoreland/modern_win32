@@ -13,11 +13,13 @@
 
 #ifndef __MODERN_WIN32_PROCESS_H__
 #define __MODERN_WIN32_PROCESS_H__
-#include <memory>
 #ifdef _WIN32
 
-#include "null_handle.h"
-#include <TlHelp32.h>
+#include <modern_win32/null_handle.h>
+#include <modern_win32/modern_win32_export.h>
+#include <modern_win32/windows_exception.h>
+#include <chrono>
+#include <optional>
 #include <tuple>
 
 namespace modern_win32
@@ -27,7 +29,7 @@ namespace modern_win32
 
     class process_impl;
 
-    class process_information final
+    class MODERN_WIN32_EXPORT process_information final
     {
     public:
         using native_handle_type = PROCESS_INFORMATION;
@@ -35,6 +37,8 @@ namespace modern_win32
         using native_process_thread_handle_type = typename process_thread_handle::native_handle_type;
         using modern_handle_type = process_handle;
         using native_process_id = decltype(PROCESS_INFORMATION::dwProcessId);
+        using native_process_exit_code = unsigned long;
+        using native_process_thread_exit_code = unsigned long;
         using native_process_thread_id = decltype(PROCESS_INFORMATION::dwThreadId);
         using deconstruct_type = std::tuple<native_process_id, native_process_thread_id, process_handle::native_handle_type, process_thread_handle::native_handle_type>;
         
@@ -50,164 +54,114 @@ namespace modern_win32
         }
 
         /// <summary>Initializes an empty process_information class</summary>
-        explicit process_information()
-            : m_process_id{empty_process_id()}
-            , m_process_thread_id{empty_process_thread_id()}
-        {
-        }
+        explicit process_information();
         /// <summary>Initializes an open process_information class based on <paramref name="process_information"/></summary>
-        explicit process_information(native_handle_type const& process_information)
-            : m_process_id{process_information.dwProcessId}
-            , m_process_thread_id{process_information.dwThreadId}
-            , m_process_handle{process_information.hProcess}
-            , m_process_thread_handle{process_information.hThread}
-        {
-        }
+        explicit process_information(native_handle_type const& process_information);
+        /// <summary>copy constructor not supported</summary>
         process_information(const process_information&) = delete;
+        /// <summary>
+        /// moves the contents of <paramref name="other"> into this newly crated object
+        /// resetting <paramref name="other"> in the process
+        /// </summary>
+        process_information(process_information&& other) noexcept;
+        ~process_information();
+
+        /// <summary>returns the member details as a <see cref="native_handle_type"></summary>
+        [[nodiscard]] native_handle_type native_handle() const noexcept;
+        /// <summary>returns the <see cref="native_process_handle_type"> object for the process</summary>
+        [[nodiscard]] native_process_handle_type get_native_process_handle() const noexcept;
+        /// <summary>returns the <see cref="native_process_thread_handle_type"> object for the process</summary>
+        [[nodiscard]] native_process_thread_handle_type get_native_process_thread_handle() const noexcept;
+        /// <summary>returns the process identifier (PID)</summary>
+        [[nodiscard]] native_process_id get_native_process_id() const noexcept;
+        /// <summary>returns the process thread id</summary>
+        [[nodiscard]] native_process_thread_id get_native_process_thread_id() const noexcept;
+
+        /// <summary>returns a reference to the managed process handle</summary>
+        [[nodiscard]] process_handle& get_process_handle() noexcept;
+
+        /// <summary>returns a reference to the managed process thread handle</summary
+        [[nodiscard]] process_thread_handle& get_process_thread_handle() noexcept;
+
+        /// <summary>returns true if a process is currently owned and is running; otherwise, false</summary>
+        /// <exception cref="windows_exception">if an error occurs calling the Win32 API</exception>
+        [[nodiscard]] bool is_running() const;
+
+        /// <summary>
+        /// Returns the process exit code if it is no longer running; otherwise <see cref="std::nullopt"/>
+        /// </summary>
+        /// <returns>process exit code if process has exited</returns>
+        /// <exception cref="windows_exception">if an error occurs calling the Win32 API</exception>
+        [[nodiscard]] std::optional<native_process_exit_code> get_exit_code() const;
+
+        /// <summary>waits for process to exit</summary
+        /// <exception cref="windows_exception">if an error occurs calling the Win32 API</exception>
+        /// <exception cref="std::runtime_exception">
+        /// if process_information was incorectly built from mutex which was abandoned
+        /// </exception>
+        void wait_for_exit() const;
+
+        /// <summary>
+        /// waits until process has exited or <paramref name="timeout"> milliseconds have elapsed
+        /// </summary>
+        /// <param name="timeout">number of milliseconds to wait for process to exit</param>
+        /// <returns>true if process has exited; otherwise, false</returns>
+        /// <exception cref="windows_exception">if an error occurs calling the Win32 API</exception>
+        /// <exception cref="std::runtime_exception">
+        /// if process_information was incorectly built from mutex which was abandoned
+        /// </exception>
+        [[nodiscard]] bool wait_for_exit(std::chrono::milliseconds const& timeout) const; 
+
+        /// <summary>replaces the managed object</summary>
+        /// <returns>true if the replacement represents a valid process; otherwise, false</returns>
+        [[nodiscard]] bool reset(deconstruct_type&& deconstructed);
+        /// <summary>replaces the managed object</summary>
+        /// <returns>true if the replacement represents a valid process; otherwise, false</returns>
+        [[nodiscard]] bool reset(native_handle_type const& handle);        
+        /// <summary>
+        /// releases the ownership of the managed process if any,
+        /// returning the contents as a <see cref="deconstruct_type"> 
+        /// </summary>
+        /// <returns><see cref="deconstruct_type"> containing the contents of the managed object</returns>
+        [[nodiscard]] deconstruct_type release();
+
         process_information& operator=(const process_information&) = delete;
-        process_information(process_information&& other) noexcept 
-        {
-            auto [process_id, process_thread_id, process_handle, process_thread_handle] = other.release();
-            m_process_id = process_id;
-            m_process_thread_id = process_thread_id;
-            static_cast<void>(m_process_handle.reset(process_handle));
-            static_cast<void>(m_process_thread_handle.reset(process_thread_handle));
-        }
-        process_information& operator=(process_information&& other) noexcept 
-        {
-            if (*this == other)
-                return *this;
-
-            std::swap(*this, other);
-            return *this;
-        }
-        ~process_information() 
-        {
-            close(); // done to match unique_handle but not really needed, default would be fine
-        }
-
-        [[nodiscard]] bool reset(deconstruct_type&& deconstructed)
-        {
-            if (*this == deconstructed)
-                return static_cast<bool>(*this);
-
-            close();
-            auto [process_id, process_thread_id, process_handle, process_thread_handle] = std::move(deconstructed);
-            m_process_id = process_id;
-            m_process_thread_id = process_thread_id;
-            static_cast<void>(m_process_handle.reset(process_handle));
-            static_cast<void>(m_process_thread_handle.reset(process_thread_handle));
-
-            return static_cast<bool>(*this);
-        }
-        [[nodiscard]] bool reset(native_handle_type const& handle)
-        {
-            if (*this == handle)
-                return static_cast<bool>(*this);
-
-            close(); // no check for open needed, handled by the handle classes
-            m_process_id = handle.dwProcessId;
-            m_process_thread_id = handle.dwThreadId;
-            static_cast<void>(m_process_handle.reset(handle.hProcess));
-            static_cast<void>(m_process_thread_handle.reset(handle.hThread));
-
-            return static_cast<bool>(*this);
-        }
-        [[nodiscard]] deconstruct_type release()
-        {
-            auto deconstructed = std::make_tuple(m_native_process_id, m_native_process_thread_id, m_process_handle.release(), m_process_thread_handle.release());
-            m_native_process_id = empty_process_thread_id();
-            m_native_process_thread_id = empty_process_id();
-            return deconstructed;
-        }
-
-        friend bool operator==(process_information const& lhs, process_information const& rhs)
-        {
-            return &lhs == &rhs ||
-                lhs.m_process_id == rhs.m_process_id &&
-                lhs.m_process_thread_id == rhs.m_process__thread_id &&
-                lhs.m_process_handle == rhs.m_process_handle &&
-                lhs.m_process_thread_handle == rhs.m_process_thread_handle;
-        }
-        friend bool operator!=(process_information const& lhs, process_information const& rhs)
-        {
-            return !(lhs == rhs);
-        }
-        friend bool operator==(process_information const& lhs, PROCESS_INFORMATION const& rhs)
-        {
-            return lhs.m_process_id == rhs.dwProcessId &&
-                lhs.m_process_thread_id == rhs.dwThreadId &&
-                lhs.m_process_handle.get() == rhs.hProcess &&
-                lhs.m_process_thread_handle.get() == rhs.hThread;
-        }
-        friend bool operator!=(process_information const& lhs, PROCESS_INFORMATION const& rhs)
-        {
-            return !(lhs == rhs);
-        }
-        friend bool operator==(PROCESS_INFORMATION const& lhs, process_information const& rhs)
-        {
-            return operator==(rhs, lhs);
-        }
-        friend bool operator!=(PROCESS_INFORMATION const& lhs, process_information const& rhs)
-        {
-            return !(lhs == rhs);
-        }
-        friend bool operator==(process_information const& lhs, deconstruct_type const& rhs)
-        {
-            return lhs.m_process_id == std::get<native_process_id>(rhs) &&
-                lhs.m_process_thread_id == std::get<native_process_thread_id>(rhs) &&
-                lhs.m_process_handle.get() == std::get<native_process_handle_type>(rhs) &&
-                lhs.m_process_thread_handle.get() == std::get<native_process_thread_handle_type>(rhs);
-        }
-        friend bool operator!=(process_information const& lhs, deconstruct_type const& rhs)
-        {
-            return !(lhs == rhs);
-        }
-        friend bool operator==(deconstruct_type const& lhs, process_information const& rhs)
-        {
-            return (rhs == lhs);
-        }
-        friend bool operator!=(deconstruct_type const& lhs, process_information const& rhs)
-        {
-            return !(lhs == rhs);
-        }
+        process_information& operator=(process_information&& other) noexcept;
+        MODERN_WIN32_EXPORT friend bool operator==(process_information const& lhs, process_information const& rhs);
+        MODERN_WIN32_EXPORT friend bool operator!=(process_information const& lhs, process_information const& rhs);
+        MODERN_WIN32_EXPORT friend bool operator==(process_information const& lhs, PROCESS_INFORMATION const& rhs);
+        MODERN_WIN32_EXPORT friend bool operator!=(process_information const& lhs, PROCESS_INFORMATION const& rhs);
+        MODERN_WIN32_EXPORT friend bool operator==(PROCESS_INFORMATION const& lhs, process_information const& rhs);
+        MODERN_WIN32_EXPORT friend bool operator!=(PROCESS_INFORMATION const& lhs, process_information const& rhs);
+        MODERN_WIN32_EXPORT friend bool operator==(process_information const& lhs, deconstruct_type const& rhs);
+        MODERN_WIN32_EXPORT friend bool operator!=(process_information const& lhs, deconstruct_type const& rhs);
+        MODERN_WIN32_EXPORT friend bool operator==(deconstruct_type const& lhs, process_information const& rhs);
+        MODERN_WIN32_EXPORT friend bool operator!=(deconstruct_type const& lhs, process_information const& rhs);
 
         /// <summary>
         /// Returns true if process handle is not invalid and process id is non-empty
         /// </summary>
         /// <remarks>process thread handle is ignored for this check as it is dependent on the process</remarks>
-        [[nodiscard]] explicit operator bool() const noexcept
-        {
-            return static_cast<bool>(m_process_handle) && 
-                m_process_thread_handle && m_process_id != empty_process_id();
-        }
+        [[nodiscard]] explicit operator bool() const noexcept;
 
-        friend void swap(process_information& lhs, process_information& rhs) noexcept
-        {
-            using std::swap;
-            swap(lhs.m_process_id, rhs.m_process_id);
-            swap(lhs.m_process_thread_id, rhs.m_process_thread_id);
-            swap(lhs.m_process_handle, rhs.m_process_handle);
-            swap(lhs.m_process_thread_handle, rhs.m_process_thread_handle);
-        }
+        /// <summary>swaps the value of <paramref name="lhs"/> and <paramref name="rhs"/></summary>
+        MODERN_WIN32_EXPORT friend void swap(process_information& lhs, process_information& rhs) noexcept;
 
     private:
+        using running_details = std::tuple<bool, native_process_exit_code>;
+        using wait_result = decltype(WaitForSingleObject(std::declval<native_process_handle_type>(), std::declval<DWORD>()));
+
         native_process_id m_process_id;
         native_process_thread_id m_process_thread_id;
+#       pragma warning(push)
+#       pragma warning(disable : 4251)
         process_handle m_process_handle;
         process_thread_handle m_process_thread_handle;
+#       pragma warning(pop)
         
-        void close()
-        {
-            if (*this)
-            {
-                m_process_id = empty_process_id();
-                m_process_thread_id = empty_process_thread_id();
-                static_cast<void>(m_process_handle.reset());
-                static_cast<void>(m_process_thread_handle.reset());
-            }
-        }
-
+        void close();
+        [[nodiscard]] static running_details get_running_details(native_process_handle_type process_handle);
+        [[nodiscard]] static bool wait_for_single_object_to_bool(wait_result const& result);
     };
 }
 
