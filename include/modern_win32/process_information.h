@@ -15,11 +15,12 @@
 #define __MODERN_WIN32_PROCESS_H__
 #ifdef _WIN32
 
-#include "null_handle.h"
-#include <tuple>
-#include <optional>
+#include <modern_win32/null_handle.h>
 #include <modern_win32/modern_win32_export.h>
 #include <modern_win32/windows_exception.h>
+#include <chrono>
+#include <optional>
+#include <tuple>
 
 namespace modern_win32
 {
@@ -93,6 +94,24 @@ namespace modern_win32
         /// <exception cref="windows_exception">if an error occurs calling the Win32 API</exception>
         [[nodiscard]] std::optional<native_process_exit_code> get_exit_code() const;
 
+        /// <summary>waits for process to exit</summary
+        /// <exception cref="windows_exception">if an error occurs calling the Win32 API</exception>
+        /// <exception cref="std::runtime_exception">
+        /// if process_information was incorectly built from mutex which was abandoned
+        /// </exception>
+        void wait_for_exit() const;
+
+        /// <summary>
+        /// waits until process has exited or <paramref name="timeout"> milliseconds have elapsed
+        /// </summary>
+        /// <param name="timeout">number of milliseconds to wait for process to exit</param>
+        /// <returns>true if process has exited; otherwise, false</returns>
+        /// <exception cref="windows_exception">if an error occurs calling the Win32 API</exception>
+        /// <exception cref="std::runtime_exception">
+        /// if process_information was incorectly built from mutex which was abandoned
+        /// </exception>
+        [[nodiscard]] bool wait_for_exit(std::chrono::milliseconds const& timeout) const; 
+
         /// <summary>replaces the managed object</summary>
         /// <returns>true if the replacement represents a valid process; otherwise, false</returns>
         [[nodiscard]] bool reset(deconstruct_type&& deconstructed);
@@ -130,6 +149,8 @@ namespace modern_win32
 
     private:
         using running_details = std::tuple<bool, native_process_exit_code>;
+        using wait_result = decltype(WaitForSingleObject(std::declval<native_process_handle_type>(), std::declval<DWORD>()));
+
         native_process_id m_process_id;
         native_process_thread_id m_process_thread_id;
 #       pragma warning(push)
@@ -140,6 +161,7 @@ namespace modern_win32
         
         void close();
         [[nodiscard]] static running_details get_running_details(native_process_handle_type process_handle);
+        [[nodiscard]] static bool wait_for_single_object_to_bool(wait_result const& result);
     };
 }
 

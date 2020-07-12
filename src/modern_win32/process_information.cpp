@@ -13,6 +13,7 @@
     
 #include <modern_win32/process_information.h>
 #include <memory>
+#include "shared.h"
 
 namespace modern_win32
 {
@@ -93,6 +94,21 @@ bool process_information::is_running() const
     auto const [isRunning, exit_code] = get_running_details(m_process_handle.native_handle());
     static_cast<void>(exit_code);
     return isRunning;
+}
+
+void process_information::wait_for_exit() const
+{
+    if (!is_running())
+        return;
+    static_cast<void>(wait_for_single_object_to_bool(WaitForSingleObject(m_process_handle.native_handle(), INFINITE)));
+}
+bool process_information::wait_for_exit(std::chrono::milliseconds const& timeout) const
+{
+    if (!is_running())
+        return true;
+
+    auto const native_timeout = convert_timeout(timeout);
+    return wait_for_single_object_to_bool(WaitForSingleObject(m_process_handle.native_handle(), native_timeout));
 }
 
 std::optional<process_information::native_process_exit_code> process_information::get_exit_code() const
@@ -229,6 +245,22 @@ process_information::running_details process_information::get_running_details(na
     return exit_code == STILL_ACTIVE
         ? make_tuple(true, 0UL)
         : make_tuple(false, exit_code);
+}
+
+bool process_information::wait_for_single_object_to_bool(wait_result const& result)
+{
+    switch (result)
+    {
+    case WAIT_OBJECT_0:
+        return true;
+    case WAIT_FAILED:
+        throw windows_exception("an error occurred attempting to wait");
+    case WAIT_ABANDONED:
+        throw std::runtime_error("handle represented a mutex which was abondoned rather than process");
+    case WAIT_TIMEOUT:
+    default:
+        return false;
+    }
 }
 
 }
