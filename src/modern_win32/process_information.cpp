@@ -12,8 +12,8 @@
 // 
     
 #include <modern_win32/process_information.h>
+#include <modern_win32/win32_duration.h>
 #include <memory>
-#include "shared.h"
 
 namespace modern_win32
 {

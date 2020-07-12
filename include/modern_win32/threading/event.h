@@ -20,7 +20,7 @@
 #include <stdexcept>
 #include <modern_win32/null_handle.h>
 #include <modern_win32/template_utilities.h>
-
+#include <modern_win32/win32_duration.h>
 
 #include <Windows.h>
 #include <modern_win32/windows_exception.h>
@@ -32,13 +32,6 @@ namespace modern_win32::threading
         manual_reset,
         auto_reset,
     };
-
-    constexpr auto get_infinity_in_ms()
-    {
-        // same as std::chrono::millisecond::rep, done to show it can be done this way
-        using millisecond_rep = decltype(std::declval<std::chrono::milliseconds>().count());
-        return std::chrono::duration<millisecond_rep>(INFINITE);
-    }
 
     template <event_type EVENT_TYPE>
     class event final
@@ -188,16 +181,6 @@ namespace modern_win32::threading
 
     private:
         modern_handle_type m_event;
-
-        static constexpr DWORD convert_timeout(std::chrono::milliseconds const& timeout)
-        {
-#           undef max // disable so we can use numerical_limits
-            return (timeout >= get_infinity_in_ms())
-                ? INFINITE
-                : static_cast<DWORD>(timeout.count());
-
-#           define max(a,b) (a) > (b) ? (a) : (b);
-        }
 
         template <typename... EVENTS>
         static DWORD wait(EVENTS const&... events, bool const wait_all, std::chrono::milliseconds const timeout)

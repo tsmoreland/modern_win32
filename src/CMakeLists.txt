@@ -2,14 +2,15 @@ project(modern_win32 CXX)
 
 # Source groups
 set(source_files
-    "modern_win32/threading/slim_lock.cpp"
-    "modern_win32/threading/thread.cpp"
-    "modern_win32/guid.cpp"
-    "modern_win32/process_information.cpp"
-)
+	"modern_win32/threading/slim_lock.cpp"
+	"modern_win32/threading/thread.cpp"
+	"modern_win32/guid.cpp"
+	"modern_win32/process_information.cpp"
+	 )
+
 source_group("source files" FILES ${source_files})
 
-set (header_files
+set (public_header_files
     "../include/modern_win32/com_exception.h"
     "../include/modern_win32/threading/event.h"
     "../include/modern_win32/invalid_handle.h"
@@ -24,9 +25,9 @@ set (header_files
     "../include/modern_win32/threading/thread.h"
     "../include/modern_win32/threading/thread_start.h"
     "../include/modern_win32/unique_handle.h"
-    "../include/modern_win32/windows_exception.h"
-)
-source_group("header files" FILES ${header_files})
+    "../include/modern_win32/windows_exception.h")
+
+source_group("public header files" FILES ${public_header_files})
 
 # Target
 add_library(${PROJECT_NAME} SHARED ${source_files})

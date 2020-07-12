@@ -11,15 +11,15 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __MODERN_WIN32_SHARED_H__
-#define __MODERN_WIN32_SHARED_H__
+#ifndef __MODERN_WIN32_DURATION_H__
+#define __MODERN_WIN32_DURATION_H__
 #ifdef _WIN32
 
+#include <Windows.h>
 #include <chrono>
 
 namespace modern_win32
 {
-
     constexpr auto get_infinity_in_ms()
     {
         // same as std::chrono::millisecond::rep, done to show it can be done this way
