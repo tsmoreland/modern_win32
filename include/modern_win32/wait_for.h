@@ -11,15 +11,26 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __MODERN_WIN32_DURATION_H__
-#define __MODERN_WIN32_DURATION_H__
+#ifndef __MODERN_wait_for_H__
+#define __MODERN_wait_for_H__
 #ifdef _WIN32
 
 #include <Windows.h>
 #include <chrono>
+#include <modern_win32/windows_exception.h>
 
 namespace modern_win32
 {
+    using wait_result = decltype(WaitForSingleObject(std::declval<HANDLE>(), std::declval<DWORD>()));
+
+    enum class wait_for_result : wait_result
+    {
+        object = WAIT_OBJECT_0,
+        failed = WAIT_FAILED,
+        timeout = WAIT_TIMEOUT,
+        abandonded = WAIT_ABANDONED,
+    };
+
     constexpr auto get_infinity_in_ms()
     {
         // same as std::chrono::millisecond::rep, done to show it can be done this way
@@ -36,6 +47,23 @@ namespace modern_win32
 
 #       define max(a,b) (a) > (b) ? (a) : (b);
     }
+
+    [[nodiscard]] inline bool wait_for_single_object_to_bool(wait_result const& result)
+    {
+        switch (result)
+        {
+        case WAIT_OBJECT_0:
+            return true;
+        case WAIT_FAILED:
+            throw windows_exception("an error occurred attempting to wait");
+        case WAIT_ABANDONED:
+            throw std::runtime_error("handle represented a mutex which was abondoned rather than process");
+        case WAIT_TIMEOUT:
+        default:
+            return false;
+        }
+    }
+
 }
 
 #endif

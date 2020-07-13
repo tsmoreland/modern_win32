@@ -20,7 +20,7 @@
 #include <stdexcept>
 #include <modern_win32/null_handle.h>
 #include <modern_win32/template_utilities.h>
-#include <modern_win32/win32_duration.h>
+#include <modern_win32/wait_for.h>
 
 #include <Windows.h>
 #include <modern_win32/windows_exception.h>

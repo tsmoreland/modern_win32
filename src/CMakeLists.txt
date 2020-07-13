@@ -6,7 +6,7 @@ set(source_files
 	"modern_win32/threading/thread.cpp"
 	"modern_win32/guid.cpp"
 	"modern_win32/process_information.cpp"
-	 )
+    "modern_win32/process.cpp")
 
 source_group("source files" FILES ${source_files})
 
@@ -19,12 +19,14 @@ set (public_header_files
     "../include/modern_win32/module_handle.h"
     "../include/modern_win32/naive_stack_allocator.h"
     "../include/modern_win32/null_handle.h"
+    "../include/modern_win32/process.h"
     "../include/modern_win32/process_information.h"
     "../include/modern_win32/template_utilities.h"
     "../include/modern_win32/threading/slim_lock.h"
     "../include/modern_win32/threading/thread.h"
     "../include/modern_win32/threading/thread_start.h"
     "../include/modern_win32/unique_handle.h"
+    "../include/modern_win32/wait_for.h"
     "../include/modern_win32/windows_exception.h")
 
 source_group("public header files" FILES ${public_header_files})
@@ -36,7 +38,7 @@ include(GenerateExportHeader)
 generate_export_header(${PROJECT_NAME})
 
 use_props(${PROJECT_NAME} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PROPS}")
-set(ROOT_NAMESPACE util)
+set(ROOT_NAMESPACE modern_win32)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES VS_GLOBAL_KEYWORD "Win32Proj")
 

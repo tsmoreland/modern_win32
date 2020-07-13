@@ -12,7 +12,7 @@
 // 
     
 #include <modern_win32/process_information.h>
-#include <modern_win32/win32_duration.h>
+#include <modern_win32/wait_for.h>
 #include <memory>
 
 namespace modern_win32
