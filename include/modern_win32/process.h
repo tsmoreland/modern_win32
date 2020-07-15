@@ -15,8 +15,9 @@
 #define __MODERN_WIN32_PROCESS_H__
 #ifdef _WIN32
 
-#include <modern_win32/null_handle.h>
 #include <modern_win32/modern_win32_export.h>
+#include <modern_win32/null_handle.h>
+#include <modern_win32/process_priority.h>
 #include <modern_win32/windows_exception.h>
 
 #include <chrono>
@@ -86,6 +87,13 @@ namespace modern_win32
         /// <summary>returns true if a process is currently owned and is running; otherwise, false</summary>
         /// <exception cref="windows_exception">if an error occurs calling the Win32 API</exception>
         [[nodiscard]] bool is_running() const;
+
+        /// <summary>
+        /// Returns the priority of the process if running; otherwise std::nullopt
+        /// </summary>
+        /// <returns>priority of the process if running; otherwise std::nullopt</returns>
+        /// <exception cref="windows_exception">if native api (GetPriorityClass) fails</exception>
+        [[nodiscard]] std::optional<process_priority> get_priority() const;
 
         /// <summary>
         /// Returns the process exit code if it is no longer running; otherwise <see cref="std::nullopt"/>

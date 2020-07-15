@@ -102,6 +102,43 @@ bool process::is_running() const
     return isRunning;
 }
 
+template <typename ENUM_TYPE>
+constexpr auto to_native_enum_value(ENUM_TYPE const& enum_value) {
+
+    return static_cast<typename std::underlying_type<ENUM_TYPE>::type>(enum_value);
+}
+
+std::optional<process_priority> process::get_priority() const
+{
+    if (!static_cast<bool>(m_handle))
+        return std::nullopt;
+
+    auto const native_priority = GetPriorityClass(m_handle.native_handle());
+    if (native_priority == 0)
+        throw windows_exception();
+
+    // could be replaced by simple cast but it's an excuse to have the constexpr demonstrating
+    // getting the raw value
+    switch (native_priority)
+    {
+    case to_native_enum_value(process_priority::above_normal):
+        return std::optional(process_priority::above_normal);
+
+    case to_native_enum_value(process_priority::below_normal):
+        return std::optional(process_priority::below_normal);
+
+    case to_native_enum_value(process_priority::idle):
+        return std::optional(process_priority::idle);
+
+    case to_native_enum_value(process_priority::realtime):
+        return std::optional(process_priority::realtime);
+
+    case to_native_enum_value(process_priority::normal):
+    default:
+        return std::optional(process_priority::normal);
+    }
+}
+
 std::optional<process::exit_code_type> process::get_exit_code() const
 {
     if (!static_cast<bool>(m_handle))
