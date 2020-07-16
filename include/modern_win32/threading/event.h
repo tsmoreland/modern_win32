@@ -111,9 +111,11 @@ namespace modern_win32::threading
         /// </summary>
         /// <typeparam name="EVENTS">variadic array of </typeparam>
         /// <param name="events">the number of events to wait on</param>
+        /// <param name="timeout">
         /// The time-out interval, in milliseconds. If a nonzero value is specified, the function waits until the specified objects are signaled or the interval elapses.
         /// If  zero, the function does not enter a wait state if the specified objects are not signaled; it always returns immediately.
         /// If maximum value or maximum value of DWORD, the function will return only when the specified objects are signaled.
+        /// </param>
         /// <returns>index within <paramref name="events"/> of first event to be set</returns>
         /// <exception cref="util::shared::windows_exception">if wait fails</exception>
         /// <exception cref="util::shared::runtime_error">if any handle has been abandonded details</exception>

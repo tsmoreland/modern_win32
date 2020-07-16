@@ -27,9 +27,39 @@ namespace modern_win32
     {
         object = WAIT_OBJECT_0,
         abandonded = WAIT_ABANDONED,
+        io_completion = WAIT_IO_COMPLETION,
         failed = WAIT_FAILED,
         timeout = WAIT_TIMEOUT,
     };
+
+    /// <summary>
+    /// converts <paramref name="result"/> to matching value from <see cref="wait_for_result"/>
+    /// </summary>
+    /// <param name="result">value to convert</param>
+    /// <returns>value from <see cref="wait_for_result"/></returns>
+    [[nodiscard]] inline wait_for_result to_wait_for_result(wait_result const& result)
+    {
+        switch (result)
+        {
+        case WAIT_FAILED:
+            return wait_for_result::failed;
+        case WAIT_TIMEOUT:
+            return wait_for_result::timeout;
+        case WAIT_IO_COMPLETION:
+            return wait_for_result::io_completion;
+        case WAIT_ABANDONED:
+            return wait_for_result::abandonded;
+        case WAIT_OBJECT_0:
+            return wait_for_result::object;
+        default:
+            if (WAIT_OBJECT_0 >= result && result < WAIT_OBJECT_0 + MAXIMUM_WAIT_OBJECTS)
+                return wait_for_result::object;
+            else
+                return wait_for_result::abandonded;
+        }
+
+    }
+
 
     constexpr auto get_infinity_in_ms()
     {
@@ -38,13 +68,27 @@ namespace modern_win32
         return std::chrono::duration<millisecond_rep>(INFINITE);
     }
 
-    constexpr auto convert_timeout(std::chrono::milliseconds const& timeout)
+    constexpr auto to_dword(std::chrono::milliseconds const& timeout)
     {
 #       undef max // disable so we can use numerical_limits
         return (timeout >= get_infinity_in_ms())
             ? INFINITE
             : static_cast<DWORD>(timeout.count());
 
+#       define max(a,b) (a) > (b) ? (a) : (b);  // NOLINT(cppcoreguidelines-macro-usage)
+    }
+
+    template <typename NUMERIC>
+    constexpr auto as(std::chrono::milliseconds const& timeout)
+    {
+        static_assert(std::is_arithmetic<NUMERIC>::value);
+
+#       undef max // disable so we can use numerical_limits
+        using millisecond_rep = decltype(std::declval<std::chrono::milliseconds>().count());
+        if (timeout > static_cast<millisecond_rep>(std::numeric_limits<NUMERIC>::max())) {
+            return std::numeric_limits<NUMERIC>::max();
+        } else
+            return static_cast<NUMERIC>(timeout.count());
 #       define max(a,b) (a) > (b) ? (a) : (b);  // NOLINT(cppcoreguidelines-macro-usage)
     }
 
@@ -57,30 +101,58 @@ namespace modern_win32
         add_to_array(++first, args...);
     }
 
-    template <typename... UNIQUE_HANDLES>
-    bool wait_all(UNIQUE_HANDLES const & ... args) 
+    template <typename... HANDLES>
+    [[nodiscard]] auto wait_all(std::chrono::milliseconds const& timeout, HANDLES const & ... args)  noexcept
     {
-        static_assert(sizeof...(UNIQUE_HANDLES) < static_cast<size_t>(MAXIMUM_WAIT_OBJECTS));
-        HANDLE handles[sizeof...(UNIQUE_HANDLES)];
+        static_assert(sizeof...(HANDLES) < static_cast<size_t>(MAXIMUM_WAIT_OBJECTS));
+        HANDLE handles[sizeof...(HANDLES)];
         add_to_array(handles, args...);
-        WaitForMultipleObjects(sizeof...(UNIQUE_HANDLES), handles, true, INFINITE);
-        return true;
+        return to_wait_for_result(WaitForMultipleObjects(sizeof...(HANDLES), handles, true, as<DWORD>(timeout)));
+    }
+    template <typename... HANDLES>
+    [[nodiscard]] auto wait_all(HANDLES const & ... args) noexcept
+    {
+        using std::chrono::milliseconds;
+        return wait_all(static_cast<milliseconds::rep>(INFINITE), args...);
     }
 
-    [[nodiscard]] inline bool wait_for_single_object_to_bool(wait_result const& result)
+    template <typename... HANDLES>
+    [[nodiscard]] auto wait_any(std::chrono::milliseconds const& timeout, HANDLES const & ... args) noexcept
     {
-        switch (result)
-        {
-        case WAIT_OBJECT_0:
-            return true;
-        case WAIT_FAILED:
-            throw windows_exception("an error occurred attempting to wait");
-        case WAIT_ABANDONED:
-            throw std::runtime_error("handle represented a mutex which was abondoned rather than process");
-        case WAIT_TIMEOUT:
+        static_assert(sizeof...(HANDLES) < static_cast<size_t>(MAXIMUM_WAIT_OBJECTS));
+        HANDLE handles[sizeof...(HANDLES)];
+        add_to_array(handles, args...);
+
+        auto const native_result = WaitForMultipleObjects(sizeof...(HANDLES), handles, false, as<DWORD>(timeout));
+        auto const result = to_wait_for_result(native_result);
+
+        switch (result) {
+        case wait_for_result::object:
+            if (auto const index = native_result - WAIT_OBJECT_0;
+                index >= 0 && index < sizeof...(HANDLES)) {
+                return make_tuple(result, std::optional(handles[index]));
+            }
+            return std::make_tuple(result, std::nullopt);
+        case wait_for_result::abandonded:
+            if (auto const index = native_result - WAIT_ABANDONED_0; 
+                index >= 0 && index < sizeof...(HANDLES)) {
+                return make_tuple(result, std::optional(handles[index]));
+            }
+            return std::make_tuple(result, std::nullopt);
         default:
-            return false;
+            return std::make_tuple(result, std::nullopt);
         }
+    }
+    template <typename... HANDLES>
+    [[nodiscard]] auto wait_any(HANDLES const & ... args) noexcept
+    {
+        using std::chrono::milliseconds;
+        return wait_any(static_cast<milliseconds::rep>(INFINITE), args...);
+    }
+
+    constexpr bool to_bool(wait_for_result const& result)
+    {
+        return result == wait_for_result::object;
     }
 
 
