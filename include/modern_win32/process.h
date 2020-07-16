@@ -36,7 +36,7 @@ namespace modern_win32
         using native_handle_type = process_handle::native_handle_type;
         using exit_code_type = unsigned long;
 
-        explicit process(native_handle_type const& handle);
+        explicit process(native_handle_type const& handle = process_handle::invalid());
         process(process const&) = delete;
         process(process&& other) noexcept;
         ~process() = default;
