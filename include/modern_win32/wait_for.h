@@ -26,9 +26,9 @@ namespace modern_win32
     enum class wait_for_result : wait_result
     {
         object = WAIT_OBJECT_0,
+        abandonded = WAIT_ABANDONED,
         failed = WAIT_FAILED,
         timeout = WAIT_TIMEOUT,
-        abandonded = WAIT_ABANDONED,
     };
 
     constexpr auto get_infinity_in_ms()
@@ -45,7 +45,26 @@ namespace modern_win32
             ? INFINITE
             : static_cast<DWORD>(timeout.count());
 
-#       define max(a,b) (a) > (b) ? (a) : (b);
+#       define max(a,b) (a) > (b) ? (a) : (b);  // NOLINT(cppcoreguidelines-macro-usage)
+    }
+
+    constexpr void add_to_array(HANDLE *){}
+
+    template <typename T, typename... ARGS>
+    constexpr void add_to_array(HANDLE * first, T const & remaining, ARGS const & ... args) 
+    {
+        *first = remaining.native_handle();
+        add_to_array(++first, args...);
+    }
+
+    template <typename... UNIQUE_HANDLES>
+    bool wait_all(UNIQUE_HANDLES const & ... args) 
+    {
+        static_assert(sizeof...(UNIQUE_HANDLES) < static_cast<size_t>(MAXIMUM_WAIT_OBJECTS));
+        HANDLE handles[sizeof...(UNIQUE_HANDLES)];
+        add_to_array(handles, args...);
+        WaitForMultipleObjects(sizeof...(UNIQUE_HANDLES), handles, true, INFINITE);
+        return true;
     }
 
     [[nodiscard]] inline bool wait_for_single_object_to_bool(wait_result const& result)
@@ -63,6 +82,8 @@ namespace modern_win32
             return false;
         }
     }
+
+
 
 }
 

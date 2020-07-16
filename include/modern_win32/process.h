@@ -18,7 +18,6 @@
 #include <modern_win32/modern_win32_export.h>
 #include <modern_win32/null_handle.h>
 #include <modern_win32/process_priority.h>
-#include <modern_win32/windows_exception.h>
 
 #include <chrono>
 #include <optional>
@@ -57,7 +56,7 @@ namespace modern_win32
 
         /// <summary>replaces the managed object</summary>
         /// <returns>true if the replacement represents a valid process; otherwise, false</returns>
-        [[nodiscard]] bool reset(native_handle_type const& handle);        
+        [[nodiscard]] bool reset(native_handle_type const& handle = process_handle::invalid());
 
         /// <summary>
         /// releases the ownership of the process handle if any,
@@ -80,7 +79,9 @@ namespace modern_win32
         /// <summary>
         /// Retrieves the process identifier of the process.
         /// </summary>
-        /// <returns>the process identifier of the process, if found; otherise <see cref="std::nullopt/></returns>
+        /// <returns>
+        /// the process identifier of the process, if found; otherise <see cref="std::nullopt"/>
+        /// </returns>
         /// <exception cref="windows_exception">if call to native GetProcessId fails</exception>
         [[nodiscard]] std::optional<process_id_type> get_process_id() const;
 
@@ -102,7 +103,7 @@ namespace modern_win32
         /// <exception cref="windows_exception">if an error occurs calling the Win32 API</exception>
         [[nodiscard]] std::optional<exit_code_type> get_exit_code() const;
 
-        /// <summary>waits for process to exit</summary
+        /// <summary>waits for process to exit</summary>
         /// <exception cref="windows_exception">if an error occurs calling the Win32 API</exception>
         /// <exception cref="std::runtime_exception">
         /// if process_information was incorectly built from mutex which was abandoned
@@ -110,7 +111,7 @@ namespace modern_win32
         void wait_for_exit() const;
 
         /// <summary>
-        /// waits until process has exited or <paramref name="timeout"> milliseconds have elapsed
+        /// waits until process has exited or <paramref name="timeout"/> milliseconds have elapsed
         /// </summary>
         /// <param name="timeout">number of milliseconds to wait for process to exit</param>
         /// <returns>true if process has exited; otherwise, false</returns>

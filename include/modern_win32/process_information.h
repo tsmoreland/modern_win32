@@ -35,8 +35,8 @@ namespace modern_win32
         using native_process_handle_type = process::native_handle_type;
         using native_process_thread_handle_type = process_thread_handle::native_handle_type;
         using modern_handle_type = process_handle;
-        using exit_code_type = unsigned long;
-        using native_process_thread_exit_code = unsigned long;
+        using exit_code_type = process::exit_code_type;
+        using thread_exit_code_type = unsigned long;
         using native_process_thread_id = decltype(PROCESS_INFORMATION::dwThreadId);
         using deconstruct_type = std::tuple<process_id_type, native_process_thread_id, process_handle::native_handle_type, process_thread_handle::native_handle_type>;
 

@@ -57,7 +57,7 @@ void swap(process& first, process& second) noexcept
     swap(first.m_handle, second.m_handle);
 }
 
-bool process::reset(native_handle_type const& handle = process_handle::invalid())
+bool process::reset(native_handle_type const& handle)
 {
     if (m_handle.native_handle() == handle)
         return static_cast<bool>(*this);
