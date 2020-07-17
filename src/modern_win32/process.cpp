@@ -154,7 +154,8 @@ void process::wait_for_exit() const
 {
     if (!is_running())
         return;
-    static_cast<void>(wait_for_single_object_to_bool(WaitForSingleObject(m_handle.native_handle(), INFINITE)));
+
+    static_cast<void>(wait_one(m_handle));
 }
 
 bool process::wait_for_exit(std::chrono::milliseconds const& timeout) const 
@@ -162,8 +163,7 @@ bool process::wait_for_exit(std::chrono::milliseconds const& timeout) const
     if (!is_running())
         return true;
 
-    auto const native_timeout = convert_timeout(timeout);
-    return wait_for_single_object_to_bool(WaitForSingleObject(m_handle.native_handle(), native_timeout));
+    return is_complete(wait_one(m_handle, timeout));
 }
 
 void process::close() noexcept
@@ -183,6 +183,24 @@ process::running_details process::get_running_details(native_handle_type process
     return exit_code == STILL_ACTIVE
         ? make_tuple(true, 0UL)
         : make_tuple(false, exit_code);
+}
+
+process open(process_id_type const process_id, process_access_rights const access_rights, bool const inherit_handles)
+{
+    process process{OpenProcess(static_cast<DWORD>(access_rights), inherit_handles ? TRUE : FALSE, process_id)};
+
+    if (static_cast<bool>(process))
+        return process;
+
+    auto const error = GetLastError();
+    switch (error) {
+    case ERROR_INVALID_PARAMETER:
+        throw std::invalid_argument("invalid process id");
+    case ERROR_ACCESS_DENIED:
+        throw access_denied_exception();
+    default:
+        throw windows_exception(error);
+    }
 }
 
 }

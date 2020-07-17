@@ -11,44 +11,23 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __MODERN_WIN32_SHARED_WINDOWS_EXCEPTION_H__
-#define __MODERN_WIN32_SHARED_WINDOWS_EXCEPTION_H__
-
-#if _WIN32
-
-#include <system_error>
-#include <Windows.h>
+#include <modern_win32/wait_for.h>
 
 namespace modern_win32
 {
-    /// <summary>
-    /// wrapper around system_error which constructs error value from GetLastError result
-    /// </summary>
-    class windows_exception final : public std::system_error
-    {
-    public:
-        using error_type = decltype(GetLastError());
 
-        explicit windows_exception(char const* message) 
-            : std::system_error(GetLastError(), std::system_category(), message)
-        {
-        }
-        explicit windows_exception() 
-            : std::system_error(GetLastError(), std::system_category())
-        {
-        }
-        explicit windows_exception(error_type const error_code) 
-            : std::system_error(error_code, std::system_category())
-        {
-        }
-        explicit windows_exception(error_type const error_code, char const* message) 
-            : std::system_error(error_code, std::system_category(), message)
-        {
-        }
-    };
-
+bool is_complete(wait_for_result const& result)
+{
+    switch (result) {
+    case wait_for_result::object:
+        return true;
+    case wait_for_result::abandonded:
+        throw std::runtime_error("unexpected handle type");
+    case wait_for_result::failed:
+        throw windows_exception();
+    default:
+        return false;
+    }
 }
 
-#endif
-#endif
-
+}

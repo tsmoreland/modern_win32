@@ -11,44 +11,24 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __MODERN_WIN32_SHARED_WINDOWS_EXCEPTION_H__
-#define __MODERN_WIN32_SHARED_WINDOWS_EXCEPTION_H__
-
-#if _WIN32
-
-#include <system_error>
-#include <Windows.h>
+#ifndef __MODERN_WIN32_WAIT_FOR_RESULT_H__
+#define __MODERN_WIN32_WAIT_FOR_RESULT_H__
+#ifdef _WIN32
 
 namespace modern_win32
 {
-    /// <summary>
-    /// wrapper around system_error which constructs error value from GetLastError result
-    /// </summary>
-    class windows_exception final : public std::system_error
-    {
-    public:
-        using error_type = decltype(GetLastError());
+    using wait_result = decltype(WaitForSingleObject(std::declval<HANDLE>(), std::declval<DWORD>()));
 
-        explicit windows_exception(char const* message) 
-            : std::system_error(GetLastError(), std::system_category(), message)
-        {
-        }
-        explicit windows_exception() 
-            : std::system_error(GetLastError(), std::system_category())
-        {
-        }
-        explicit windows_exception(error_type const error_code) 
-            : std::system_error(error_code, std::system_category())
-        {
-        }
-        explicit windows_exception(error_type const error_code, char const* message) 
-            : std::system_error(error_code, std::system_category(), message)
-        {
-        }
+    enum class wait_for_result : wait_result
+    {
+        object = WAIT_OBJECT_0,
+        abandonded = WAIT_ABANDONED,
+        io_completion = WAIT_IO_COMPLETION,
+        failed = WAIT_FAILED,
+        timeout = WAIT_TIMEOUT,
     };
 
 }
 
 #endif
 #endif
-

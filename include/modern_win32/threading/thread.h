@@ -20,8 +20,9 @@
 #include <modern_win32/windows_exception.h>
 #include <modern_win32/modern_win32_export.h>
 #include <chrono>
-#include <string>
 #include <optional>
+#include <memory>
+#include <string>
 
 namespace modern_win32::threading
 {
@@ -56,7 +57,7 @@ namespace modern_win32::threading
     class MODERN_WIN32_EXPORT thread final
     {
     public:
-        using native_handle_type = typename thread_handle::native_handle_type;
+        using native_handle_type = thread_handle::native_handle_type;
         using modern_handle_type = thread_handle;
         using thread_worker = void (*)();
         using thread_parameter = void*;

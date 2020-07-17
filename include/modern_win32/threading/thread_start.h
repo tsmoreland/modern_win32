@@ -17,7 +17,6 @@
 
 #include <Windows.h>
 #include <any>
-#include <memory>
 
 namespace modern_win32::threading
 {

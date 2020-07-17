@@ -16,8 +16,10 @@
 #ifdef _WIN32
 
 #include <modern_win32/modern_win32_export.h>
+#include <modern_win32/access_denied_exception.h>
 #include <modern_win32/null_handle.h>
 #include <modern_win32/process_priority.h>
+#include <modern_win32/process_access_rights.h>
 
 #include <chrono>
 #include <optional>
@@ -123,7 +125,7 @@ namespace modern_win32
 
     private:
         using running_details = std::tuple<bool, exit_code_type>;
-        using wait_result = decltype(WaitForSingleObject(std::declval<native_handle_type>(), std::declval<DWORD>()));
+        //using wait_result = decltype(WaitForSingleObject(std::declval<native_handle_type>(), std::declval<DWORD>()));
 
 #       pragma warning(push)
 #       pragma warning(disable : 4251)
@@ -133,6 +135,23 @@ namespace modern_win32
         void close() noexcept;
         [[nodiscard]] static running_details get_running_details(native_handle_type process_handle);
     };
+
+    /// <summary>
+    /// Opens an existing local process object.
+    /// </summary>
+    /// <param name="process_id">The identifier of the local process to be opened.</param>
+    /// <param name="access_rights">
+    /// The access to the process object. This access right is checked against the security
+    /// descriptor for the process. This parameter can be one or more of the <see cref="process_access_rights"/>.
+    /// </param>
+    /// <param name="inherit_handles">
+    /// If this value is true, processes created by this process will inherit the handle.
+    /// Otherwise, the processes do not inherit this handle.</param>
+    /// <returns></returns>
+    /// <exception cref="std::invalid_argument">if <paramref name="process_id"/> is 0</exception>
+    /// <exception cref="access_denied_exception">if insufficent access to open process</exception>
+    [[nodiscard]] process open(process_id_type const process_id, process_access_rights const access_rights, bool const inherit_handles);
+
 
 }
 

@@ -15,6 +15,7 @@
 #include <modern_win32/module_handle.h>
 #include <modern_win32/naive_stack_allocator.h>
 #include <modern_win32/string_conversion.h>
+#include <modern_win32/wait_for.h>
 
 namespace modern_win32::threading
 {
@@ -105,7 +106,7 @@ bool thread::start()
 void thread::join() const
 {
     if (is_running())
-        WaitForSingleObject(m_handle.native_handle(), INFINITE);
+        static_cast<void>(wait_one(m_handle));
 }
 
 bool thread::join(std::chrono::milliseconds const& timeout) const
@@ -117,11 +118,7 @@ bool thread::join(std::chrono::milliseconds const& timeout) const
         ? INFINITE
         : static_cast<DWORD>(timeout.count());
 
-    auto const result = WaitForSingleObject(m_handle.native_handle(), native_timeout);
-    if (result == WAIT_FAILED)
-        throw windows_exception();
-
-    return result == WAIT_OBJECT_0;
+    return is_complete(wait_one(m_handle, timeout));
 }
 
 bool thread::is_running() const
