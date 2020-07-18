@@ -11,32 +11,23 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __MODERN_WIN32_SHARED_H__
-#define __MODERN_WIN32_SHARED_H__
-#ifdef _WIN32
+#ifndef __MODERN_WIN32_ACCESS_DENIED_EXCEPTION_H__
+#define __MODERN_WIN32_ACCESS_DENIED_EXCEPTION_H__
 
-#include <chrono>
+#include <exception>
 
 namespace modern_win32
 {
-
-    constexpr auto get_infinity_in_ms()
+    class access_denied_exception final : public std::exception
     {
-        // same as std::chrono::millisecond::rep, done to show it can be done this way
-        using millisecond_rep = decltype(std::declval<std::chrono::milliseconds>().count());
-        return std::chrono::duration<millisecond_rep>(INFINITE);
-    }
-
-    constexpr auto convert_timeout(std::chrono::milliseconds const& timeout)
-    {
-#       undef max // disable so we can use numerical_limits
-        return (timeout >= get_infinity_in_ms())
-            ? INFINITE
-            : static_cast<DWORD>(timeout.count());
-
-#       define max(a,b) (a) > (b) ? (a) : (b);
-    }
+    public:
+        explicit access_denied_exception() : exception()
+        {
+        }
+        explicit access_denied_exception(char const* message) : exception(message)
+        {
+        }
+    };
 }
 
-#endif
 #endif

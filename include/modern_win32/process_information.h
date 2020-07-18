@@ -11,13 +11,14 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __MODERN_WIN32_PROCESS_H__
-#define __MODERN_WIN32_PROCESS_H__
+#ifndef __MODERN_WIN32_PROCESS_INFORMATION_H__
+#define __MODERN_WIN32_PROCESS_INFORMATION_H__
 #ifdef _WIN32
 
 #include <modern_win32/null_handle.h>
 #include <modern_win32/modern_win32_export.h>
 #include <modern_win32/windows_exception.h>
+#include <modern_win32/process.h>
 #include <chrono>
 #include <optional>
 #include <tuple>
@@ -27,31 +28,17 @@ namespace modern_win32
     using process_handle = null_handle;
     using process_thread_handle = null_handle;
 
-    class process_impl;
-
     class MODERN_WIN32_EXPORT process_information final
     {
     public:
         using native_handle_type = PROCESS_INFORMATION;
-        using native_process_handle_type = typename process_handle::native_handle_type;
-        using native_process_thread_handle_type = typename process_thread_handle::native_handle_type;
+        using native_process_handle_type = process::native_handle_type;
+        using native_process_thread_handle_type = process_thread_handle::native_handle_type;
         using modern_handle_type = process_handle;
-        using native_process_id = decltype(PROCESS_INFORMATION::dwProcessId);
-        using native_process_exit_code = unsigned long;
-        using native_process_thread_exit_code = unsigned long;
+        using exit_code_type = process::exit_code_type;
+        using thread_exit_code_type = unsigned long;
         using native_process_thread_id = decltype(PROCESS_INFORMATION::dwThreadId);
-        using deconstruct_type = std::tuple<native_process_id, native_process_thread_id, process_handle::native_handle_type, process_thread_handle::native_handle_type>;
-        
-        /// <summary>Returns a value representing an empty or invalid process id</summary>
-        static constexpr native_process_id empty_process_id()
-        {
-            return 0UL;
-        }
-        /// <summary>Returns a value representing an empty or invalid process id</summary>
-        static constexpr native_process_thread_id empty_process_thread_id()
-        {
-            return 0UL;
-        }
+        using deconstruct_type = std::tuple<process_id_type, native_process_thread_id, process_handle::native_handle_type, process_thread_handle::native_handle_type>;
 
         /// <summary>Initializes an empty process_information class</summary>
         explicit process_information();
@@ -60,27 +47,27 @@ namespace modern_win32
         /// <summary>copy constructor not supported</summary>
         process_information(const process_information&) = delete;
         /// <summary>
-        /// moves the contents of <paramref name="other"> into this newly crated object
-        /// resetting <paramref name="other"> in the process
+        /// moves the contents of <paramref name="other"/> into this newly crated object
+        /// resetting <paramref name="other"/> in the process
         /// </summary>
         process_information(process_information&& other) noexcept;
         ~process_information();
 
-        /// <summary>returns the member details as a <see cref="native_handle_type"></summary>
-        [[nodiscard]] native_handle_type native_handle() const noexcept;
-        /// <summary>returns the <see cref="native_process_handle_type"> object for the process</summary>
+        /// <summary>returns the member details as a <see cref="native_handle_type"/></summary>
+        [[nodiscard]] native_handle_type native_handle() const;
+        /// <summary>returns the <see cref="native_process_handle_type"/> object for the process</summary>
         [[nodiscard]] native_process_handle_type get_native_process_handle() const noexcept;
-        /// <summary>returns the <see cref="native_process_thread_handle_type"> object for the process</summary>
+        /// <summary>returns the <see cref="native_process_thread_handle_type"/> object for the process</summary>
         [[nodiscard]] native_process_thread_handle_type get_native_process_thread_handle() const noexcept;
         /// <summary>returns the process identifier (PID)</summary>
-        [[nodiscard]] native_process_id get_native_process_id() const noexcept;
+        [[nodiscard]] std::optional<process_id_type> get_process_id() const;
         /// <summary>returns the process thread id</summary>
         [[nodiscard]] native_process_thread_id get_native_process_thread_id() const noexcept;
 
         /// <summary>returns a reference to the managed process handle</summary>
         [[nodiscard]] process_handle& get_process_handle() noexcept;
 
-        /// <summary>returns a reference to the managed process thread handle</summary
+        /// <summary>returns a reference to the managed process thread handle</summary>
         [[nodiscard]] process_thread_handle& get_process_thread_handle() noexcept;
 
         /// <summary>returns true if a process is currently owned and is running; otherwise, false</summary>
@@ -92,9 +79,9 @@ namespace modern_win32
         /// </summary>
         /// <returns>process exit code if process has exited</returns>
         /// <exception cref="windows_exception">if an error occurs calling the Win32 API</exception>
-        [[nodiscard]] std::optional<native_process_exit_code> get_exit_code() const;
+        [[nodiscard]] std::optional<exit_code_type> get_exit_code() const;
 
-        /// <summary>waits for process to exit</summary
+        /// <summary>waits for process to exit</summary>
         /// <exception cref="windows_exception">if an error occurs calling the Win32 API</exception>
         /// <exception cref="std::runtime_exception">
         /// if process_information was incorectly built from mutex which was abandoned
@@ -102,7 +89,7 @@ namespace modern_win32
         void wait_for_exit() const;
 
         /// <summary>
-        /// waits until process has exited or <paramref name="timeout"> milliseconds have elapsed
+        /// waits until process has exited or <paramref name="timeout"/> milliseconds have elapsed
         /// </summary>
         /// <param name="timeout">number of milliseconds to wait for process to exit</param>
         /// <returns>true if process has exited; otherwise, false</returns>
@@ -120,9 +107,9 @@ namespace modern_win32
         [[nodiscard]] bool reset(native_handle_type const& handle);        
         /// <summary>
         /// releases the ownership of the managed process if any,
-        /// returning the contents as a <see cref="deconstruct_type"> 
+        /// returning the contents as a <see cref="deconstruct_type"/> 
         /// </summary>
-        /// <returns><see cref="deconstruct_type"> containing the contents of the managed object</returns>
+        /// <returns><see cref="deconstruct_type"/> containing the contents of the managed object</returns>
         [[nodiscard]] deconstruct_type release();
 
         process_information& operator=(const process_information&) = delete;
@@ -148,20 +135,14 @@ namespace modern_win32
         MODERN_WIN32_EXPORT friend void swap(process_information& lhs, process_information& rhs) noexcept;
 
     private:
-        using running_details = std::tuple<bool, native_process_exit_code>;
-        using wait_result = decltype(WaitForSingleObject(std::declval<native_process_handle_type>(), std::declval<DWORD>()));
-
-        native_process_id m_process_id;
         native_process_thread_id m_process_thread_id;
 #       pragma warning(push)
 #       pragma warning(disable : 4251)
-        process_handle m_process_handle;
+        process m_process;
         process_thread_handle m_process_thread_handle;
 #       pragma warning(pop)
         
         void close();
-        [[nodiscard]] static running_details get_running_details(native_process_handle_type process_handle);
-        [[nodiscard]] static bool wait_for_single_object_to_bool(wait_result const& result);
     };
 }
 

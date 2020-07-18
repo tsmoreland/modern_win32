@@ -18,6 +18,7 @@
 
 #include <system_error>
 #include <Windows.h>
+#include <modern_win32/windows_error.h>
 
 namespace modern_win32
 {
@@ -27,14 +28,44 @@ namespace modern_win32
     class windows_exception final : public std::system_error
     {
     public:
-        explicit windows_exception(char const* message) 
-            : std::system_error(GetLastError(), std::system_category(), message)
-        {
-        }
         explicit windows_exception() 
-            : std::system_error(GetLastError(), std::system_category())
+            : windows_exception(GetLastError())
         {
         }
+        explicit windows_exception(char const* message) 
+            : windows_exception(GetLastError(), message)
+        {
+        }
+        explicit windows_exception(native_windows_error const error_code) 
+            : std::system_error(error_code, std::system_category())
+        {
+        }
+        explicit windows_exception(native_windows_error const error_code, char const* message) 
+            : std::system_error(error_code, std::system_category(), message)
+        {
+        }
+        explicit windows_exception(windows_error_details const& error) 
+            : std::system_error(error.native_error_code(), std::system_category())
+            , m_error(error)
+        {
+        }
+        explicit windows_exception(windows_error_details const& error, char const* message) 
+            : std::system_error(error.native_error_code(), std::system_category(), message)
+            , m_error(error)
+        {
+        }
+        explicit windows_exception(windows_error const error) 
+            : std::system_error(static_cast<native_windows_error>(error), std::system_category())
+            , m_error(error)
+        {
+        }
+        explicit windows_exception(windows_error const error, char const* message) 
+            : std::system_error(static_cast<native_windows_error>(error), std::system_category(), message)
+            , m_error(error)
+        {
+        }
+    private:
+        windows_error_details m_error;
     };
 
 }
