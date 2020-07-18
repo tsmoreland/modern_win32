@@ -12,8 +12,8 @@
 // 
 
 #include <modern_win32/process.h>
-
-#include "modern_win32/wait_for.h"
+#include <modern_win32/wait_for.h>
+#include <modern_win32/windows_error.h>
 
 namespace modern_win32
 {
@@ -192,14 +192,14 @@ process open(process_id_type const process_id, process_access_rights const acces
     if (static_cast<bool>(process))
         return process;
 
-    auto const error = GetLastError();
+    windows_error_details const error{};
     switch (error) {
-    case ERROR_INVALID_PARAMETER:
+    case windows_error::error_invalid_parameter:
         throw std::invalid_argument("invalid process id");
-    case ERROR_ACCESS_DENIED:
+    case windows_error::error_access_denied:
         throw access_denied_exception();
     default:
-        throw windows_exception(error);
+        throw windows_exception(error.native_error_code());
     }
 }
 

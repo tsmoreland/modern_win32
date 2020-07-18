@@ -13,21 +13,22 @@
 #define __MODERN_WIN32_WINDOWS_ERROR_H__
 #ifdef _WIN32
 
-#include <errhandlingapi.h>
-#include <winerror.h>
+#include <Windows.h>
 #include <optional>
 #include <tuple>
-#include <type_traits>
 
 namespace modern_win32
 {
-    enum class windows_error
+    enum class windows_error : unsigned long
     {
-        none = NO_ERROR,
+        /// <summary>
+        /// out of range value used when there is no appropriate value
+        /// </summary>
+        unknown = (std::numeric_limits<unsigned long>::max)(),
 
+        none = NO_ERROR,
         /// <summary>Incorrect function.</summary>
         error_invalid_function = ERROR_INVALID_FUNCTION,
-
         /// <summary>The system cannot find the file specified.</summary>
         error_file_not_found = ERROR_FILE_NOT_FOUND,
         /// <summary>The system cannot find the path specified.</summary>
@@ -3080,140 +3081,96 @@ namespace modern_win32
         /// <summary>The object specified was not found.</summary>
 
         or_invalid_oid = OR_INVALID_OID,
-        /// <summary>The object resolver set specified was not found.</summary>
 
+        /// <summary>The object resolver set specified was not found.</summary>
         or_invalid_set = OR_INVALID_SET,
         /// <summary>Some data remains to be sent in the request buffer.</summary>
-
         rpc_s_send_incomplete = RPC_S_SEND_INCOMPLETE,
         /// <summary>Invalid asynchronous remote procedure call handle.</summary>
-
         rpc_s_invalid_async_handle = RPC_S_INVALID_ASYNC_HANDLE,
         /// <summary>Invalid asynchronous RPC call handle for this operation.</summary>
-
         rpc_s_invalid_async_call = RPC_S_INVALID_ASYNC_CALL,
         /// <summary>The RPC pipe object has already been closed.</summary>
-
         rpc_x_pipe_closed = RPC_X_PIPE_CLOSED,
         /// <summary>The RPC call completed before all pipes were processed.</summary>
-
         rpc_x_pipe_discipline_error = RPC_X_PIPE_DISCIPLINE_ERROR,
         /// <summary>No more data is available from the RPC pipe.</summary>
-
         rpc_x_pipe_empty = RPC_X_PIPE_EMPTY,
         /// <summary>No site name is available for this machine.</summary>
-
         error_no_sitename = ERROR_NO_SITENAME,
         /// <summary>The file cannot be accessed by the system.</summary>
-
         error_cant_access_file = ERROR_CANT_ACCESS_FILE,
         /// <summary>The name of the file cannot be resolved by the system.</summary>
-
         error_cant_resolve_filename = ERROR_CANT_RESOLVE_FILENAME,
         /// <summary>The entry is not of the expected type.</summary>
-
         rpc_s_entry_type_mismatch = RPC_S_ENTRY_TYPE_MISMATCH,
         /// <summary>Not all object UUIDs could be exported to the specified entry.</summary>
-
         rpc_s_not_all_objs_exported = RPC_S_NOT_ALL_OBJS_EXPORTED,
         /// <summary>Interface could not be exported to the specified entry.</summary>
-
         rpc_s_interface_not_exported = RPC_S_INTERFACE_NOT_EXPORTED,
         /// <summary>The specified profile entry could not be added.</summary>
-
         rpc_s_profile_not_added = RPC_S_PROFILE_NOT_ADDED,
         /// <summary>The specified profile element could not be added.</summary>
-
         rpc_s_prf_elt_not_added = RPC_S_PRF_ELT_NOT_ADDED,
         /// <summary>The specified profile element could not be removed.</summary>
-
         rpc_s_prf_elt_not_removed = RPC_S_PRF_ELT_NOT_REMOVED,
         /// <summary>The group element could not be added.</summary>
-
         rpc_s_grp_elt_not_added = RPC_S_GRP_ELT_NOT_ADDED,
         /// <summary>The group element could not be removed.</summary>
-
         rpc_s_grp_elt_not_removed = RPC_S_GRP_ELT_NOT_REMOVED,
         /// <summary>The printer driver is not compatible with a policy enabled on your computer that blocks NT 4.0 drivers.</summary>
-
         error_km_driver_blocked = ERROR_KM_DRIVER_BLOCKED,
         /// <summary>The context has expired and can no longer be used.</summary>
-
         error_context_expired = ERROR_CONTEXT_EXPIRED,
         /// <summary>The current user's delegated trust creation quota has been exceeded.</summary>
-
         error_per_user_trust_quota_exceeded = ERROR_PER_USER_TRUST_QUOTA_EXCEEDED,
         /// <summary>The total delegated trust creation quota has been exceeded.</summary>
-
         error_all_user_trust_quota_exceeded = ERROR_ALL_USER_TRUST_QUOTA_EXCEEDED,
         /// <summary>The current user's delegated trust deletion quota has been exceeded.</summary>
-
         error_user_delete_trust_quota_exceeded = ERROR_USER_DELETE_TRUST_QUOTA_EXCEEDED,
         /// <summary>The computer you are signing into is protected by an authentication firewall. The specified account is not allowed to authenticate to the computer.</summary>
-
         error_authentication_firewall_failed = ERROR_AUTHENTICATION_FIREWALL_FAILED,
         /// <summary>Remote connections to the Print Spooler are blocked by a policy set on your machine.</summary>
-
         error_remote_print_connections_blocked = ERROR_REMOTE_PRINT_CONNECTIONS_BLOCKED,
         /// <summary>Authentication failed because NTLM authentication has been disabled.</summary>
-
         error_ntlm_blocked = ERROR_NTLM_BLOCKED,
         /// <summary>Logon Failure: EAS policy requires that the user change their password before this operation can be performed.</summary>
-
         error_password_change_required = ERROR_PASSWORD_CHANGE_REQUIRED,
         /// <summary>An administrator has restricted sign in. To sign in, make sure your device is connected to the Internet, and have your administrator sign in first.</summary>
-
         error_lost_mode_logon_restriction = ERROR_LOST_MODE_LOGON_RESTRICTION,
         /// <summary>The pixel format is invalid.</summary>
-
         error_invalid_pixel_format = ERROR_INVALID_PIXEL_FORMAT,
         /// <summary>The specified driver is invalid.</summary>
-
         error_bad_driver = ERROR_BAD_DRIVER,
         /// <summary>The window style or class attribute is invalid for this operation.</summary>
-
         error_invalid_window_style = ERROR_INVALID_WINDOW_STYLE,
         /// <summary>The requested metafile operation is not supported.</summary>
-
         error_metafile_not_supported = ERROR_METAFILE_NOT_SUPPORTED,
         /// <summary>The requested transformation operation is not supported.</summary>
-
         error_transform_not_supported = ERROR_TRANSFORM_NOT_SUPPORTED,
         /// <summary>The requested clipping operation is not supported.</summary>
-
         error_clipping_not_supported = ERROR_CLIPPING_NOT_SUPPORTED,
         /// <summary>The specified color management module is invalid.</summary>
-
         error_invalid_cmm = ERROR_INVALID_CMM,
         /// <summary>The specified color profile is invalid.</summary>
-
         error_invalid_profile = ERROR_INVALID_PROFILE,
         /// <summary>The specified tag was not found.</summary>
-
         error_tag_not_found = ERROR_TAG_NOT_FOUND,
         /// <summary>A required tag is not present.</summary>
-
         error_tag_not_present = ERROR_TAG_NOT_PRESENT,
         /// <summary>The specified tag is already present.</summary>
-
         error_duplicate_tag = ERROR_DUPLICATE_TAG,
         /// <summary>The specified color profile is not associated with the specified device.</summary>
-
         error_profile_not_associated_with_device = ERROR_PROFILE_NOT_ASSOCIATED_WITH_DEVICE,
         /// <summary>The specified color profile was not found.</summary>
-
         error_profile_not_found = ERROR_PROFILE_NOT_FOUND,
         /// <summary>The specified color space is invalid.</summary>
-
         error_invalid_colorspace = ERROR_INVALID_COLORSPACE,
         /// <summary>Image Color Management is not enabled.</summary>
-
         error_icm_not_enabled = ERROR_ICM_NOT_ENABLED,
         /// <summary>There was an error while deleting the color transform.</summary>
-
         error_deleting_icm_xform = ERROR_DELETING_ICM_XFORM,
         /// <summary>The specified color transform is invalid.</summary>
-
         error_invalid_transform = ERROR_INVALID_TRANSFORM,
         /// <summary>The specified transform does not match the bitmap's color space.</summary>
 
@@ -4999,9 +4956,9 @@ namespace modern_win32
         error_ctx_winstations_disabled = ERROR_CTX_WINSTATIONS_DISABLED,
         /// <summary>You do not have the proper encryption level to access this Session.</summary>
         error_ctx_encryption_level_required = ERROR_CTX_ENCRYPTION_LEVEL_REQUIRED,
-        /// <summary>The user %s\\%s is currently logged on to this computer. Only the current user or an administrator can log on to this computer.</summary>
+        /// <summary>The user %s/%s is currently logged on to this computer. Only the current user or an administrator can log on to this computer.</summary>
         error_ctx_session_in_use = ERROR_CTX_SESSION_IN_USE,
-        /// <summary>The user %s\\%s is already logged on to the console of this computer. You do not have permission to log in at this time. To resolve this issue, contact %s\\%s and have them log off.</summary>
+        /// <summary>The user %s/%s is already logged on to the console of this computer. You do not have permission to log in at this time. To resolve this issue, contact %s/%s and have them log off.</summary>
         error_ctx_no_force_logoff = ERROR_CTX_NO_FORCE_LOGOFF,
         /// <summary>Unable to log you on because of an account restriction.</summary>
         error_ctx_account_restriction = ERROR_CTX_ACCOUNT_RESTRICTION,
@@ -5017,6 +4974,43 @@ namespace modern_win32
         error_ts_incompatible_sessions = ERROR_TS_INCOMPATIBLE_SESSIONS,
         /// <summary>Windows can't connect to your session because a problem occurred in the Windows video subsystem. Try connecting again later, or contact the server administrator for assistance.</summary>
         error_ts_video_subsystem_error = ERROR_TS_VIDEO_SUBSYSTEM_ERROR,
+    };
+
+    using native_windows_error = decltype(GetLastError());
+
+    class windows_error_details final 
+    {
+    public:
+
+        explicit windows_error_details() noexcept;
+        explicit windows_error_details(windows_error const error_code) noexcept;
+        explicit windows_error_details(native_windows_error const error_code) noexcept;
+
+        /// <summary>
+        /// Returns the native windows error code value
+        /// </summary>
+        /// <returns>native windows error code value</returns>
+        [[nodiscard]] native_windows_error native_error_code() const noexcept;
+
+        /// <summary>
+        /// Returns true if native_error_code is NO_ERROR
+        /// </summary>
+        /// <returns>true if native_error_code is NO_ERROR</returns>
+        explicit operator bool() const noexcept;
+
+        /// <summary>
+        /// Returns the <see cref="windows_error"/> formed using the original native error code if a match is found; otherwise <see cref="windows_error::unknown"/>
+        /// </summary>
+        /// <returns><see cref="windows_error"/> formed using the original native error code if a match is found; otherwise <see cref="windows_error::unknown"/></returns>
+        [[nodiscard]] windows_error get() const noexcept;
+
+
+        /// <summary>
+        /// <see cref="get()"/>
+        /// </summary>
+        operator windows_error() const noexcept;
+    private:
+        native_windows_error m_native_error_code;
     };
 
 }

@@ -8,7 +8,7 @@ set(source_files
 	"process_information.cpp"
     "process.cpp" 
     "wait_for.cpp"
-)
+ "windows_error.cpp")
 
 source_group("source files" FILES ${source_files})
 
