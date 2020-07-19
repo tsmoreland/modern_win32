@@ -38,10 +38,12 @@ namespace modern_win32
         }
         explicit windows_exception(native_windows_error const error_code) 
             : std::system_error(error_code, std::system_category())
+            , m_error(error_code)
         {
         }
         explicit windows_exception(native_windows_error const error_code, char const* message) 
             : std::system_error(error_code, std::system_category(), message)
+            , m_error(error_code)
         {
         }
         explicit windows_exception(windows_error_details const& error) 

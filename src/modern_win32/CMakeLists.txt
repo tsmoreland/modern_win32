@@ -33,7 +33,8 @@ set (public_header_files
     "../../include/modern_win32/wait_for.h"
     "../../include/modern_win32/wait_for_result.h"
     "../../include/modern_win32/windows_exception.h"
-    "../../include/modern_win32/windows_error.h")
+    "../../include/modern_win32/windows_error.h"
+    "../../include/modern_win32/windows_handle.h")
 
 source_group("public header files" FILES ${public_header_files})
 
