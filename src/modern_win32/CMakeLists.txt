@@ -5,7 +5,7 @@ set(source_files
 	"threading/slim_lock.cpp"
 	"threading/thread.cpp"
 	"guid.cpp"
-	"process_information.cpp"
+	
     "process.cpp" 
     "wait_for.cpp"
  "windows_error.cpp")

@@ -16,14 +16,13 @@
 #ifdef _WIN32
 
 #include <modern_win32/modern_win32_export.h>
-#include <modern_win32/access_denied_exception.h>
 #include <modern_win32/null_handle.h>
 #include <modern_win32/process_priority.h>
 #include <modern_win32/process_access_rights.h>
 
 #include <chrono>
+#include <filesystem>
 #include <optional>
-#include <tuple>
 #include <Windows.h>
 
 namespace modern_win32
@@ -36,8 +35,20 @@ namespace modern_win32
     public:
         using native_handle_type = process_handle::native_handle_type;
         using exit_code_type = unsigned long;
+        using deconstruct_type = std::pair<process_id_type, native_handle_type>;
+
+        [[nodiscard]] static constexpr deconstruct_type make_deconstruct_type(process_id_type id, native_handle_type handle)
+        {
+            return deconstruct_type{id, handle};
+        }
+        [[nodiscard]] static constexpr deconstruct_type empty() noexcept
+        {
+            return make_deconstruct_type(0UL, process_handle::invalid());
+        }
 
         explicit process(native_handle_type const& handle = process_handle::invalid());
+        explicit process(process_id_type const& id, native_handle_type const& handle);
+        explicit process(deconstruct_type const& id_handle_pair);
         process(process const&) = delete;
         process(process&& other) noexcept;
         ~process() = default;
@@ -58,13 +69,17 @@ namespace modern_win32
 
         /// <summary>replaces the managed object</summary>
         /// <returns>true if the replacement represents a valid process; otherwise, false</returns>
-        [[nodiscard]] bool reset(native_handle_type const& handle = process_handle::invalid());
+        [[nodiscard]] bool reset(deconstruct_type const& process = empty());
+
+        /// <summary>replaces the managed object</summary>
+        /// <returns>true if the replacement represents a valid process; otherwise, false</returns>
+        [[nodiscard]] bool reset(native_handle_type const handle = process_handle::invalid());
 
         /// <summary>
         /// releases the ownership of the process handle if any,
         /// </summary>
         /// <returns><see cref="native_handle_type"/> containing the contents of the managed object</returns>
-        [[nodiscard]] native_handle_type release();
+        [[nodiscard]] deconstruct_type release();
 
         /// <summary>
         /// Returns the underlying implementation-defined native handle object.
@@ -90,6 +105,10 @@ namespace modern_win32
         /// <summary>returns true if a process is currently owned and is running; otherwise, false</summary>
         /// <exception cref="windows_exception">if an error occurs calling the Win32 API</exception>
         [[nodiscard]] bool is_running() const;
+
+        /// <summary>Gets a value indicating whether the associated process has been terminated.</summary>
+        /// <exception cref="windows_exception">if an error occurs calling the Win32 API</exception>
+        [[nodiscard]] bool has_exited() const;
 
         /// <summary>
         /// Returns the priority of the process if running; otherwise std::nullopt
@@ -124,16 +143,14 @@ namespace modern_win32
         [[nodiscard]] bool wait_for_exit(std::chrono::milliseconds const& timeout) const; 
 
     private:
-        using running_details = std::tuple<bool, exit_code_type>;
-        //using wait_result = decltype(WaitForSingleObject(std::declval<native_handle_type>(), std::declval<DWORD>()));
 
 #       pragma warning(push)
 #       pragma warning(disable : 4251)
         process_handle m_handle;
 #       pragma warning(pop)
+        process_id_type m_id;
 
         void close() noexcept;
-        [[nodiscard]] static running_details get_running_details(native_handle_type process_handle);
     };
 
     /// <summary>
@@ -152,6 +169,24 @@ namespace modern_win32
     /// <exception cref="access_denied_exception">if insufficent access to open process</exception>
     [[nodiscard]] process open(process_id_type const process_id, process_access_rights const access_rights, bool const inherit_handles);
 
+    /// <summary>
+    /// Starts a process resource by specifying the name of an application and
+    /// a set of command-line arguments, and associates the resource
+    /// with a new <see cref="process"/> component.
+    /// </summary>
+    /// <param name="filename">The name of an application file to run in the process.</param>
+    /// <param name="arguments">Command-line arguments to pass when starting the process.</param>
+    /// <returns>
+    /// A new <see cref="process"/> that is associated with the process resource, or null if no process resource is started.
+    /// Note that a new process that's started alongside already running instances of the same process will be
+    /// independent from the others. In addition, Start may return a non-null Process with <see cref="has_exited"/> 
+    /// already true.
+    /// In this case, the started process may have activated an existing instance of itself and then exited.
+    /// </returns>
+    [[nodiscard]] process start(std::filesystem::path const& filename, char const* arguments);
+
+    /// <summary><see cref="start(std::filesystem::path, char const*)"/></summary>
+    [[nodiscard]] process start(std::filesystem::path const& filename, wchar_t const* arguments);
 
 }
 
