@@ -14,6 +14,7 @@
 #include <sstream>
 #include <modern_win32/access_denied_exception.h>
 #include <modern_win32/process.h>
+#include <modern_win32/process_creation_options.h>
 #include <modern_win32/wait_for.h>
 #include <modern_win32/windows_error.h>
 
@@ -276,6 +277,11 @@ process start(std::filesystem::path const& filename, TCHAR const* arguments, CRE
 
     std::copy(command_line.begin(), command_line.end(), command_buffer.get());
 
+    auto create_flags = static_cast<std::underlying_type<process_priority>::type>(priority);
+
+    // leaving here for now - but this should be movoed along with priority out to a process_startup_info class that mirrors the C# equivalent, if nothing else it'll
+    // save adding endless options to this constructor
+    create_flags |=  static_cast<std::underlying_type<process_creation_options>::type>(process_creation_options::create_no_window); 
 
     auto const result = create_process(
         filename.c_str(), 
@@ -283,7 +289,7 @@ process start(std::filesystem::path const& filename, TCHAR const* arguments, CRE
         nullptr, // process attributes
         nullptr, // thread attributes
         inherit_handles, 
-        static_cast<std::underlying_type<process_priority>::type>(priority),
+        create_flags,
         nullptr, // environment
         nullptr, // working directory,
         &startup_info,
