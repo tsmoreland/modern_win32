@@ -14,7 +14,8 @@
 #include <sstream>
 #include <modern_win32/access_denied_exception.h>
 #include <modern_win32/process.h>
-#include <modern_win32/process_creation_options.h>
+#include <modern_win32/process_enums.h>
+#include <modern_win32/process_startup_info.h>
 #include <modern_win32/wait_for.h>
 #include <modern_win32/windows_error.h>
 
@@ -260,6 +261,37 @@ process open(process_id_type const process_id, process_access_rights const acces
     default:
         throw windows_exception(error.native_error_code());
     }
+}
+
+template <typename TCHAR, typename CREATE_PROCESS>
+process start(process_startup_info<TCHAR> const& startup_info)
+{
+    std::filesystem::path const filename(startup_info.filename);
+    if (!exists(filename))
+        throw std::filesystem::filesystem_error("filename not found", std::error_code(static_cast<int>(windows_error::error_file_not_found), std::iostream_category()));
+
+    auto native_startup_info = startup_info.starup.build_native_startup_info();
+    auto command_buffer = startup_info.build_command_buffer();
+
+    PROCESS_INFORMATION process_information{};
+
+    auto const result = create_process(
+        filename.c_str(), 
+        command_buffer.get(), 
+        nullptr, // process attributes
+        nullptr, // thread attributes
+        startup_info.inhherit_handles,
+        to_underlying_type(startup_info.build_creation_options()), 
+        nullptr, // environment
+        nullptr, // working directory,
+        &startup_info,
+        &process_information);
+
+    if (result != TRUE)
+        throw windows_exception();
+
+    CloseHandle(process_information.hThread);
+    return process(process_information.dwProcessId, process_information.hProcess);
 }
 
 template <typename TCHAR, typename STARTUPINFO, typename CREATE_PROCESS>

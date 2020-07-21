@@ -18,7 +18,6 @@
 #include <modern_win32/modern_win32_export.h>
 #include <modern_win32/null_handle.h>
 #include <modern_win32/process_priority.h>
-#include <modern_win32/process_access_rights.h>
 
 #include <chrono>
 #include <filesystem>
@@ -27,6 +26,7 @@
 
 namespace modern_win32
 {
+    enum class process_access_rights : unsigned long;
     using process_handle = null_handle;
     using process_id_type = decltype(PROCESS_INFORMATION::dwProcessId);
 

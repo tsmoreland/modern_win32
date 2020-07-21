@@ -17,21 +17,27 @@
 
 #include <filesystem>
 #include <map>
+#include <optional>
+#include <sstream>
 #include <string>
 #include <modern_win32/window_handle.h>
 
 namespace modern_win32
 {
-
+    /// <summary>
+    /// data transfer object storing details for process start up include command line arguments, environment settings, ...
+    /// </summary>
+    /// <typeparam name="TCHAR"></typeparam>
     template <typename TCHAR>
     class process_startup_info final
     {
         using string_type = std::basic_string<TCHAR>;
         using char_array_type = TCHAR[];
+        using environment_variable_container = std::optional<std::map<string_type, string_type>>;
     public:
         process_startup_info() = default;
 
-        [[nodiscard]] string_type get_filename() const
+        [[nodiscard]] string_type const& get_filename() const
         {
             return m_filename;
         }
@@ -51,7 +57,7 @@ namespace modern_win32
         }
         __declspec(property(get = get_arguments, put = set_arguments)) string_type arguments;
 
-        [[nodiscard]] string_type get_directory() const
+        [[nodiscard]] string_type const& get_directory() const
         {
             return m_directory;
         }
@@ -122,21 +128,86 @@ namespace modern_win32
         }
         __declspec(property(get = get_create_window, put = set_create_window)) bool create_window;
 
-        [[nodiscard]] std::map<string_type, string_type> get_environment() const
+        
+        [[nodiscard]] bool get_inherit_handles() const
+        {
+            return m_inherit_handles;
+        }
+        void set_inherit_handles(bool const inherit_handles)
+        {
+            m_inherit_handles = inherit_handles;
+        }
+        __declspec(property(get = get_inherit_handles, put = set_inherit_handles)) bool inherit_handles;
+
+        [[nodiscard]] environment_variable_container const& get_environment() const
         {
             return m_environment;
         }
-        void set_environment(const std::map<string_type, string_type>& environment)
+        void set_environment(environment_variable_container const& environment)
         {
             m_environment = environment;
         }
 
         __declspec(property(get = get_environment, put = set_environment))
-        std::map<string_type, string_type> environment;
+        environment_variable_container environment;
 
         [[nodiscard]] static constexpr bool is_wide() 
         {
             return typeid(TCHAR) == typeid(wchar_t);
+        }
+
+
+        [[nodiscard]] process_creation_options build_creation_options() const
+        {
+            process_creation_options options = process_creation_options::none;
+
+            if (!create_window)
+                options |= process_creation_options::create_no_window;
+
+            if constexpr(is_wide())
+                options |= process_creation_options::create_unicode_environment;
+
+            return options;
+        }
+
+        [[nodiscard]] std::unique_ptr<char_array_type> build_command_buffer() const
+        {
+            std::basic_stringstream<TCHAR> builder;
+
+            if constexpr(is_wide())
+                builder << m_filename << L" " << m_arguments;
+            else
+                builder << m_filename << " " << m_arguments;
+
+            string_type command_line{builder.str()};
+            auto buffer = std::make_unique<char_array_type>(command_line.size() + 1);
+            std::copy(begin(command_line), end(command_line), buffer.get());
+            return buffer;
+        }
+
+        [[nodiscard]] constexpr auto build_native_startup_info() const
+        {
+            auto flags = process_startup_options::none;
+
+            if (redirect_standard_input || m_redirect_standard_output || redirect_standard_error) {
+                // TODO: add handle support - maybe change these flags to std::optional<...handle>
+                flags |= process_startup_options::use_standard_handles;
+            }
+
+            if constexpr(is_wide())
+            {
+                STARTUPINFOW startup_info{};
+                startup_info.cb = sizeof(startup_info);
+                startup_info.dwFlags = to_underlying_type(flags);
+                return startup_info;
+            }
+            else
+            {
+                STARTUPINFOA startup_info{};
+                startup_info.cb = sizeof(startup_info);
+                startup_info.dwFlags = to_underlying_type(flags);
+                return startup_info;
+            }
         }
 
     private:
@@ -153,41 +224,13 @@ namespace modern_win32
         bool m_redirect_standard_output{false};
         bool m_redirect_standard_error{false};
         bool m_create_window{true};
-        std::map<string_type, string_type> m_environment;
+        bool m_inherit_handles{true};
+        environment_variable_container m_environment;
     };
 
     using ansi_process_startup_info = process_startup_info<char>;
     using wide_process_startup_info = process_startup_info<wchar_t>;
-
-    /*
-        string fileName;
-        string arguments;
-        string directory;
-        string verb;
-        ProcessWindowStyle windowStyle;
-        bool errorDialog;
-        IntPtr errorDialogParentHandle;
-#if FEATURE_PAL
-        bool useShellExecute = false;
-#else //FEATURE_PAL
-        bool useShellExecute = true;
-        string userName;
-        string domain;
-        SecureString password;
-        string passwordInClearText;
-        bool loadUserProfile;
-#endif //FEATURE_PAL
-        bool redirectStandardInput = false;
-        bool redirectStandardOutput = false;       
-        bool redirectStandardError = false;
-        Encoding standardOutputEncoding;
-        Encoding standardErrorEncoding; 
         
-        bool createNoWindow = false;
-        WeakReference weakParentProcess;
-        internal StringDictionary environmentVariables;
-    */
-    
 }
 
 #endif
