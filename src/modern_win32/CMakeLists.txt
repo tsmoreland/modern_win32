@@ -26,6 +26,7 @@ set (public_header_files
     "../../include/modern_win32/process_access_rights.h"
     "../../include/modern_win32/process_creation_options.h"
     "../../include/modern_win32/process_information.h"
+    "../../include/modern_win32/process_startup_info.h"
     "../../include/modern_win32/template_utilities.h"
     "../../include/modern_win32/threading/slim_lock.h"
     "../../include/modern_win32/threading/thread.h"
