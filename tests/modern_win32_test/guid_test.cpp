@@ -75,7 +75,7 @@ TEST(guid, empty_equals_expected_all_zero_value)
 {
     guid const all_zero("00000000-0000-0000-0000-000000000000");
 
-    bool const equal = all_zero == guid::empty();
+    bool const equal = all_zero == guid::zero();
 
     ASSERT_TRUE(equal);
 }

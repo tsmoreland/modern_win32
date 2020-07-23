@@ -77,7 +77,7 @@ guid::guid(wchar_t const* value)
 
 }
 
-guid& guid::empty()
+guid& guid::zero()
 {
     static guid empty(GUID{});
     return empty;

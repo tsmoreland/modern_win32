@@ -15,7 +15,6 @@
 #define __MODERN_WIN32_PROCESS_STARTUP_INFO_H__
 #ifdef _WIN32
 
-#include <filesystem>
 #include <map>
 #include <optional>
 #include <sstream>
@@ -31,10 +30,11 @@ namespace modern_win32
     template <typename TCHAR>
     class process_startup_info final
     {
+    public:
         using string_type = std::basic_string<TCHAR>;
         using char_array_type = TCHAR[];
         using environment_variable_container = std::optional<std::map<string_type, string_type>>;
-    public:
+
         process_startup_info() = default;
 
         [[nodiscard]] string_type const& get_filename() const
@@ -164,7 +164,7 @@ namespace modern_win32
             if (!create_window)
                 options |= process_creation_options::create_no_window;
 
-            if constexpr(is_wide())
+            if (is_wide())
                 options |= process_creation_options::create_unicode_environment;
 
             return options;
@@ -172,19 +172,15 @@ namespace modern_win32
 
         [[nodiscard]] std::unique_ptr<char_array_type> build_command_buffer() const
         {
-            std::basic_stringstream<TCHAR> builder;
-
-            if constexpr(is_wide())
-                builder << m_filename << L" " << m_arguments;
-            else
-                builder << m_filename << " " << m_arguments;
-
+            std::basic_stringstream<TCHAR, std::char_traits<TCHAR>, std::allocator<TCHAR>> builder;
+            builder << m_filename.c_str() << TCHAR(' ') << m_arguments.c_str();
             string_type command_line{builder.str()};
             auto buffer = std::make_unique<char_array_type>(command_line.size() + 1);
             std::copy(begin(command_line), end(command_line), buffer.get());
             return buffer;
         }
 
+        template <typename STARTUP_INFO_T>
         [[nodiscard]] constexpr auto build_native_startup_info() const
         {
             auto flags = process_startup_options::none;
@@ -194,20 +190,10 @@ namespace modern_win32
                 flags |= process_startup_options::use_standard_handles;
             }
 
-            if constexpr(is_wide())
-            {
-                STARTUPINFOW startup_info{};
-                startup_info.cb = sizeof(startup_info);
-                startup_info.dwFlags = to_underlying_type(flags);
-                return startup_info;
-            }
-            else
-            {
-                STARTUPINFOA startup_info{};
-                startup_info.cb = sizeof(startup_info);
-                startup_info.dwFlags = to_underlying_type(flags);
-                return startup_info;
-            }
+            STARTUP_INFO_T startup_info{};
+            startup_info.cb = sizeof(startup_info);
+            startup_info.dwFlags = to_underlying_type(flags);
+            return startup_info;
         }
 
     private:
@@ -231,6 +217,84 @@ namespace modern_win32
     using ansi_process_startup_info = process_startup_info<char>;
     using wide_process_startup_info = process_startup_info<wchar_t>;
         
+    template <typename TCHAR>
+    class process_startup_info_builder final
+    {
+    public:
+        using string_type = typename process_startup_info<TCHAR>::string_type;
+        using char_array_type = typename process_startup_info<TCHAR>::char_array_type;
+        using environment_variable_container = typename process_startup_info<TCHAR>::environment_variable_container;
+
+        process_startup_info<TCHAR>&& build()
+        {
+            return std::move(m_startup_info);
+        }
+
+        process_startup_info_builder& with_filename(string_type const& filename)
+        {
+            m_startup_info.filename = filename;
+            return *this;
+        }
+        process_startup_info_builder& with_arguments(string_type const& arguments)
+        {
+            m_startup_info.arguments = arguments;
+            return *this;
+        }
+        process_startup_info_builder& with_directory(string_type const& directory)
+        {
+            m_startup_info.directory = directory;
+            return *this;
+        }
+        process_startup_info_builder& with_error_dialog(window_handle&& error_dialog)
+        {
+            m_startup_info.error_dialog = std::move(error_dialog);
+            return *this;
+        }
+        process_startup_info_builder& with_redirect_standard_input(bool redirect_standard_input)
+        {
+            m_startup_info.redirect_standard_input = redirect_standard_input; 
+            return *this;
+        }
+        process_startup_info_builder& with_redirect_standard_output(bool redirect_standard_output)
+        {
+            m_startup_info.redirect_standard_output = redirect_standard_output; 
+            return *this;
+        }
+        process_startup_info_builder& with_redirect_standard_error(bool redirect_standard_error)
+        {
+            m_startup_info.redirect_standard_error = redirect_standard_error;
+            return *this;
+        }
+        process_startup_info_builder& with_create_window(bool create_window)
+        {
+            m_startup_info.create_window = create_window;
+            return *this;
+        }
+        process_startup_info_builder& with_inherit_handles(bool inherit_handles)
+        {
+            m_startup_info.inherit_handles = inherit_handles; 
+            return *this;
+        }
+        process_startup_info_builder& with_environment(environment_variable_container&& environment)
+        {
+            m_startup_info.environment = std::move(environment); 
+            return *this;
+        }
+        process_startup_info_builder& with_environment(environment_variable_container const& environment)
+        {
+            m_startup_info.environment = environment; 
+            return *this;
+        }
+
+        void reset()
+        {
+            m_startup_info = process_startup_info<TCHAR>();
+        }
+    private:
+        process_startup_info<TCHAR> m_startup_info;
+
+    };
+
 }
 
 #endif

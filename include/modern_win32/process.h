@@ -183,10 +183,10 @@ namespace modern_win32
     /// already true.
     /// In this case, the started process may have activated an existing instance of itself and then exited.
     /// </returns>
-    [[nodiscard]] process start(std::filesystem::path const& filename, char const* arguments);
+    [[nodiscard]] process start(char const* filename, char const* arguments);
 
     /// <summary><see cref="start(std::filesystem::path, char const*)"/></summary>
-    [[nodiscard]] process start(std::filesystem::path const& filename, wchar_t const* arguments);
+    [[nodiscard]] process start(wchar_t const* filename, wchar_t const* arguments);
 
 }
 

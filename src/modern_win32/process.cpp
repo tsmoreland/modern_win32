@@ -263,96 +263,123 @@ process open(process_id_type const process_id, process_access_rights const acces
     }
 }
 
-template <typename TCHAR, typename CREATE_PROCESS>
+template <typename TCHAR>
+std::vector<TCHAR>&& build_environment_block(typename process_startup_info<TCHAR>::environment_variable_container const& maybe_environment_map)
+{
+    std::vector<TCHAR> environment_block;
+    if (!maybe_environment_map.has_value())
+        return std::move(environment_block);
+
+    auto& environment_map = maybe_environment_map.value();
+    auto const nul_char = TCHAR(0);
+    auto const equals_char = TCHAR('=');
+
+    using std::copy;
+    using std::back_inserter;
+
+    for (auto& pair : environment_map)
+    {
+        copy(begin(pair.first), end(pair.first), back_inserter(environment_block));
+        environment_block.push_back(equals_char);
+        copy(begin(pair.second), end(pair.second), back_inserter(environment_block));
+        environment_block.push_back(nul_char);
+    }
+    if (!environment_block.empty())
+        environment_block.push_back(nul_char);
+
+    return std::move(environment_block);
+}
+
+template <typename TCHAR>
+[[nodiscard]] bool create_process_t(TCHAR* command_line, bool inherit_handles, 
+    std::vector<TCHAR>& environment_block, TCHAR const* directory, 
+    process_startup_info<TCHAR> const& startup_info, PROCESS_INFORMATION& process_information)
+{
+    return false;
+}
+
+template <>
+[[nodiscard]] bool create_process_t(char* command_line, bool const inherit_handles, 
+    std::vector<char>& environment_block, char const* directory, 
+    process_startup_info<char> const& startup_info, PROCESS_INFORMATION& process_information)
+{
+    auto native_startup_info = startup_info.build_native_startup_info<STARTUPINFOA>();
+    return CreateProcessA(
+        nullptr,
+        command_line, 
+        nullptr, 
+        nullptr, 
+        inherit_handles ? TRUE : FALSE, 
+        to_underlying_type(startup_info.build_creation_options()), 
+        environment_block.empty() ? static_cast<void*>(nullptr) : static_cast<void*>(&environment_block[0]),
+        directory,
+        &native_startup_info, 
+        &process_information) == TRUE;
+}
+template <>
+[[nodiscard]] bool create_process_t(wchar_t* command_line, bool const inherit_handles, 
+    std::vector<wchar_t>& environment_block, wchar_t const* directory, 
+    process_startup_info<wchar_t> const& startup_info, PROCESS_INFORMATION& process_information)
+{
+    auto native_startup_info = startup_info.build_native_startup_info<STARTUPINFOW>();
+    return CreateProcessW(
+        nullptr,
+        command_line, 
+        nullptr, 
+        nullptr, 
+        inherit_handles ? TRUE : FALSE, 
+        to_underlying_type(startup_info.build_creation_options()), 
+        environment_block.empty() ? static_cast<void*>(nullptr) : static_cast<void*>(&environment_block[0]),
+        directory,
+        &native_startup_info, 
+        &process_information) == TRUE;
+}
+
+template <typename TCHAR>
 process start(process_startup_info<TCHAR> const& startup_info)
 {
     std::filesystem::path const filename(startup_info.filename);
     if (!exists(filename))
         throw std::filesystem::filesystem_error("filename not found", std::error_code(static_cast<int>(windows_error::error_file_not_found), std::iostream_category()));
 
-    auto native_startup_info = startup_info.starup.build_native_startup_info();
     auto command_buffer = startup_info.build_command_buffer();
 
     PROCESS_INFORMATION process_information{};
 
-    auto const result = create_process(
-        filename.c_str(), 
-        command_buffer.get(), 
-        nullptr, // process attributes
-        nullptr, // thread attributes
-        startup_info.inhherit_handles,
-        to_underlying_type(startup_info.build_creation_options()), 
-        nullptr, // environment
-        nullptr, // working directory,
-        &startup_info,
-        &process_information);
+    auto environment_block = build_environment_block<TCHAR>(startup_info.environment);
 
-    if (result != TRUE)
+    auto const result = create_process_t<TCHAR>(
+        command_buffer.get(), 
+        startup_info.inherit_handles,
+        environment_block,
+        startup_info.directory.empty() ? nullptr : startup_info.directory.c_str(), // working directory,
+        startup_info,
+        process_information);
+
+    if (!result)
         throw windows_exception();
 
     CloseHandle(process_information.hThread);
     return process(process_information.dwProcessId, process_information.hProcess);
 }
 
-template <typename TCHAR, typename STARTUPINFO, typename CREATE_PROCESS>
-process start(std::filesystem::path const& filename, TCHAR const* arguments, CREATE_PROCESS create_process, bool inherit_handles, process_priority priority, STARTUPINFO& startup_info)
+process start(char const* filename, char const* arguments)
 {
-    if (!exists(filename))
-        throw std::filesystem::filesystem_error("filename not found", std::error_code(static_cast<int>(windows_error::error_file_not_found), std::iostream_category()));
-
-    PROCESS_INFORMATION process_information{};
-
-    std::basic_stringstream<TCHAR> builder;
-    builder << filename << " " << arguments;
-    std::basic_string<TCHAR> command_line = builder.str();
-    auto command_buffer = std::make_unique<TCHAR[]>(command_line.size() + 1); // null terminator
-
-    std::copy(command_line.begin(), command_line.end(), command_buffer.get());
-
-    auto create_flags = static_cast<std::underlying_type<process_priority>::type>(priority);
-
-    // leaving here for now - but this should be movoed along with priority out to a process_startup_info class that mirrors the C# equivalent, if nothing else it'll
-    // save adding endless options to this constructor
-    create_flags |=  static_cast<std::underlying_type<process_creation_options>::type>(process_creation_options::create_no_window); 
-
-    auto const result = create_process(
-        filename.c_str(), 
-        command_buffer.get(), 
-        nullptr, // process attributes
-        nullptr, // thread attributes
-        inherit_handles, 
-        create_flags,
-        nullptr, // environment
-        nullptr, // working directory,
-        &startup_info,
-        &process_information);
-
-    if (result != TRUE)
-        throw windows_exception();
-
-    CloseHandle(process_information.hThread);
-    return process(process_information.dwProcessId, process_information.hProcess);
+    auto const startup_info = process_startup_info_builder<char>()
+        .with_filename(filename)
+        .with_arguments(arguments)
+        .build();
+    return start(startup_info);
 }
 
-process start(std::filesystem::path const& filename, char const* arguments)
+process start(wchar_t const* filename, wchar_t const* arguments)
 {
-    if (!exists(filename))
-        throw std::filesystem::filesystem_error("filename not found", std::error_code(static_cast<int>(windows_error::error_file_not_found), std::iostream_category()));
+    auto const startup_info = process_startup_info_builder<wchar_t>()
+        .with_filename(filename)
+        .with_arguments(arguments)
+        .build();
+    return start<wchar_t>(startup_info);
 
-    STARTUPINFOA startup_info{};
-    startup_info.cb = sizeof(startup_info);
-
-    return start(filename.string(), arguments, CreateProcessA, true, process_priority::normal, startup_info);
-}
-
-process start(std::filesystem::path const& filename, wchar_t const* arguments)
-{
-    if (!exists(filename))
-        throw std::filesystem::filesystem_error("filename not found", std::error_code(static_cast<int>(windows_error::error_file_not_found), std::iostream_category()));
-
-    STARTUPINFOW startup_info{};
-    startup_info.cb = sizeof(startup_info);
-    return start(filename.wstring(), arguments, CreateProcessW, true, process_priority::normal, startup_info);
 }
 
 }
