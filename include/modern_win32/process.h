@@ -20,7 +20,6 @@
 #include <modern_win32/process_priority.h>
 
 #include <chrono>
-#include <filesystem>
 #include <optional>
 #include <Windows.h>
 
@@ -167,7 +166,7 @@ namespace modern_win32
     /// <returns></returns>
     /// <exception cref="std::invalid_argument">if <paramref name="process_id"/> is 0</exception>
     /// <exception cref="access_denied_exception">if insufficent access to open process</exception>
-    [[nodiscard]] process open(process_id_type const process_id, process_access_rights const access_rights, bool const inherit_handles);
+    [[nodiscard]] MODERN_WIN32_EXPORT process open(process_id_type const process_id, process_access_rights const access_rights, bool const inherit_handles);
 
     /// <summary>
     /// Starts a process resource by specifying the name of an application and
@@ -183,10 +182,10 @@ namespace modern_win32
     /// already true.
     /// In this case, the started process may have activated an existing instance of itself and then exited.
     /// </returns>
-    [[nodiscard]] process start(char const* filename, char const* arguments);
+    [[nodiscard]] MODERN_WIN32_EXPORT process start(char const* filename, char const* arguments);
 
     /// <summary><see cref="start(std::filesystem::path, char const*)"/></summary>
-    [[nodiscard]] process start(wchar_t const* filename, wchar_t const* arguments);
+    [[nodiscard]] MODERN_WIN32_EXPORT process start(wchar_t const* filename, wchar_t const* arguments);
 
 }
 

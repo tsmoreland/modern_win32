@@ -113,11 +113,6 @@ bool thread::join(std::chrono::milliseconds const& timeout) const
 {
     if (!is_running())
         return false;
-
-    auto const native_timeout = timeout.count() > static_cast<std::chrono::milliseconds::rep>(INFINITE)
-        ? INFINITE
-        : static_cast<DWORD>(timeout.count());
-
     return is_complete(wait_one(m_handle, timeout));
 }
 
