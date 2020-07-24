@@ -17,7 +17,8 @@
 
 #include <modern_win32/modern_win32_export.h>
 #include <modern_win32/null_handle.h>
-#include <modern_win32/process_priority.h>
+#include <modern_win32/process_enums.h>
+#include <modern_win32/shared_utilities.h>
 
 #include <chrono>
 #include <optional>
@@ -25,7 +26,6 @@
 
 namespace modern_win32
 {
-    enum class process_access_rights : unsigned long;
     using process_handle = null_handle;
     using process_id_type = decltype(PROCESS_INFORMATION::dwProcessId);
 
@@ -46,6 +46,8 @@ namespace modern_win32
         }
 
         explicit process(native_handle_type const& handle = process_handle::invalid());
+        explicit process(process_id_type const& id);
+        explicit process(process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles = false);
         explicit process(process_id_type const& id, native_handle_type const& handle);
         explicit process(deconstruct_type const& id_handle_pair);
         process(process const&) = delete;
@@ -166,7 +168,7 @@ namespace modern_win32
     /// <returns></returns>
     /// <exception cref="std::invalid_argument">if <paramref name="process_id"/> is 0</exception>
     /// <exception cref="access_denied_exception">if insufficent access to open process</exception>
-    [[nodiscard]] MODERN_WIN32_EXPORT process open(process_id_type const process_id, process_access_rights const access_rights, bool const inherit_handles);
+    [[nodiscard]] MODERN_WIN32_EXPORT process open_process(process_id_type const& process_id, process_access_rights const access_rights, bool const inherit_handles = false);
 
     /// <summary>
     /// Starts a process resource by specifying the name of an application and
@@ -182,10 +184,10 @@ namespace modern_win32
     /// already true.
     /// In this case, the started process may have activated an existing instance of itself and then exited.
     /// </returns>
-    [[nodiscard]] MODERN_WIN32_EXPORT process start(char const* filename, char const* arguments);
+    [[nodiscard]] MODERN_WIN32_EXPORT process start_process(char const* filename, char const* arguments);
 
     /// <summary><see cref="start(std::filesystem::path, char const*)"/></summary>
-    [[nodiscard]] MODERN_WIN32_EXPORT process start(wchar_t const* filename, wchar_t const* arguments);
+    [[nodiscard]] MODERN_WIN32_EXPORT process start_process(wchar_t const* filename, wchar_t const* arguments);
 
 }
 

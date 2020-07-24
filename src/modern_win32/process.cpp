@@ -21,39 +21,22 @@
 #include <modern_win32/wait_for.h>
 #include <modern_win32/windows_error.h>
 
+#include "impl/process_impl.h"
+
 namespace modern_win32
 {
 
-using running_details = std::tuple<bool, process::exit_code_type>;
-
-[[nodiscard]] running_details get_running_details(process::native_handle_type const process_handle)
+process::process(process_id_type const& id)
+    : m_id{id}
 {
-    process::exit_code_type exit_code{};
-    auto const getExitProcessSuccess = GetExitCodeProcess(process_handle, &exit_code);
-    if (!getExitProcessSuccess)
-        throw windows_exception("Unable to get exit code for the requested process");
-
-    using std::make_tuple;
-    return exit_code == STILL_ACTIVE
-        ? make_tuple(true, 0UL)
-        : make_tuple(false, exit_code);
+    if (id == 0UL)
+        throw std::invalid_argument("id cannot be 0");
 }
-
-process_id_type get_process_id(process::native_handle_type const handle)
+process::process(process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles)
+    : process(m_id)
 {
-    auto const id = GetProcessId(handle);
-    if (id != 0)
-        return id;
-
-    windows_error_details const error_details;
-
-    auto [is_running, exit_code] = get_running_details(handle);
-    if (!is_running)
-        return 0;
-
-    throw windows_exception(error_details);
+    m_handle = impl::get_process_handle(m_id, access_rights, inherit_handles);
 }
-
 process::process(native_handle_type const& handle)
     : m_handle{handle}
     , m_id{0UL}
@@ -61,7 +44,7 @@ process::process(native_handle_type const& handle)
     if (handle == process_handle::invalid())
         return;
 
-    m_id = modern_win32::get_process_id(handle);
+    m_id = impl::get_process_id(handle);
 
 }
 process::process(process_id_type const& id, native_handle_type const& handle)
@@ -107,7 +90,12 @@ bool operator!=(process const& first, process const& second)
 
 process::operator bool() const noexcept
 {
-    return static_cast<bool>(m_handle);
+    if (static_cast<bool>(m_handle))
+        return true;
+    if (m_id != 0UL) {
+        return static_cast<bool>(impl::get_process_handle(m_id, combine(process_access_rights::process_query_information, process_access_rights::synchronize)));
+    }
+    return false;
 }
 
 void swap(process& first, process& second) noexcept
@@ -163,10 +151,10 @@ std::optional<process_id_type> process::get_process_id() const
 
 bool process::is_running() const
 {
-    if (!static_cast<bool>(m_handle))
+    if (!static_cast<bool>(*this))
         return false;
 
-    auto const [isRunning, exit_code] = get_running_details(m_handle.native_handle());
+    auto const [isRunning, exit_code] = impl::get_running_details(m_handle);
     static_cast<void>(exit_code);
     return isRunning;
 }
@@ -176,41 +164,17 @@ bool process::has_exited() const
     return !is_running();
 }
 
-template <typename ENUM_TYPE>
-constexpr auto to_native_enum_value(ENUM_TYPE const& enum_value) {
-
-    return static_cast<typename std::underlying_type<ENUM_TYPE>::type>(enum_value);
-}
 
 std::optional<process_priority> process::get_priority() const
 {
-    if (!static_cast<bool>(m_handle))
+    if (!static_cast<bool>(*this))
         return std::nullopt;
 
-    auto const native_priority = GetPriorityClass(m_handle.native_handle());
-    if (native_priority == 0)
-        throw windows_exception();
+    if (static_cast<bool>(m_handle))
+        return impl::get_process_priority(m_handle);
 
-    // could be replaced by simple cast but it's an excuse to have the constexpr demonstrating
-    // getting the raw value
-    switch (native_priority)
-    {
-    case to_native_enum_value(process_priority::above_normal):
-        return std::optional(process_priority::above_normal);
-
-    case to_native_enum_value(process_priority::below_normal):
-        return std::optional(process_priority::below_normal);
-
-    case to_native_enum_value(process_priority::idle):
-        return std::optional(process_priority::idle);
-
-    case to_native_enum_value(process_priority::realtime):
-        return std::optional(process_priority::realtime);
-
-    case to_native_enum_value(process_priority::normal):
-    default:
-        return std::optional(process_priority::normal);
-    }
+    auto const handle = impl::get_process_handle(m_id, process_access_rights::process_query_information);
+    return impl::get_process_priority(handle);
 }
 
 std::optional<process::exit_code_type> process::get_exit_code() const
@@ -218,7 +182,7 @@ std::optional<process::exit_code_type> process::get_exit_code() const
     if (!static_cast<bool>(m_handle))
         return std::nullopt;
 
-    auto const [isRunning, exit_code] = get_running_details(m_handle.native_handle());
+    auto const [isRunning, exit_code] = impl::get_running_details(m_handle.native_handle());
     return isRunning
         ? std::nullopt
         : std::optional(exit_code);
@@ -226,18 +190,27 @@ std::optional<process::exit_code_type> process::get_exit_code() const
 
 void process::wait_for_exit() const
 {
-    if (!is_running())
+    if (!static_cast<bool>(*this))
         return;
+
+    if (static_cast<bool>(m_handle)) {
+        impl::wait_for_exit(m_handle);
+        return;
+    }
 
     static_cast<void>(wait_one(m_handle));
 }
 
 bool process::wait_for_exit(std::chrono::milliseconds const& timeout) const 
 {
-    if (!is_running())
+    if (!static_cast<bool>(*this))
         return true;
 
-    return is_complete(wait_one(m_handle, timeout));
+    if (static_cast<bool>(m_handle))
+        return impl::wait_for_exit(m_handle, timeout);
+
+    auto const handle = impl::get_process_handle(m_id, combine(process_access_rights::process_query_information, process_access_rights::synchronize));
+    return impl::wait_for_exit(handle, timeout);
 }
 
 void process::close() noexcept
@@ -247,9 +220,9 @@ void process::close() noexcept
 
 }
 
-process open(process_id_type const process_id, process_access_rights const access_rights, bool const inherit_handles)
+process open_process(process_id_type const& process_id, process_access_rights const access_rights, bool const inherit_handles)
 {
-    process process{OpenProcess(static_cast<DWORD>(access_rights), inherit_handles ? TRUE : FALSE, process_id)};
+    process process{process_id};
 
     if (static_cast<bool>(process))
         return process;
@@ -338,7 +311,7 @@ template <>
 }
 
 template <typename TCHAR>
-process start(process_startup_info<TCHAR> const& startup_info)
+process start_process(process_startup_info<TCHAR> const& startup_info)
 {
     std::filesystem::path const filename(startup_info.filename);
     if (!exists(filename))
@@ -365,22 +338,22 @@ process start(process_startup_info<TCHAR> const& startup_info)
     return process(process_information.dwProcessId, process_information.hProcess);
 }
 
-process start(char const* filename, char const* arguments)
+process start_process(char const* filename, char const* arguments)
 {
     auto const startup_info = process_startup_info_builder<char>()
         .with_filename(filename)
         .with_arguments(arguments)
         .build();
-    return start(startup_info);
+    return start_process(startup_info);
 }
 
-process start(wchar_t const* filename, wchar_t const* arguments)
+process start_process(wchar_t const* filename, wchar_t const* arguments)
 {
     auto const startup_info = process_startup_info_builder<wchar_t>()
         .with_filename(filename)
         .with_arguments(arguments)
         .build();
-    return start<wchar_t>(startup_info);
+    return start_process<wchar_t>(startup_info);
 
 }
 
