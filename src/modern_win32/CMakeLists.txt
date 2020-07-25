@@ -2,13 +2,13 @@ project(modern_win32 CXX)
 
 # Source groups
 set(source_files
+    "impl/process_impl.cpp"
 	"threading/slim_lock.cpp"
 	"threading/thread.cpp"
 	"guid.cpp"
-	
     "process.cpp" 
     "wait_for.cpp"
- "windows_error.cpp")
+    "windows_error.cpp")
 
 source_group("source files" FILES ${source_files})
 
@@ -23,9 +23,10 @@ set (public_header_files
     "../../include/modern_win32/naive_stack_allocator.h"
     "../../include/modern_win32/null_handle.h"
     "../../include/modern_win32/process.h"
-    "../../include/modern_win32/process_access_rights.h"
+    "../../include/modern_win32/process_enums.h"
     "../../include/modern_win32/process_information.h"
-    "../../include/modern_win32/template_utilities.h"
+    "../../include/modern_win32/process_startup_info.h"
+    "../../include/modern_win32/shared_utilities.h"
     "../../include/modern_win32/threading/slim_lock.h"
     "../../include/modern_win32/threading/thread.h"
     "../../include/modern_win32/threading/thread_start.h"

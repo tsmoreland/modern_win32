@@ -11,8 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __MODERN_WIN32_CONCURRENCY_SHARED_TEMPLATE_UTILITIES_H__
-#define __MODERN_WIN32_CONCURRENCY_SHARED_TEMPLATE_UTILITIES_H__
+#ifndef __MODERN_WIN32_CONCURRENCY_SHARED_SHARED_UTILITIES_H__
+#define __MODERN_WIN32_CONCURRENCY_SHARED_SHARED_UTILITIES_H__
 
 namespace modern_win32
 {
@@ -25,6 +25,19 @@ namespace modern_win32
 
     template <typename DESTINATION_TYPE, typename SOURCE_TYPE, typename CONVERTER, typename... ARGS>
     void pack(DESTINATION_TYPE *left, CONVERTER converter) { }
+
+
+    template <typename ENUM, typename... ENUMPARAMS>
+    constexpr auto combine(ENUM first, ENUM second, ENUMPARAMS... remaining)
+    {
+        return first | combine(second, remaining);
+    }
+
+    template <typename ENUM, typename... ENUMPARAMS>
+    constexpr auto combine(ENUM first, ENUM second)
+    {
+        return first | second;
+    }
 
 }
 

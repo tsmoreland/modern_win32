@@ -32,7 +32,7 @@ namespace modern_win32
 
         [[nodiscard]] GUID get() const noexcept;
 
-        static guid& empty();
+        static guid& zero();
 
         void swap(guid& other) noexcept;
         MODERN_WIN32_EXPORT friend bool operator==(guid const& left, guid const& right) noexcept;
@@ -52,7 +52,11 @@ namespace modern_win32
         }
         explicit operator bool() const
         {
-            return *this != empty();
+            return *this != zero();
+        }
+        [[nodiscard]] constexpr bool empty() const
+        {
+            return static_cast<bool>(this);
         }
     private:
         GUID m_value{};
