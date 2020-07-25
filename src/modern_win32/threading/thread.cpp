@@ -14,7 +14,7 @@
 #include <modern_win32/threading/thread.h>
 #include <modern_win32/module_handle.h>
 #include <modern_win32/naive_stack_allocator.h>
-#include <modern_win32/string_conversion.h>
+#include <modern_win32/string.h>
 #include <modern_win32/wait_for.h>
 
 namespace modern_win32::threading
