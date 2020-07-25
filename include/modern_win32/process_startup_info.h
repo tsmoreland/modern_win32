@@ -24,7 +24,8 @@
 namespace modern_win32
 {
     /// <summary>
-    /// data transfer object storing details for process start up include command line arguments, environment settings, ...
+    /// data transfer object storing details for process start up include command line arguments,
+    /// environment settings, ...
     /// </summary>
     /// <typeparam name="TCHAR"></typeparam>
     template <typename TCHAR>
@@ -294,6 +295,9 @@ namespace modern_win32
         process_startup_info<TCHAR> m_startup_info;
 
     };
+
+    using ansi_process_startup_info_builder = process_startup_info_builder<char>;
+    using wide_process_startup_info_builder = process_startup_info_builder<wchar_t>;
 
 }
 
