@@ -18,6 +18,7 @@
 #include <modern_win32/process.h>
 #include <modern_win32/process_enums.h>
 #include <modern_win32/process_startup_info.h>
+#include <modern_win32/shared_utilities.h>
 #include <modern_win32/wait_for.h>
 #include <modern_win32/windows_error.h>
 
@@ -238,7 +239,7 @@ process open_process(process_id_type const& id, process_access_rights const acce
     }
 }
 
-process start_process(ansi_process_startup_info const& startup_info)
+process start_process(narrow_process_startup_info const& startup_info)
 {
     return impl::start_process<char>(startup_info);
 }
@@ -249,7 +250,7 @@ process start_process(wide_process_startup_info const& startup_info)
 
 process start_process(char const* filename, char const* arguments)
 {
-    auto const startup_info = ansi_process_startup_info_builder()
+    auto const startup_info = narrow_process_startup_info_builder()
         .with_filename(filename)
         .with_arguments(arguments)
         .build();

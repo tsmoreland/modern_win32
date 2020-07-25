@@ -11,44 +11,40 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#pragma warning(push)
-#pragma warning(disable : 26495 26812)
-#include <gtest/gtest.h>
-#pragma warning(pop)
-#include <modern_win32/threading/event.h>
-#include "context.h"
+#include <modern_win32/environment.h>
+#include <Windows.h>
+#include <processenv.h>
+#include <memory>
 
-using modern_win32::threading::auto_reset_event;
-using modern_win32::threading::manual_reset_event;
-
-using util::test::context;
-constexpr auto TEST_TIMOUT = std::chrono::milliseconds(250);
-
-TEST(auto_reset_event, is_reset_after_wait) 
+namespace modern_win32
 {
-    // Arrange
-    context context{TEST_TIMOUT};
-    auto_reset_event event{false};
 
-    // Act
-    auto const signalled = context::get_second_wait_result(event);
-    context.complete = true;
 
-    // Assert
-    ASSERT_TRUE(!signalled && !context.get_timed_out());
+template <>
+bool try_get_all_environment_variables(environment_map<char>& environment)
+{
+#   ifdef UNICODE
+#   undef GetEnvironmentStrings
+    auto deleter = [](char*& character) { FreeEnvironmentStringsA(character); };
+    auto env_block = std::unique_ptr<char, decltype(deleter)>{GetEnvironmentStrings(), deleter};
+#   define GetEnvironmentStrings GetEnvironmentStringsW  // NOLINT(cppcoreguidelines-macro-usage) -- re-enabling GetEnvironmentStrings macro
+#   else 
+    auto deleter = [](char* character) { FreeEnvironmentStringsA(character); };
+    auto env_block = std::unique_ptr<char, decltype(free)>{GetEnvironmentStrings(), deleter};
+#   endif
+
+
+
+    return true;
 }
 
-TEST(manual_reset_event, is_reset_after_wait) 
+template <>
+bool try_get_all_environment_variables(environment_map<wchar_t>& environment)
 {
-    // Arrange
-    context context{TEST_TIMOUT};
-    manual_reset_event event{false};
+    auto deleter = [](wchar_t*& character) { FreeEnvironmentStringsW(character); };
+    auto env_block = std::unique_ptr<wchar_t, decltype(deleter)>{GetEnvironmentStringsW(), deleter};
 
-    // Act
-    auto const signalled = context::get_second_wait_result(event);
-    context.complete = true;
-
-    // Assert
-    ASSERT_TRUE(signalled && !context.get_timed_out());
+    return true;
 }
 
+}

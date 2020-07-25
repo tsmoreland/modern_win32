@@ -12,7 +12,7 @@ add_executable(${TEST_PROJECT_NAME} ${TEST_SOURCES}
     "guid_test.cpp" 
     "process_test.cpp"
     "slim_lock_test.cpp" 
-    "thread_test.cpp")
+    "thread_test.cpp" "environment_test.cpp")
 
 add_test(NAME ${TEST_PROJECT_NAME} COMMAND ${TEST_PROJECT_NAME})
 

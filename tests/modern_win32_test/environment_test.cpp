@@ -15,40 +15,17 @@
 #pragma warning(disable : 26495 26812)
 #include <gtest/gtest.h>
 #pragma warning(pop)
-#include <modern_win32/threading/event.h>
-#include "context.h"
 
-using modern_win32::threading::auto_reset_event;
-using modern_win32::threading::manual_reset_event;
+#include <modern_win32/environment.h>
 
-using util::test::context;
-constexpr auto TEST_TIMOUT = std::chrono::milliseconds(250);
+using modern_win32::environment_map;
 
-TEST(auto_reset_event, is_reset_after_wait) 
+TEST(environment, get_all_environment_returns_true_on_success)
 {
-    // Arrange
-    context context{TEST_TIMOUT};
-    auto_reset_event event{false};
+    using modern_win32::try_get_all_environment_variables;
 
-    // Act
-    auto const signalled = context::get_second_wait_result(event);
-    context.complete = true;
-
-    // Assert
-    ASSERT_TRUE(!signalled && !context.get_timed_out());
+    environment_map<char> env;
+    bool const success = try_get_all_environment_variables(env);
+    
+    ASSERT_TRUE(success);
 }
-
-TEST(manual_reset_event, is_reset_after_wait) 
-{
-    // Arrange
-    context context{TEST_TIMOUT};
-    manual_reset_event event{false};
-
-    // Act
-    auto const signalled = context::get_second_wait_result(event);
-    context.complete = true;
-
-    // Assert
-    ASSERT_TRUE(signalled && !context.get_timed_out());
-}
-
