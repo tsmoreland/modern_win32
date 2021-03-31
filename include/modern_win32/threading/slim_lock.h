@@ -11,8 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __MODERN_WIN32_CONCURRENCY_SYNCHRONIZATION_SLIM_LOCK_H__
-#define __MODERN_WIN32_CONCURRENCY_SYNCHRONIZATION_SLIM_LOCK_H__
+#ifndef MODERN_WIN32_CONCURRENCY_SYNCHRONIZATION_SLIM_LOCK_H_
+#define MODERN_WIN32_CONCURRENCY_SYNCHRONIZATION_SLIM_LOCK_H_
 
 #ifdef _WIN32
 
@@ -52,7 +52,8 @@ namespace modern_win32::threading
         /// Attempts to acquire a slim reader/writer (SRW) lock in exclusive mode. If the call is successful, the calling thread takes ownership of the lock.
         /// </summary>
         /// <returns>true if lock has been obtained; otherwise, false</returns>
-        [[nodiscard]] bool try_lock() noexcept;
+        [[nodiscard]]
+        bool try_lock() noexcept;
 
         /// <summary>
         /// Releases an SRW lock that was opened in exclusive mode.
@@ -68,7 +69,8 @@ namespace modern_win32::threading
         /// Attempts to acquire a slim reader/writer (SRW) lock in shared mode. If the call is successful, the calling thread takes ownership of the lock.
         /// </summary>
         /// <returns>true if lock has been obtained; otherwise, false</returns>
-        [[nodiscard]] bool try_lock_shared() noexcept;
+        [[nodiscard]]
+        bool try_lock_shared() noexcept;
 
         /// <summary>
         /// Releases an SRW lock that was opened in shared mode.
@@ -79,7 +81,8 @@ namespace modern_win32::threading
         /// <summary>
         /// returns the underlying implementation-defined native handle object
         /// </summary>
-        [[nodiscard]] native_handle_type native_handle() noexcept;
+        [[nodiscard]]
+        native_handle_type native_handle() noexcept;
 
         slim_lock& operator=(slim_lock const&) = delete;
         slim_lock& operator=(slim_lock&& other) noexcept;

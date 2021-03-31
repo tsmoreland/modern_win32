@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Terry Moreland
+// Copyright Â© 2020 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -11,8 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __MODERN_WIN32_PROCESS_STARTUP_INFO_H__
-#define __MODERN_WIN32_PROCESS_STARTUP_INFO_H__
+#ifndef MODERN_WIN32_PROCESS_STARTUP_INFO_H_
+#define MODERN_WIN32_PROCESS_STARTUP_INFO_H_
 #ifdef _WIN32
 
 #include <map>
@@ -38,7 +38,8 @@ namespace modern_win32
 
         process_startup_info() = default;
 
-        [[nodiscard]] string_type const& get_filename() const
+        [[nodiscard]]
+        string_type const& get_filename() const
         {
             return m_filename;
         }
@@ -48,7 +49,8 @@ namespace modern_win32
         }
         __declspec(property(get = get_filename, put = set_filename)) string_type filename;
 
-        [[nodiscard]] string_type get_arguments() const
+        [[nodiscard]]
+        string_type get_arguments() const
         {
             return m_arguments;
         }
@@ -58,7 +60,8 @@ namespace modern_win32
         }
         __declspec(property(get = get_arguments, put = set_arguments)) string_type arguments;
 
-        [[nodiscard]] string_type const& get_directory() const
+        [[nodiscard]]
+        string_type const& get_directory() const
         {
             return m_directory;
         }
@@ -68,11 +71,13 @@ namespace modern_win32
         }
         __declspec(property(get = get_directory, put = set_directory)) string_type directory;
 
-        [[nodiscard]] window_handle const& get_error_dialog() const
+        [[nodiscard]]
+        window_handle const& get_error_dialog() const
         {
             return m_error_dialog;
         }
-        [[nodiscard]] window_handle& get_error_dialog() 
+        [[nodiscard]]
+        window_handle& get_error_dialog() 
         {
             return m_error_dialog;
         }
@@ -86,7 +91,8 @@ namespace modern_win32
         }
         __declspec(property(get = get_error_dialog, put = set_error_dialog)) window_handle error_dialog;
 
-        [[nodiscard]] bool get_redirect_standard_input() const
+        [[nodiscard]]
+        bool get_redirect_standard_input() const
         {
             return m_redirect_standard_input;
         }
@@ -97,7 +103,8 @@ namespace modern_win32
         __declspec(property(get = get_redirect_standard_input, put = set_redirect_standard_input))
         bool redirect_standard_input;
 
-        [[nodiscard]] bool get_redirect_standard_output() const
+        [[nodiscard]]
+        bool get_redirect_standard_output() const
         {
             return m_redirect_standard_output;
         }
@@ -108,7 +115,8 @@ namespace modern_win32
         __declspec(property(get = get_redirect_standard_output, put = set_redirect_standard_output))
         bool redirect_standard_output;
 
-        [[nodiscard]] bool get_redirect_standard_error() const
+        [[nodiscard]]
+        bool get_redirect_standard_error() const
         {
             return m_redirect_standard_error;
         }
@@ -119,7 +127,8 @@ namespace modern_win32
         __declspec(property(get = get_redirect_standard_error, put = set_redirect_standard_error))
         bool redirect_standard_error;
 
-        [[nodiscard]] bool get_create_window() const
+        [[nodiscard]]
+        bool get_create_window() const
         {
             return m_create_window;
         }
@@ -130,7 +139,8 @@ namespace modern_win32
         __declspec(property(get = get_create_window, put = set_create_window)) bool create_window;
 
         
-        [[nodiscard]] bool get_inherit_handles() const
+        [[nodiscard]]
+        bool get_inherit_handles() const
         {
             return m_inherit_handles;
         }
@@ -140,7 +150,8 @@ namespace modern_win32
         }
         __declspec(property(get = get_inherit_handles, put = set_inherit_handles)) bool inherit_handles;
 
-        [[nodiscard]] environment_variable_container const& get_environment() const
+        [[nodiscard]]
+        environment_variable_container const& get_environment() const
         {
             return m_environment;
         }
@@ -152,13 +163,15 @@ namespace modern_win32
         __declspec(property(get = get_environment, put = set_environment))
         environment_variable_container environment;
 
-        [[nodiscard]] static constexpr bool is_wide() 
+        [[nodiscard]]
+        static constexpr bool is_wide() 
         {
             return typeid(TCHAR) == typeid(wchar_t);
         }
 
 
-        [[nodiscard]] process_creation_options build_creation_options() const
+        [[nodiscard]]
+        process_creation_options build_creation_options() const
         {
             process_creation_options options = process_creation_options::none;
 
@@ -171,7 +184,8 @@ namespace modern_win32
             return options;
         }
 
-        [[nodiscard]] std::unique_ptr<char_array_type> build_command_buffer() const
+        [[nodiscard]]
+        std::unique_ptr<char_array_type> build_command_buffer() const
         {
             std::basic_stringstream<TCHAR, std::char_traits<TCHAR>, std::allocator<TCHAR>> builder;
             builder << m_filename.c_str() << TCHAR(' ') << m_arguments.c_str();
@@ -182,7 +196,8 @@ namespace modern_win32
         }
 
         template <typename STARTUP_INFO_T>
-        [[nodiscard]] constexpr auto build_native_startup_info() const
+        [[nodiscard]]
+        constexpr auto build_native_startup_info() const
         {
             auto flags = process_startup_options::none;
 

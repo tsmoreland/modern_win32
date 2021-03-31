@@ -20,6 +20,7 @@
 #include <modern_win32/process_startup_info.h>
 #include <modern_win32/wait_for.h>
 #include <modern_win32/windows_error.h>
+#include <modern_win32/shared_utilities.h>
 
 #include "impl/process_impl.h"
 

@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Terry Moreland
+// Copyright Â© 2020 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -11,8 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __MODERN_WIN32_WAIT_FOR_H__
-#define __MODERN_WIN32_WAIT_FOR_H__
+#ifndef MODERN_WIN32_WAIT_FOR_H_
+#define MODERN_WIN32_WAIT_FOR_H_
 #ifdef _WIN32
 
 #include <Windows.h>
@@ -29,7 +29,8 @@ namespace modern_win32
     /// </summary>
     /// <param name="result">value to convert</param>
     /// <returns>value from <see cref="wait_for_result"/></returns>
-    [[nodiscard]] constexpr wait_for_result to_wait_for_result(wait_result const& result)
+    [[nodiscard]]
+    constexpr wait_for_result to_wait_for_result(wait_result const& result)
     {
         switch (result)
         {
@@ -80,13 +81,15 @@ namespace modern_win32
     constexpr void add_to_array(HANDLE *){}
 
     template <typename HANDLE>
-    [[nodiscard]] auto wait_one(HANDLE const& handle, std::chrono::milliseconds const& timeout = get_infinity_in_ms()) noexcept
+    [[nodiscard]]
+    auto wait_one(HANDLE const& handle, std::chrono::milliseconds const& timeout = get_infinity_in_ms()) noexcept
     {
         return to_wait_for_result(WaitForSingleObject(handle.native_handle(), as<DWORD>(timeout)));
     }
 
     template <typename... HANDLES>
-    [[nodiscard]] auto wait_all(HANDLES const & ... args, std::chrono::milliseconds const& timeout = get_infinity_in_ms()) noexcept
+    [[nodiscard]]
+    auto wait_all(HANDLES const & ... args, std::chrono::milliseconds const& timeout = get_infinity_in_ms()) noexcept
     {
         static_assert(sizeof...(HANDLES) < static_cast<size_t>(MAXIMUM_WAIT_OBJECTS));
         HANDLE handles[sizeof...(HANDLES)];
@@ -95,7 +98,8 @@ namespace modern_win32
     }
 
     template <typename... HANDLES>
-    [[nodiscard]] auto wait_any(HANDLES const & ... args, std::chrono::milliseconds const& timeout = get_infinity_in_ms()) noexcept
+    [[nodiscard]]
+    auto wait_any(HANDLES const & ... args, std::chrono::milliseconds const& timeout = get_infinity_in_ms()) noexcept
     {
         static_assert(sizeof...(HANDLES) < static_cast<size_t>(MAXIMUM_WAIT_OBJECTS));
         HANDLE handles[sizeof...(HANDLES)];
@@ -130,7 +134,8 @@ namespace modern_win32
     /// <returns>true if result is <see cref="wait_for_result::object"/>; otherwise false</returns>
     /// <exception cref="windows_exception">if result is <see cref="wait_for_result::failed"/></exception>
     /// <exception cref="std::runtime_error">if result is <see cref="wait_for_result::abandonded"/></exception>
-    [[nodiscard]] MODERN_WIN32_EXPORT bool is_complete(wait_for_result const& result);
+    [[nodiscard]]
+    MODERN_WIN32_EXPORT bool is_complete(wait_for_result const& result);
 
 }
 

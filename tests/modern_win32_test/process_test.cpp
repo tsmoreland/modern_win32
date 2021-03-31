@@ -18,6 +18,7 @@
 #include <filesystem>
 
 #include <modern_win32/process.h>
+#include <modern_win32/shared_utilities.h>
 #include "context.h"
 
 #ifdef _WIN64
