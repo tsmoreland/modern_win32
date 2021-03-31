@@ -53,7 +53,8 @@ namespace modern_win32
         /// as closing the handle could lead to undefined behaviour
         /// </summary>
         /// <returns>native handle type</returns>
-        [[nodiscard]] native_handle_type native_handle() const noexcept
+        [[nodiscard]]
+        native_handle_type native_handle() const noexcept
         {
             return m_handle;
         }
@@ -61,7 +62,8 @@ namespace modern_win32
         /// <summary>
         /// releases the current handle, it will be the callers responsibility to close the handle if open
         /// </summary>
-        [[nodiscard]] native_handle_type release() noexcept
+        [[nodiscard]]
+        native_handle_type release() noexcept
         {
             auto const handle = m_handle;
             m_handle = TRAITS::invalid();
@@ -71,7 +73,8 @@ namespace modern_win32
         /// resets the handle to value to the provided value closing the existing handle if open
         /// </summary>
         /// <returns>true if handle is open</returns>
-        [[nodiscard]] bool reset(native_handle_type handle = TRAITS::invalid()) noexcept
+        [[nodiscard]]
+        bool reset(native_handle_type handle = TRAITS::invalid()) noexcept
         {
             if (m_handle == handle)
                 return static_cast<bool>(*this);
@@ -90,7 +93,8 @@ namespace modern_win32
             std::swap(m_handle, other.m_handle);
         }
 
-        [[nodiscard]] explicit operator bool() const noexcept
+        [[nodiscard]]
+        explicit operator bool() const noexcept
         {
             return m_handle != TRAITS::invalid();
         }
