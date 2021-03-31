@@ -82,13 +82,13 @@ namespace modern_win32
             return static_cast<bool>(*this);
         }
 
-		/// <summary>
-		/// swaps the values of the current object and other
-		/// </summary>
-		void swap(unique_handle<TRAITS>& other) noexcept
-		{
-			std::swap(m_handle, other.m_handle);
-		}
+        /// <summary>
+        /// swaps the values of the current object and other
+        /// </summary>
+        void swap(unique_handle<TRAITS>& other) noexcept
+        {
+            std::swap(m_handle, other.m_handle);
+        }
 
         [[nodiscard]] explicit operator bool() const noexcept
         {
@@ -164,10 +164,10 @@ namespace modern_win32
     /// swaps the values of the lhs and rhs 
     /// </summary>
     template <typename TRAITS>
-	void swap(unique_handle<TRAITS>& lhs, unique_handle<TRAITS>& rhs) noexcept
-	{
-		lhs.swap(rhs);
-	}
+    void swap(unique_handle<TRAITS>& lhs, unique_handle<TRAITS>& rhs) noexcept
+    {
+        lhs.swap(rhs);
+    }
 
 }
 
