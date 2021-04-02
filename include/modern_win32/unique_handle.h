@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Terry Moreland
+// Copyright Â© 2020 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -105,23 +105,28 @@ namespace modern_win32
         }
 
 #       if __cplusplus > 201703L || _MSVC_LANG > 201703L
+        [[nodiscard]]
         friend auto operator<=>(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second) noexcept
         {
             return first.m_handle <=> second.m_handle;
         }
 #       else
+        [[nodiscard]]
         friend bool operator<(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second)
         {
             return first.m_handle < second.m_handle;
         }
+        [[nodiscard]]
         friend bool operator>(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second)
         {
             return first.m_handle > second.m_handle;
         }
+        [[nodiscard]]
         friend bool operator<=(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second)
         {
             return first.m_handle <= second.m_handle;
         }
+        [[nodiscard]]
         friend bool operator>=(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second)
         {
             return first.m_handle >= second.m_handle;
@@ -129,21 +134,25 @@ namespace modern_win32
 
 #       endif
 
+        [[nodiscard]]
         friend bool operator==(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second)
         {
             return first.m_handle == second.m_handle;
         }
+        [[nodiscard]]
         friend bool operator!=(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second)
         {
             return !(first == second);
         }
 
+        [[nodiscard]]
         unique_handle& operator=(native_handle_type const handle)
         {
             static_cast<void>(reset(handle));
             return *this;
         }
         unique_handle& operator=(unique_handle const& other) = delete;
+        [[nodiscard]]
         unique_handle& operator=(unique_handle&& other) noexcept
         {
             if (this == &other)
