@@ -115,9 +115,9 @@ namespace modern_win32::threading
         bool start_stateless(WORKER worker) 
         {
             static_assert(std::is_convertible<decltype(worker), thread_worker>::value, "WORKER must be assignable to thread_worker");
-            if (is_running() || m_thread_start != nullptr)
+            if (is_running() || thread_start_ != nullptr)
                 return false;
-            return m_handle.reset(CreateThread(nullptr, 0, thread_adapter, static_cast<thread_worker>(worker), 0, &m_thread_id));  // NOLINT(clang-diagnostic-microsoft-cast)
+            return handle_.reset(CreateThread(nullptr, 0, thread_adapter, static_cast<thread_worker>(worker), 0, &thread_id_));  // NOLINT(clang-diagnostic-microsoft-cast)
         }
         /// <summary>
         /// starts the thread using <paramref name="worker"/> if not already running
@@ -175,9 +175,9 @@ namespace modern_win32::threading
     private:
 #       pragma warning(push)
 #       pragma warning(disable : 4251)
-        modern_handle_type m_handle{};
-        native_thread_id m_thread_id{};
-        std::unique_ptr<thread_start> m_thread_start;
+        modern_handle_type handle_{};
+        native_thread_id thread_id_{};
+        std::unique_ptr<thread_start> thread_start_;
 #       pragma warning(pop)
 
         static DWORD __stdcall thread_adapter(void* state);

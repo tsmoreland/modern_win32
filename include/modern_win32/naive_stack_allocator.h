@@ -38,7 +38,7 @@ namespace modern_win32
         using value_type = TYPE;
 
         explicit naive_stack_allocator() noexcept
-            : m_allocator(std::allocator<TYPE>())
+            : allocator_(std::allocator<TYPE>())
         {
         }
         template <class ALTERNATE_TYPE>
@@ -52,17 +52,17 @@ namespace modern_win32
             if (size == 0)
                 return nullptr;
 
-            if (size > CAPACITY || m_position + size > CAPACITY)
-                return m_allocator.allocate(size);
+            if (size > CAPACITY || position_ + size > CAPACITY)
+                return allocator_.allocate(size);
 
-            auto* result = &m_buffer[m_position];
-            m_position += size;
+            auto* result = &buffer_[position_];
+            position_ += size;
             return result;
         }
         void deallocate(TYPE* const value_ptr, std::size_t size)
         {
-            if (value_ptr >= m_buffer + CAPACITY || value_ptr < m_buffer)
-                m_allocator.deallocate(value_ptr, size);
+            if (value_ptr >= buffer_ + CAPACITY || value_ptr < buffer_)
+                allocator_.deallocate(value_ptr, size);
         }
 
         template<class OTHER>
@@ -72,9 +72,9 @@ namespace modern_win32
         };
 
     private:
-        TYPE m_buffer[CAPACITY]{};
-        std::allocator<TYPE> m_allocator;
-        std::size_t m_position{};
+        TYPE buffer_[CAPACITY]{};
+        std::allocator<TYPE> allocator_;
+        std::size_t position_{};
     };
 
     template <class T, class U, size_t CAPACITY>

@@ -37,12 +37,12 @@ namespace modern_win32::threading
         using modern_handle_type = modern_win32::null_handle;
     public:
         explicit event(bool const initial_state) noexcept
-            : m_event{CreateEvent(nullptr, EVENT_TYPE == event_type::manual_reset, initial_state ? TRUE : FALSE, nullptr)}
+            : event_{CreateEvent(nullptr, EVENT_TYPE == event_type::manual_reset, initial_state ? TRUE : FALSE, nullptr)}
         {
         }
         event(event const& other) = delete;
         event(event&& other) noexcept
-            : m_event(other.m_event.release())
+            : event_(other.event_.release())
         {
         }
         ~event() = default;
@@ -55,7 +55,7 @@ namespace modern_win32::threading
         [[nodiscard]]
         bool set() noexcept
         {
-            return SetEvent(m_event.native_handle()) != 0;
+            return SetEvent(event_.native_handle()) != 0;
         }
         /// <summary>
         /// Sets the event object to the nonsignaled state.
@@ -65,7 +65,7 @@ namespace modern_win32::threading
         [[nodiscard]]
         bool clear() noexcept
         {
-            return ResetEvent(m_event.native_handle()) != 0;
+            return ResetEvent(event_.native_handle()) != 0;
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace modern_win32::threading
         [[nodiscard]]
         bool wait_one(std::chrono::milliseconds const timeout = get_infinity_in_ms()) const 
         {
-            return is_complete(modern_win32::wait_one(m_event, timeout));
+            return is_complete(modern_win32::wait_one(event_, timeout));
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace modern_win32::threading
         void swap(event& other) noexcept
         {
             using std::swap;
-            swap(m_event, other.m_event);
+            swap(event_, other.event_);
         }
 
         event& operator=(event const& other) = delete;
@@ -98,7 +98,7 @@ namespace modern_win32::threading
         {
             if (this == &other)
                 return *this;
-            static_cast<void>(m_event.reset(other.m_event.release()));
+            static_cast<void>(event_.reset(other.event_.release()));
             return *this;
         }
 
@@ -106,49 +106,49 @@ namespace modern_win32::threading
         [[nodiscard]]
         auto operator<=>(event const& other)
         {
-            return m_event <=> other.m_event;
+            return event_ <=> other.event_;
         }
 
 #       else
         [[nodiscard]]
         bool operator<(event const& other)
         {
-            return m_event < other.m_event;
+            return event_ < other.event_;
         }
 
         [[nodiscard]]
         bool operator<=(event const& other)
         {
-            return !(other.m_event < m_event);
+            return !(other.event_ < event_);
         }
 
         [[nodiscard]]
         bool operator>(event const& other)
         {
-            return other.m_event < m_event;
+            return other.event_ < event_;
         }
 
         [[nodiscard]]
         bool operator>=(event const& other)
         {
-            return !(m_event < other.m_event);
+            return !(event_ < other.event_);
         }
 
         [[nodiscard]]
         bool operator==(event const& other)
         {
-            return m_event == other.m_event;
+            return event_ == other.event_;
         }
 
         [[nodiscard]]
         bool operator!=(event const& other)
         {
-            return !(m_event == other.m_event);
+            return !(event_ == other.event_);
         }
 #       endif
 
     private:
-        modern_handle_type m_event;
+        modern_handle_type event_;
 
     };
 

@@ -21,47 +21,47 @@ namespace modern_win32::threading
 {
 
 thread::thread(std::unique_ptr<thread_start> worker)
-    : m_handle(thread_handle::invalid())
-    , m_thread_start(std::move(worker))
+    : handle_(thread_handle::invalid())
+    , thread_start_(std::move(worker))
 {
-    if (m_thread_start == nullptr)
+    if (thread_start_ == nullptr)
         throw std::invalid_argument("provided thread_start is null");
 }
 thread::thread(modern_handle_type&& handle)
-    : m_handle(handle.release())
+    : handle_(handle.release())
 {
 }
 thread::thread(native_handle_type const& handle /* = thread_handle::invalid() */)
-    : m_handle(handle)
+    : handle_(handle)
 {
 }
 thread::thread(thread&& other) noexcept
-    : m_handle{other.m_handle.release()}
-    , m_thread_id{other.m_thread_id}
-    , m_thread_start(std::move(other.m_thread_start))
+    : handle_{other.handle_.release()}
+    , thread_id_{other.thread_id_}
+    , thread_start_(std::move(other.thread_start_))
 {
-    other.m_thread_id = native_thread_id{};
+    other.thread_id_ = native_thread_id{};
 }
 
 bool thread::set_name(wchar_t const* name) const
 {
     if (!is_running())
         return false;
-    return set_thread_name(m_handle.native_handle(), name);
+    return set_thread_name(handle_.native_handle(), name);
 }
 
 bool thread::set_name(char const* name) const
 {
     if (!is_running())
         return false;
-    return set_thread_name(m_handle.native_handle(), name);
+    return set_thread_name(handle_.native_handle(), name);
 }
 
 std::optional<std::wstring> thread::get_name() const
 {
     if (!is_running())
         return std::nullopt;
-    return get_thread_name(m_handle.native_handle());
+    return get_thread_name(handle_.native_handle());
 }
 
 
@@ -83,46 +83,46 @@ thread start_thread(thread_start* const worker)
 
 bool thread::start(thread_proc const worker, thread_parameter const parameter) 
 {
-    if (is_running() || m_thread_start != nullptr)
+    if (is_running() || thread_start_ != nullptr)
         return false;
-    return m_handle.reset(CreateThread(nullptr, 0, worker, parameter, 0, &m_thread_id));  // NOLINT(clang-diagnostic-microsoft-cast)
+    return handle_.reset(CreateThread(nullptr, 0, worker, parameter, 0, &thread_id_));  // NOLINT(clang-diagnostic-microsoft-cast)
 }
 
 bool thread::start(thread_start* const worker) 
 {
-    if (is_running() || m_thread_start != nullptr)
+    if (is_running() || thread_start_ != nullptr)
         return false;
 
-    return m_handle.reset(CreateThread(nullptr, 0, thread_start::thread_proc, static_cast<thread_parameter>(worker), 0, &m_thread_id));  // NOLINT(clang-diagnostic-microsoft-cast)
+    return handle_.reset(CreateThread(nullptr, 0, thread_start::thread_proc, static_cast<thread_parameter>(worker), 0, &thread_id_));  // NOLINT(clang-diagnostic-microsoft-cast)
 }
 
 bool thread::start()
 {
-    if (is_running() || m_thread_start == nullptr)
+    if (is_running() || thread_start_ == nullptr)
         return false;
-    return m_handle.reset(CreateThread(nullptr, 0, thread_start::thread_proc, m_thread_start.get(), 0, &m_thread_id));  // NOLINT(clang-diagnostic-microsoft-cast)
+    return handle_.reset(CreateThread(nullptr, 0, thread_start::thread_proc, thread_start_.get(), 0, &thread_id_));  // NOLINT(clang-diagnostic-microsoft-cast)
 }
 
 void thread::join() const
 {
     if (is_running())
-        static_cast<void>(wait_one(m_handle));
+        static_cast<void>(wait_one(handle_));
 }
 
 bool thread::join(std::chrono::milliseconds const& timeout) const
 {
     if (!is_running())
         return false;
-    return is_complete(wait_one(m_handle, timeout));
+    return is_complete(wait_one(handle_, timeout));
 }
 
 bool thread::is_running() const
 {
-    if (!static_cast<bool>(m_handle))
+    if (!static_cast<bool>(handle_))
         return false;
 
     DWORD exit_code;
-    if (GetExitCodeThread(m_handle.native_handle(), &exit_code) != TRUE)
+    if (GetExitCodeThread(handle_.native_handle(), &exit_code) != TRUE)
         throw windows_exception();
     return exit_code == STILL_ACTIVE;
 }
@@ -134,8 +134,8 @@ thread& thread::operator=(thread&& other) noexcept
 
     std::swap(*this, other);
 
-    static_cast<void>(other.m_handle.reset());
-    other.m_thread_id = native_thread_id{};
+    static_cast<void>(other.handle_.reset());
+    other.thread_id_ = native_thread_id{};
 
     return *this;
 }
@@ -143,9 +143,9 @@ thread& thread::operator=(thread&& other) noexcept
 void swap(thread& lhs, thread& rhs) noexcept
 {
     using std::swap;
-    swap(lhs.m_handle, rhs.m_handle);
-    swap(lhs.m_thread_id, rhs.m_thread_id);
-    swap(lhs.m_thread_start, rhs.m_thread_start);
+    swap(lhs.handle_, rhs.handle_);
+    swap(lhs.thread_id_, rhs.thread_id_);
+    swap(lhs.thread_start_, rhs.thread_start_);
 }
 
 DWORD __stdcall thread::thread_adapter(void* state)

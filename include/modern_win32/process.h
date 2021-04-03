@@ -161,9 +161,9 @@ namespace modern_win32
 
 #       pragma warning(push)
 #       pragma warning(disable : 4251)
-        process_handle m_handle;
+        process_handle handle_;
 #       pragma warning(pop)
-        process_id_type m_id;
+        process_id_type id_;
 
         void close() noexcept;
     };

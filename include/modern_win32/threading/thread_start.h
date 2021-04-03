@@ -25,7 +25,7 @@ namespace modern_win32::threading
     public:
         thread_start() = default;
         explicit thread_start(std::any state) 
-            : m_state(std::move(state))
+            : state_(std::move(state))
         {
         }
         thread_start(thread_start&& other) noexcept = default;
@@ -41,10 +41,10 @@ namespace modern_win32::threading
         [[nodiscard]]
         std::any const& get_state() const
         {
-            return m_state;
+            return state_;
         }
     private:
-        std::any m_state;
+        std::any state_;
 
         using thread_parameter = void*;
         static DWORD thread_proc(thread_parameter const this_ptr)

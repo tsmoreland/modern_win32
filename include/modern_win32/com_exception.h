@@ -26,22 +26,22 @@ namespace modern_win32
         using native_handle_type = HRESULT;
         explicit com_exception(HRESULT const result)
             : exception()
-            , m_result(result)
+            , result_(result)
         {
         }
         explicit com_exception(HRESULT const result, char const* message)
             : exception(message)
-            , m_result(result)
+            , result_(result)
         {
         }
 
         [[nodiscard]]
         native_handle_type get() const noexcept
         {
-            return m_result;
+            return result_;
         }
     private:
-        native_handle_type m_result;
+        native_handle_type result_;
     };
 }
 

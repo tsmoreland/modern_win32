@@ -38,36 +38,36 @@ namespace modern_win32
         }
         explicit windows_exception(native_windows_error const error_code) 
             : std::system_error(error_code, std::system_category())
-            , m_error(error_code)
+            , error_(error_code)
         {
         }
         explicit windows_exception(native_windows_error const error_code, char const* message) 
             : std::system_error(error_code, std::system_category(), message)
-            , m_error(error_code)
+            , error_(error_code)
         {
         }
         explicit windows_exception(windows_error_details const& error) 
             : std::system_error(error.native_error_code(), std::system_category())
-            , m_error(error)
+            , error_(error)
         {
         }
         explicit windows_exception(windows_error_details const& error, char const* message) 
             : std::system_error(error.native_error_code(), std::system_category(), message)
-            , m_error(error)
+            , error_(error)
         {
         }
         explicit windows_exception(windows_error const error) 
             : std::system_error(static_cast<native_windows_error>(error), std::system_category())
-            , m_error(error)
+            , error_(error)
         {
         }
         explicit windows_exception(windows_error const error, char const* message) 
             : std::system_error(static_cast<native_windows_error>(error), std::system_category(), message)
-            , m_error(error)
+            , error_(error)
         {
         }
     private:
-        windows_error_details m_error;
+        windows_error_details error_;
     };
 
 }

@@ -49,7 +49,7 @@ namespace modern_win32
 
         explicit operator GUID() const
         {
-            return m_value;
+            return value_;
         }
         explicit operator bool() const
         {
@@ -61,7 +61,7 @@ namespace modern_win32
             return static_cast<bool>(this);
         }
     private:
-        GUID m_value{};
+        GUID value_{};
     };
 
     [[nodiscard]]

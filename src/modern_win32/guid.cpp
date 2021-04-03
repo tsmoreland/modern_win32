@@ -34,14 +34,14 @@ namespace modern_win32
     }
 
     guid::guid() 
-        : m_value{}
+        : value_{}
     {
-        if (auto const hr = CoCreateGuid(&m_value); FAILED(hr)) 
+        if (auto const hr = CoCreateGuid(&value_); FAILED(hr)) 
             throw com_exception(hr);
     }
 
     guid::guid(GUID const& value) noexcept
-        : m_value(value)
+        : value_(value)
     {
     }
 
@@ -55,7 +55,7 @@ namespace modern_win32
         memcpy_s(buffer, sizeof(buffer), value, strlen(value)*sizeof(char_type));
         buffer[63] = '\0';
 
-        m_value = from_string(buffer,   
+        value_ = from_string(buffer,   
             [](char_type *value, UUID* out) {
                 return UuidFromStringA(value, out);
             });
@@ -70,7 +70,7 @@ namespace modern_win32
         memcpy_s(buffer, sizeof(buffer), value, wcslen(value)*sizeof(char_type));
         buffer[63] = '\0';
 
-        m_value = from_string(buffer,
+        value_ = from_string(buffer,
             [](char_type *value, UUID* out) {
                 return UuidFromStringW(value, out);
             });
@@ -85,12 +85,12 @@ namespace modern_win32
 
     GUID guid::get() const noexcept
     {
-        return m_value;
+        return value_;
     }
 
     void guid::swap(guid& other) noexcept
     {
-        std::swap(m_value, other.m_value);
+        std::swap(value_, other.value_);
     }
 
     std::wstring to_wstring(guid const& uid)
@@ -126,31 +126,31 @@ namespace modern_win32
     }
     bool operator==(guid const& left, guid const& right) noexcept
     {
-        return left.m_value == right.m_value;
+        return left.value_ == right.value_;
     }
 
     bool operator!=(guid const& left, guid const& right) noexcept
     {
-        return left.m_value != right.m_value;
+        return left.value_ != right.value_;
     }
 
     bool operator==(GUID const& left, guid const& right) noexcept
     {
-        return left == right.m_value;
+        return left == right.value_;
     }
 
     bool operator!=(GUID const& left, guid const& right) noexcept
     {
-        return left != right.m_value;
+        return left != right.value_;
     }
     bool operator==(guid const& left, GUID const& right) noexcept
     {
-        return left.m_value == right;
+        return left.value_ == right;
     }
 
     bool operator!=(guid const& left, GUID const& right) noexcept
     {
-        return left.m_value != right;
+        return left.value_ != right;
     }
 
     std::ostream& operator<<(std::ostream& os, const guid& obj)

@@ -88,7 +88,7 @@ namespace modern_win32::threading
         slim_lock& operator=(slim_lock&& other) noexcept;
 
     private:
-        SRWLOCK m_lock{};
+        SRWLOCK lock_{};
     };
 
 #else

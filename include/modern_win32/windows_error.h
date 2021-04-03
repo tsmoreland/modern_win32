@@ -15,7 +15,6 @@
 
 #include <Windows.h>
 #include <optional>
-#include <tuple>
 
 namespace modern_win32
 {
@@ -727,7 +726,7 @@ namespace modern_win32
         /// <summary>Attempt to access invalid address.</summary>
         error_invalid_address = ERROR_INVALID_ADDRESS,
         /// <summary>Driver Verifier Volatile settings cannot be set when CFG is enabled.</summary>
-        error_vrf_cfg_enabled = ERROR_VRF_CFG_ENABLED,
+        error_vrf_cfg_enabled = 1183L, //ERROR_VRF_CFG_ENABLED,
         /// <summary>An attempt was made to access a partition that has begun termination.</summary>
         error_partition_terminating = ERROR_PARTITION_TERMINATING,
         /// <summary>User profile cannot be loaded.</summary>
@@ -5012,7 +5011,7 @@ namespace modern_win32
         /// </summary>
         operator windows_error() const noexcept;
     private:
-        native_windows_error m_native_error_code;
+        native_windows_error native_error_code_;
     };
 
 }

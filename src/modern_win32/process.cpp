@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Terry Moreland
+// Copyright Â© 2020 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -28,7 +28,7 @@ namespace modern_win32
 {
 
 process::process(process_id_type const& id)
-    : m_id{id}
+    : id_{id}
 {
     if (id == 0UL)
         throw std::invalid_argument("id cannot be 0");
@@ -36,25 +36,25 @@ process::process(process_id_type const& id)
 process::process(process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles)
     : process(id)
 {
-    m_handle = impl::get_process_handle(m_id, access_rights, inherit_handles);
+    static_cast<void>(handle_.reset(impl::get_process_handle(id_, access_rights, inherit_handles).release()));
 }
 process::process(native_handle_type const& handle)
-    : m_handle{handle}
-    , m_id{0UL}
+    : handle_{handle}
+    , id_{0UL}
 {
     if (handle == process_handle::invalid())
         return;
 
-    m_id = impl::get_process_id(handle);
+    id_ = impl::get_process_id(handle);
 
 }
 process::process(process_id_type const& id, native_handle_type const& handle)
-    : m_handle{handle}
-    , m_id{id}
+    : handle_{handle}
+    , id_{id}
 {
-    if (handle == process_handle::invalid() && m_id != 0UL)
+    if (handle == process_handle::invalid() && id_ != 0UL)
         throw std::invalid_argument("id must be zero if handle is invalid");
-    if (handle != process_handle::invalid() && m_id == 0UL)
+    if (handle != process_handle::invalid() && id_ == 0UL)
         throw std::invalid_argument("id must be provided if handle is not invalid");
 }
 process::process(deconstruct_type const& id_handle_pair)
@@ -64,8 +64,8 @@ process::process(deconstruct_type const& id_handle_pair)
 process::process(process&& other) noexcept
 {
     auto [id, handle] = other.release();
-    m_id = id;
-    m_handle = handle;
+    id_ = id;
+    static_cast<void>(handle_.reset(handle));
 }
 
 process& process::operator=(process&& other) noexcept
@@ -73,16 +73,16 @@ process& process::operator=(process&& other) noexcept
     if (*this == other)
         return *this;
 
-    m_handle = std::move(other.m_handle);
-    m_id = other.m_id;
-    other.m_id = 0;
+    static_cast<void>(handle_.reset(other.handle_.release()));
+    id_ = other.id_;
+    other.id_ = 0;
 
     return *this;
 }
 
 bool operator==(process const& first, process const& second)
 {
-    return first.m_handle == second.m_handle && first.m_id == second.m_id;
+    return first.handle_ == second.handle_ && first.id_ == second.id_;
 }
 bool operator!=(process const& first, process const& second)
 {
@@ -91,10 +91,10 @@ bool operator!=(process const& first, process const& second)
 
 process::operator bool() const noexcept
 {
-    if (static_cast<bool>(m_handle))
+    if (static_cast<bool>(handle_))
         return true;
-    if (m_id != 0UL) {
-        return static_cast<bool>(impl::get_process_handle(m_id, combine(process_access_rights::process_query_information, process_access_rights::synchronize)));
+    if (id_ != 0UL) {
+        return static_cast<bool>(impl::get_process_handle(id_, combine(process_access_rights::process_query_information, process_access_rights::synchronize)));
     }
     return false;
 }
@@ -102,52 +102,52 @@ process::operator bool() const noexcept
 void swap(process& first, process& second) noexcept
 {
     using std::swap;
-    swap(first.m_handle, second.m_handle);
-    swap(first.m_id, second.m_id);
+    swap(first.handle_, second.handle_);
+    swap(first.id_, second.id_);
 }
 
 bool process::reset(deconstruct_type const& process)
 {
     auto [id, handle] = process;
 
-    if (m_handle.native_handle() == handle)
+    if (handle_.native_handle() == handle)
         return static_cast<bool>(*this);
 
     close();
-    m_id = id;
-    return m_handle.reset(handle);
+    id_ = id;
+    return handle_.reset(handle);
 }
 
 bool process::reset(native_handle_type const handle)
 {
-    if (m_handle.native_handle() == handle)
+    if (handle_.native_handle() == handle)
         return static_cast<bool>(*this);
 
     close();
 
-    return m_handle.reset(handle);
+    return handle_.reset(handle);
 }
 
 process::deconstruct_type process::release()
 {
     process_id_type id{};
-    std::swap(m_id, id);
-    return make_deconstruct_type(id, m_handle.release());
+    std::swap(id_, id);
+    return make_deconstruct_type(id, handle_.release());
 }
 
 process::native_handle_type process::native_handle() const noexcept
 {
-    return m_handle.native_handle();
+    return handle_.native_handle();
 }
 
 process_handle& process::get() noexcept
 {
-    return m_handle;
+    return handle_;
 }
 
 std::optional<process_id_type> process::get_process_id() const
 {
-    return m_id;
+    return id_;
 }
 
 bool process::is_running() const
@@ -155,7 +155,7 @@ bool process::is_running() const
     if (!static_cast<bool>(*this))
         return false;
 
-    auto const [isRunning, exit_code] = impl::get_running_details(m_handle);
+    auto const [isRunning, exit_code] = impl::get_running_details(handle_);
     static_cast<void>(exit_code);
     return isRunning;
 }
@@ -171,19 +171,19 @@ std::optional<process_priority> process::get_priority() const
     if (!static_cast<bool>(*this))
         return std::nullopt;
 
-    if (static_cast<bool>(m_handle))
-        return impl::get_process_priority(m_handle);
+    if (static_cast<bool>(handle_))
+        return impl::get_process_priority(handle_);
 
-    auto const handle = impl::get_process_handle(m_id, process_access_rights::process_query_information);
+    auto const handle = impl::get_process_handle(id_, process_access_rights::process_query_information);
     return impl::get_process_priority(handle);
 }
 
 std::optional<process::exit_code_type> process::get_exit_code() const
 {
-    if (!static_cast<bool>(m_handle))
+    if (!static_cast<bool>(handle_))
         return std::nullopt;
 
-    auto const [isRunning, exit_code] = impl::get_running_details(m_handle.native_handle());
+    auto const [isRunning, exit_code] = impl::get_running_details(handle_.native_handle());
     return isRunning
         ? std::nullopt
         : std::optional(exit_code);
@@ -194,12 +194,12 @@ void process::wait_for_exit() const
     if (!static_cast<bool>(*this))
         return;
 
-    if (static_cast<bool>(m_handle)) {
-        impl::wait_for_exit(m_handle);
+    if (static_cast<bool>(handle_)) {
+        impl::wait_for_exit(handle_);
         return;
     }
 
-    static_cast<void>(wait_one(m_handle));
+    static_cast<void>(wait_one(handle_));
 }
 
 bool process::wait_for_exit(std::chrono::milliseconds const& timeout) const 
@@ -207,17 +207,17 @@ bool process::wait_for_exit(std::chrono::milliseconds const& timeout) const
     if (!static_cast<bool>(*this))
         return true;
 
-    if (static_cast<bool>(m_handle))
-        return impl::wait_for_exit(m_handle, timeout);
+    if (static_cast<bool>(handle_))
+        return impl::wait_for_exit(handle_, timeout);
 
-    auto const handle = impl::get_process_handle(m_id, combine(process_access_rights::process_query_information, process_access_rights::synchronize));
+    auto const handle = impl::get_process_handle(id_, combine(process_access_rights::process_query_information, process_access_rights::synchronize));
     return impl::wait_for_exit(handle, timeout);
 }
 
 void process::close() noexcept
 {
     if (*this)
-        static_cast<void>(m_handle.reset());
+        static_cast<void>(handle_.reset());
 
 }
 

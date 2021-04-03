@@ -35,12 +35,12 @@ namespace modern_win32
         using native_handle_type = typename TRAITS::native_handle_type;
 
         explicit unique_handle(native_handle_type handle = TRAITS::invalid())
-            : m_handle(handle)
+            : handle_(handle)
         {
         }
         unique_handle(unique_handle const&) = delete;
         unique_handle(unique_handle&& other) noexcept
-            : m_handle(other.release())
+            : handle_(other.release())
         {
             static_cast<void>(other.reset());
         }
@@ -56,7 +56,7 @@ namespace modern_win32
         [[nodiscard]]
         native_handle_type native_handle() const noexcept
         {
-            return m_handle;
+            return handle_;
         }
 
         /// <summary>
@@ -65,8 +65,8 @@ namespace modern_win32
         [[nodiscard]]
         native_handle_type release() noexcept
         {
-            auto const handle = m_handle;
-            m_handle = TRAITS::invalid();
+            auto const handle = handle_;
+            handle_ = TRAITS::invalid();
             return handle;
         }
         /// <summary>
@@ -76,12 +76,12 @@ namespace modern_win32
         [[nodiscard]]
         bool reset(native_handle_type handle = TRAITS::invalid()) noexcept
         {
-            if (m_handle == handle)
+            if (handle_ == handle)
                 return static_cast<bool>(*this);
 
-            if (m_handle != TRAITS::invalid())
+            if (handle_ != TRAITS::invalid())
                 close();
-            m_handle = handle;
+            handle_ = handle;
             return static_cast<bool>(*this);
         }
 
@@ -90,13 +90,13 @@ namespace modern_win32
         /// </summary>
         void swap(unique_handle<TRAITS>& other) noexcept
         {
-            std::swap(m_handle, other.m_handle);
+            std::swap(handle_, other.handle_);
         }
 
         [[nodiscard]]
         explicit operator bool() const noexcept
         {
-            return m_handle != TRAITS::invalid();
+            return handle_ != TRAITS::invalid();
         }
 
         static constexpr auto invalid() noexcept
@@ -108,28 +108,28 @@ namespace modern_win32
         [[nodiscard]]
         friend auto operator<=>(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second) noexcept
         {
-            return first.m_handle <=> second.m_handle;
+            return first.handle_ <=> second.handle_;
         }
 #       else
         [[nodiscard]]
         friend bool operator<(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second)
         {
-            return first.m_handle < second.m_handle;
+            return first.handle_ < second.handle_;
         }
         [[nodiscard]]
         friend bool operator>(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second)
         {
-            return first.m_handle > second.m_handle;
+            return first.handle_ > second.handle_;
         }
         [[nodiscard]]
         friend bool operator<=(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second)
         {
-            return first.m_handle <= second.m_handle;
+            return first.handle_ <= second.handle_;
         }
         [[nodiscard]]
         friend bool operator>=(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second)
         {
-            return first.m_handle >= second.m_handle;
+            return first.handle_ >= second.handle_;
         }
 
 #       endif
@@ -137,7 +137,7 @@ namespace modern_win32
         [[nodiscard]]
         friend bool operator==(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second)
         {
-            return first.m_handle == second.m_handle;
+            return first.handle_ == second.handle_;
         }
         [[nodiscard]]
         friend bool operator!=(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second)
@@ -161,7 +161,7 @@ namespace modern_win32
             return *this;
         }
     private:
-        native_handle_type m_handle;
+        native_handle_type handle_;
 
         /// <summary>
         /// closes the current handle if open
@@ -169,7 +169,7 @@ namespace modern_win32
         void close() noexcept
         {
             if (*this) 
-                TRAITS::close(m_handle);
+                TRAITS::close(handle_);
         }
     };
 

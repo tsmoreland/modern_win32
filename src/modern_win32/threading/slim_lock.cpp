@@ -18,45 +18,45 @@ namespace modern_win32::threading
 
 slim_lock::slim_lock() 
 {
-    InitializeSRWLock(&m_lock);
+    InitializeSRWLock(&lock_);
 }
 
 slim_lock::slim_lock(slim_lock&& other) noexcept 
-    : m_lock(other.m_lock)
+    : lock_(other.lock_)
 {
-    InitializeSRWLock(&other.m_lock);
+    InitializeSRWLock(&other.lock_);
 }
 
 void slim_lock::lock() noexcept
 {
-    AcquireSRWLockExclusive(&m_lock);
+    AcquireSRWLockExclusive(&lock_);
 }
 
 bool slim_lock::try_lock() noexcept
 {
-    return TryAcquireSRWLockExclusive(&m_lock) != 0;
+    return TryAcquireSRWLockExclusive(&lock_) != 0;
 }
 
 void slim_lock::unlock() noexcept
 {
-    ReleaseSRWLockExclusive(&m_lock);
+    ReleaseSRWLockExclusive(&lock_);
 }
 void slim_lock::lock_shared() noexcept
 {
-    AcquireSRWLockShared(&m_lock);
+    AcquireSRWLockShared(&lock_);
 }
 bool slim_lock::try_lock_shared() noexcept
 {
-    return TryAcquireSRWLockShared(&m_lock) != 0;
+    return TryAcquireSRWLockShared(&lock_) != 0;
 }
 void slim_lock::unlock_shared() noexcept
 {
-    ReleaseSRWLockShared(&m_lock);
+    ReleaseSRWLockShared(&lock_);
 }
 
 slim_lock::native_handle_type slim_lock::native_handle() noexcept
 {
-    return &m_lock;
+    return &lock_;
 }
 
 slim_lock& slim_lock::operator=(slim_lock&& other) noexcept 
@@ -67,10 +67,10 @@ slim_lock& slim_lock::operator=(slim_lock&& other) noexcept
     unlock();
     unlock_shared();
 
-    m_lock = other.m_lock;
+    lock_ = other.lock_;
     
-    other.m_lock = SRWLOCK{};
-    InitializeSRWLock(&other.m_lock);
+    other.lock_ = SRWLOCK{};
+    InitializeSRWLock(&other.lock_);
 
     return *this;
 }
