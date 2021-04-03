@@ -229,7 +229,7 @@ process open_process(process_id_type const& id, process_access_rights const acce
         return process;
 
     windows_error_details const error{};
-    switch (error) {
+    switch (error) {  // NOLINT(clang-diagnostic-switch-enum)
     case windows_error::error_invalid_parameter:
         throw std::invalid_argument("invalid process id");
     case windows_error::error_access_denied:
