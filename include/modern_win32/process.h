@@ -22,6 +22,7 @@
 
 #include <chrono>
 #include <optional>
+#include <string>
 #include <Windows.h>
 
 namespace modern_win32
@@ -156,6 +157,15 @@ namespace modern_win32
         /// </exception>
         [[nodiscard]]
         bool wait_for_exit(std::chrono::milliseconds const& timeout) const; 
+
+
+        /// <summary>
+        /// returns the full path to the primary module of the process
+        /// </summary>
+        /// <returns>the full path to the primary module of the process</returns>
+        /// <exception cref="windows_exception">if error occurs with Win32 API</exception>
+        [[nodiscard]]
+        std::wstring get_file_path() const;
 
     private:
 

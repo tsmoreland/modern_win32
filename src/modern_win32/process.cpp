@@ -27,244 +27,249 @@
 namespace modern_win32
 {
 
-process::process(process_id_type const& id)
-    : id_{id}
-{
-    if (id == 0UL)
-        throw std::invalid_argument("id cannot be 0");
-}
-process::process(process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles)
-    : process(id)
-{
-    static_cast<void>(handle_.reset(impl::get_process_handle(id_, access_rights, inherit_handles).release()));
-}
-process::process(native_handle_type const& handle)
-    : handle_{handle}
-    , id_{0UL}
-{
-    if (handle == process_handle::invalid())
-        return;
+    process::process(process_id_type const& id)
+        : id_{id}
+    {
+        if (id == 0UL)
+            throw std::invalid_argument("id cannot be 0");
+    }
+    process::process(process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles)
+        : process(id)
+    {
+        static_cast<void>(handle_.reset(impl::get_process_handle(id_, access_rights, inherit_handles).release()));
+    }
+    process::process(native_handle_type const& handle)
+        : handle_{handle}
+        , id_{0UL}
+    {
+        if (handle == process_handle::invalid())
+            return;
 
-    id_ = impl::get_process_id(handle);
+        id_ = impl::get_process_id(handle);
 
-}
-process::process(process_id_type const& id, native_handle_type const& handle)
-    : handle_{handle}
-    , id_{id}
-{
-    if (handle == process_handle::invalid() && id_ != 0UL)
-        throw std::invalid_argument("id must be zero if handle is invalid");
-    if (handle != process_handle::invalid() && id_ == 0UL)
-        throw std::invalid_argument("id must be provided if handle is not invalid");
-}
-process::process(deconstruct_type const& id_handle_pair)
-    : process(id_handle_pair.first, id_handle_pair.second)
-{
-}
-process::process(process&& other) noexcept
-{
-    auto [id, handle] = other.release();
-    id_ = id;
-    static_cast<void>(handle_.reset(handle));
-}
+    }
+    process::process(process_id_type const& id, native_handle_type const& handle)
+        : handle_{handle}
+        , id_{id}
+    {
+        if (handle == process_handle::invalid() && id_ != 0UL)
+            throw std::invalid_argument("id must be zero if handle is invalid");
+        if (handle != process_handle::invalid() && id_ == 0UL)
+            throw std::invalid_argument("id must be provided if handle is not invalid");
+    }
+    process::process(deconstruct_type const& id_handle_pair)
+        : process(id_handle_pair.first, id_handle_pair.second)
+    {
+    }
+    process::process(process&& other) noexcept
+    {
+        auto [id, handle] = other.release();
+        id_ = id;
+        static_cast<void>(handle_.reset(handle));
+    }
 
-process& process::operator=(process&& other) noexcept
-{
-    if (*this == other)
+    process& process::operator=(process&& other) noexcept
+    {
+        if (*this == other)
+            return *this;
+
+        static_cast<void>(handle_.reset(other.handle_.release()));
+        id_ = other.id_;
+        other.id_ = 0;
+
         return *this;
-
-    static_cast<void>(handle_.reset(other.handle_.release()));
-    id_ = other.id_;
-    other.id_ = 0;
-
-    return *this;
-}
-
-bool operator==(process const& first, process const& second)
-{
-    return first.handle_ == second.handle_ && first.id_ == second.id_;
-}
-bool operator!=(process const& first, process const& second)
-{
-    return !(first == second);
-}
-
-process::operator bool() const noexcept
-{
-    if (static_cast<bool>(handle_))
-        return true;
-    if (id_ != 0UL) {
-        return static_cast<bool>(impl::get_process_handle(id_, combine(process_access_rights::process_query_information, process_access_rights::synchronize)));
     }
-    return false;
-}
 
-void swap(process& first, process& second) noexcept
-{
-    using std::swap;
-    swap(first.handle_, second.handle_);
-    swap(first.id_, second.id_);
-}
+    bool operator==(process const& first, process const& second)
+    {
+        return first.handle_ == second.handle_ && first.id_ == second.id_;
+    }
+    bool operator!=(process const& first, process const& second)
+    {
+        return !(first == second);
+    }
 
-bool process::reset(deconstruct_type const& process)
-{
-    auto [id, handle] = process;
-
-    if (handle_.native_handle() == handle)
-        return static_cast<bool>(*this);
-
-    close();
-    id_ = id;
-    return handle_.reset(handle);
-}
-
-bool process::reset(native_handle_type const handle)
-{
-    if (handle_.native_handle() == handle)
-        return static_cast<bool>(*this);
-
-    close();
-
-    return handle_.reset(handle);
-}
-
-process::deconstruct_type process::release()
-{
-    process_id_type id{};
-    std::swap(id_, id);
-    return make_deconstruct_type(id, handle_.release());
-}
-
-process::native_handle_type process::native_handle() const noexcept
-{
-    return handle_.native_handle();
-}
-
-process_handle& process::get() noexcept
-{
-    return handle_;
-}
-
-std::optional<process_id_type> process::get_process_id() const
-{
-    return id_;
-}
-
-bool process::is_running() const
-{
-    if (!static_cast<bool>(*this))
+    process::operator bool() const noexcept
+    {
+        if (static_cast<bool>(handle_))
+            return true;
+        if (id_ != 0UL) {
+            return static_cast<bool>(impl::get_process_handle(id_, combine(process_access_rights::process_query_information, process_access_rights::synchronize)));
+        }
         return false;
-
-    auto const [isRunning, exit_code] = impl::get_running_details(handle_);
-    static_cast<void>(exit_code);
-    return isRunning;
-}
-
-bool process::has_exited() const
-{
-    return !is_running();
-}
-
-
-std::optional<process_priority> process::get_priority() const
-{
-    if (!static_cast<bool>(*this))
-        return std::nullopt;
-
-    if (static_cast<bool>(handle_))
-        return impl::get_process_priority(handle_);
-
-    auto const handle = impl::get_process_handle(id_, process_access_rights::process_query_information);
-    return impl::get_process_priority(handle);
-}
-
-std::optional<process::exit_code_type> process::get_exit_code() const
-{
-    if (!static_cast<bool>(handle_))
-        return std::nullopt;
-
-    auto const [isRunning, exit_code] = impl::get_running_details(handle_.native_handle());
-    return isRunning
-        ? std::nullopt
-        : std::optional(exit_code);
-}
-
-void process::wait_for_exit() const
-{
-    if (!static_cast<bool>(*this))
-        return;
-
-    if (static_cast<bool>(handle_)) {
-        impl::wait_for_exit(handle_);
-        return;
     }
 
-    static_cast<void>(wait_one(handle_));
-}
-
-bool process::wait_for_exit(std::chrono::milliseconds const& timeout) const 
-{
-    if (!static_cast<bool>(*this))
-        return true;
-
-    if (static_cast<bool>(handle_))
-        return impl::wait_for_exit(handle_, timeout);
-
-    auto const handle = impl::get_process_handle(id_, combine(process_access_rights::process_query_information, process_access_rights::synchronize));
-    return impl::wait_for_exit(handle, timeout);
-}
-
-void process::close() noexcept
-{
-    if (*this)
-        static_cast<void>(handle_.reset());
-
-}
-
-process open_process(process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles)
-{
-    process process{id, access_rights, inherit_handles};
-
-    if (static_cast<bool>(process))
-        return process;
-
-    windows_error_details const error{};
-    switch (error) {  // NOLINT(clang-diagnostic-switch-enum)
-    case windows_error::error_invalid_parameter:
-        throw std::invalid_argument("invalid process id");
-    case windows_error::error_access_denied:
-        throw access_denied_exception();
-    default:
-        throw windows_exception(error.native_error_code());
+    void swap(process& first, process& second) noexcept
+    {
+        using std::swap;
+        swap(first.handle_, second.handle_);
+        swap(first.id_, second.id_);
     }
-}
 
-process start_process(ansi_process_startup_info const& startup_info)
-{
-    return impl::start_process<char>(startup_info);
-}
-process start_process(wide_process_startup_info const& startup_info)
-{
-    return impl::start_process<wchar_t>(startup_info);
-}
+    bool process::reset(deconstruct_type const& process)
+    {
+        auto [id, handle] = process;
 
-process start_process(char const* filename, char const* arguments)
-{
-    auto const startup_info = ansi_process_startup_info_builder()
-        .with_filename(filename)
-        .with_arguments(arguments)
-        .build();
-    return start_process(startup_info);
-}
+        if (handle_.native_handle() == handle)
+            return static_cast<bool>(*this);
 
-process start_process(wchar_t const* filename, wchar_t const* arguments)
-{
-    auto const startup_info = wide_process_startup_info_builder()
-        .with_filename(filename)
-        .with_arguments(arguments)
-        .build();
-    return start_process(startup_info);
+        close();
+        id_ = id;
+        return handle_.reset(handle);
+    }
 
-}
+    bool process::reset(native_handle_type const handle)
+    {
+        if (handle_.native_handle() == handle)
+            return static_cast<bool>(*this);
+
+        close();
+
+        return handle_.reset(handle);
+    }
+
+    process::deconstruct_type process::release()
+    {
+        process_id_type id{};
+        std::swap(id_, id);
+        return make_deconstruct_type(id, handle_.release());
+    }
+
+    process::native_handle_type process::native_handle() const noexcept
+    {
+        return handle_.native_handle();
+    }
+
+    process_handle& process::get() noexcept
+    {
+        return handle_;
+    }
+
+    std::optional<process_id_type> process::get_process_id() const
+    {
+        return id_;
+    }
+
+    bool process::is_running() const
+    {
+        if (!static_cast<bool>(*this))
+            return false;
+
+        auto const [isRunning, exit_code] = impl::get_running_details(handle_);
+        static_cast<void>(exit_code);
+        return isRunning;
+    }
+
+    bool process::has_exited() const
+    {
+        return !is_running();
+    }
+
+
+    std::optional<process_priority> process::get_priority() const
+    {
+        if (!static_cast<bool>(*this))
+            return std::nullopt;
+
+        if (static_cast<bool>(handle_))
+            return impl::get_process_priority(handle_);
+
+        auto const handle = impl::get_process_handle(id_, process_access_rights::process_query_information);
+        return impl::get_process_priority(handle);
+    }
+
+    std::optional<process::exit_code_type> process::get_exit_code() const
+    {
+        if (!static_cast<bool>(handle_))
+            return std::nullopt;
+
+        auto const [isRunning, exit_code] = impl::get_running_details(handle_.native_handle());
+        return isRunning
+            ? std::nullopt
+            : std::optional(exit_code);
+    }
+
+    void process::wait_for_exit() const
+    {
+        if (!static_cast<bool>(*this))
+            return;
+
+        if (static_cast<bool>(handle_)) {
+            impl::wait_for_exit(handle_);
+            return;
+        }
+
+        static_cast<void>(wait_one(handle_));
+    }
+
+    bool process::wait_for_exit(std::chrono::milliseconds const& timeout) const 
+    {
+        if (!static_cast<bool>(*this))
+            return true;
+
+        if (static_cast<bool>(handle_))
+            return impl::wait_for_exit(handle_, timeout);
+
+        auto const handle = impl::get_process_handle(id_, combine(process_access_rights::process_query_information, process_access_rights::synchronize));
+        return impl::wait_for_exit(handle, timeout);
+    }
+
+    void process::close() noexcept
+    {
+        if (*this)
+            static_cast<void>(handle_.reset());
+
+    }
+
+    std::wstring get_file_path() const
+    {
+        return L"";
+    }
+
+    process open_process(process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles)
+    {
+        process process{id, access_rights, inherit_handles};
+
+        if (static_cast<bool>(process))
+            return process;
+
+        windows_error_details const error{};
+        switch (error) {  // NOLINT(clang-diagnostic-switch-enum)
+        case windows_error::error_invalid_parameter:
+            throw std::invalid_argument("invalid process id");
+        case windows_error::error_access_denied:
+            throw access_denied_exception();
+        default:
+            throw windows_exception(error.native_error_code());
+        }
+    }
+
+    process start_process(ansi_process_startup_info const& startup_info)
+    {
+        return impl::start_process<char>(startup_info);
+    }
+    process start_process(wide_process_startup_info const& startup_info)
+    {
+        return impl::start_process<wchar_t>(startup_info);
+    }
+
+    process start_process(char const* filename, char const* arguments)
+    {
+        auto const startup_info = ansi_process_startup_info_builder()
+            .with_filename(filename)
+            .with_arguments(arguments)
+            .build();
+        return start_process(startup_info);
+    }
+
+    process start_process(wchar_t const* filename, wchar_t const* arguments)
+    {
+        auto const startup_info = wide_process_startup_info_builder()
+            .with_filename(filename)
+            .with_arguments(arguments)
+            .build();
+        return start_process(startup_info);
+
+    }
 
 }

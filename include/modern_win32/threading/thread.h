@@ -127,7 +127,7 @@ namespace modern_win32::threading
         /// <param name="parameter">parameter to use in thread creation</param>
         /// <returns>true if thread is started; otherwise, false</returns>
         [[nodiscard]]
-        bool start(thread_proc const worker, thread_parameter const parameter);
+        bool start(thread_proc const worker, thread_parameter parameter);
 
         /// <summary>
         /// starts the thread using <paramref name="worker"/> if not already running
