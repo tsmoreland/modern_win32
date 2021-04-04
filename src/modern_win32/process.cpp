@@ -275,7 +275,7 @@ namespace modern_win32
 
     process start_process(char const* filename, char const* arguments)
     {
-        auto const startup_info = ansi_process_startup_info_builder()
+        process_startup_info<char> const startup_info = ansi_process_startup_info_builder()
             .with_filename(filename)
             .with_arguments(arguments)
             .build();
@@ -284,7 +284,7 @@ namespace modern_win32
 
     process start_process(wchar_t const* filename, wchar_t const* arguments)
     {
-        auto const startup_info = wide_process_startup_info_builder()
+        process_startup_info<wchar_t> const startup_info = wide_process_startup_info_builder()
             .with_filename(filename)
             .with_arguments(arguments)
             .build();
