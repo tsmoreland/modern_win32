@@ -114,7 +114,6 @@ if(MSVC)
                 /Gy
             >
             /permissive-;
-            /std:c++latest;
             /sdl;
             /W4;
             ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT};
@@ -131,7 +130,6 @@ if(MSVC)
                 /Gy
             >
             /permissive-;
-            /std:c++latest;
             /sdl;
             /W4;
             ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT};

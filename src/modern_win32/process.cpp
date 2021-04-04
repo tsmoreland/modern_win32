@@ -21,6 +21,7 @@
 #include <modern_win32/wait_for.h>
 #include <modern_win32/windows_error.h>
 #include <modern_win32/shared_utilities.h>
+#include <Psapi.h>
 
 #include "impl/process_impl.h"
 
@@ -221,9 +222,28 @@ namespace modern_win32
 
     }
 
-    std::wstring get_file_path() const
+    std::wstring process::get_file_path() const
     {
-        return L"";
+        if (!static_cast<bool>(handle_)) {
+            throw windows_exception(ERROR_PROC_NOT_FOUND);
+        }
+
+        HMODULE modules[1024];
+        DWORD bytes_required;
+        if (EnumProcessModules(handle_.native_handle(), modules, sizeof(HMODULE), &bytes_required) == 0) {
+            throw windows_exception();
+        }
+
+        if (bytes_required == 0) {
+            throw windows_exception(ERROR_PROC_NOT_FOUND); // maybe a better choice here, ideally this should never happen, 
+        }
+
+        WCHAR path[MAX_PATH + 1];
+        if (GetModuleFileNameExW(handle_.native_handle(), modules[0], path, MAX_PATH) == 0) {
+            throw windows_exception();
+        }
+
+        return path;
     }
 
     process open_process(process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles)
