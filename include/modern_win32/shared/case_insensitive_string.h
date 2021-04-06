@@ -15,6 +15,7 @@
 #define MODERN_WIN32_SHARED_CASE_INSENSITIVE_CHARACTER_TRAITS_  // NOLINT(clang-diagnostic-unused-macros)
 
 #include <string>
+#include <string_view>
 
 namespace modern_win32::shared
 {
@@ -78,6 +79,9 @@ namespace modern_win32::shared
 
     using case_insensitive_string = std::basic_string<char, case_insensitive_char_traits<char>>;
     using case_insensitive_wstring = std::basic_string<wchar_t, case_insensitive_char_traits<wchar_t>>;
+
+    using case_insensitive_string_view = std::basic_string_view<char, case_insensitive_char_traits<char>>;
+    using case_insensitive_wstring_view = std::basic_string_view<wchar_t, case_insensitive_char_traits<wchar_t>>;
 
 }
 
