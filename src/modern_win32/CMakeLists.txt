@@ -40,7 +40,7 @@ set (public_header_files
 source_group("public header files" FILES ${public_header_files})
 
 # Target
-add_library(${PROJECT_NAME} SHARED ${source_files})
+add_library(${PROJECT_NAME} SHARED ${source_files} "process_module.cpp")
 
 include(GenerateExportHeader)
 generate_export_header(${PROJECT_NAME})

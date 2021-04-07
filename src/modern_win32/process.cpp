@@ -222,15 +222,25 @@ namespace modern_win32
 
     }
 
-    std::wstring process::get_file_path() const
+    process_module process::get_primary_module() const
+    {
+        return get_modules(1)[0];
+    }
+
+    std::vector<process_module> process::get_modules(DWORD max_count /*= 1024*/) const
     {
         if (!static_cast<bool>(handle_)) {
             throw windows_exception(ERROR_PROC_NOT_FOUND);
         }
+        if (max_count == 0) {
+            throw std::invalid_argument("max_count must be greater than 0");
+        }
 
-        HMODULE modules[1024];
+        std::vector<process_module> modules;
+
+        std::unique_ptr<HMODULE[]> const module_handles = std::make_unique<HMODULE[]>(max_count);
         DWORD bytes_required;
-        if (EnumProcessModules(handle_.native_handle(), modules, sizeof(HMODULE), &bytes_required) == 0) {
+        if (EnumProcessModules(handle_.native_handle(), module_handles.get(), sizeof(HMODULE), &bytes_required) == 0) {
             throw windows_exception();
         }
 
@@ -238,12 +248,11 @@ namespace modern_win32
             throw windows_exception(ERROR_PROC_NOT_FOUND); // maybe a better choice here, ideally this should never happen, 
         }
 
-        WCHAR path[MAX_PATH + 1];
-        if (GetModuleFileNameExW(handle_.native_handle(), modules[0], path, MAX_PATH) == 0) {
-            throw windows_exception();
+        for (auto index = 0ULL, upper_bound = bytes_required / sizeof(HMODULE); index < upper_bound; index++) {
+            modules.emplace_back(handle_.native_handle(), module_handles[index]);
         }
 
-        return path;
+        return modules;
     }
 
     process open_process(process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles)

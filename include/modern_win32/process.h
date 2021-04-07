@@ -18,6 +18,7 @@
 #include <modern_win32/modern_win32_export.h>
 #include <modern_win32/null_handle.h>
 #include <modern_win32/process_enums.h>
+#include <modern_win32/process_module.h>
 #include <modern_win32/process_startup_info.h>
 
 #include <chrono>
@@ -158,14 +159,23 @@ namespace modern_win32
         [[nodiscard]]
         bool wait_for_exit(std::chrono::milliseconds const& timeout) const; 
 
-
         /// <summary>
-        /// returns the full path to the primary module of the process
+        /// returns the first module of the process
         /// </summary>
-        /// <returns>the full path to the primary module of the process</returns>
+        /// <returns>the first module of the process</returns>
         /// <exception cref="windows_exception">if error occurs with Win32 API</exception>
         [[nodiscard]]
-        std::wstring get_file_path() const;
+        process_module get_primary_module() const;
+
+        /// <summary>
+        /// returns a collection of all modules in the process
+        /// </summary>
+        /// <param name="max_count">maximum number of modules to retrieve</param>
+        /// <returns>a collection of all modules in the process</returns>
+        /// <exception cref="windows_exception">if error occurs with Win32 API</exception>
+        /// <exception cref="std::invalid_argument">if max_count is 0</exception>
+        [[nodiscard]]
+        std::vector<process_module> get_modules(DWORD max_count = 1024) const;
 
     private:
 
