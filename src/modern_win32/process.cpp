@@ -240,7 +240,7 @@ namespace modern_win32
 
         std::unique_ptr<HMODULE[]> const module_handles = std::make_unique<HMODULE[]>(max_count);
         DWORD bytes_required;
-        if (EnumProcessModules(handle_.native_handle(), module_handles.get(), sizeof(HMODULE), &bytes_required) == 0) {
+        if (EnumProcessModules(handle_.native_handle(), module_handles.get(), max_count*sizeof(HMODULE), &bytes_required) == 0) {
             throw windows_exception();
         }
 
