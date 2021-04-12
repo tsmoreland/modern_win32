@@ -11,42 +11,29 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#pragma warning(push, 2)
+#pragma warning(push, 1)
 #include <gtest/gtest.h>
 #pragma warning(pop)
-#include <modern_win32/threading/event.h>
-#include "context.h"
 
-using modern_win32::threading::auto_reset_event;
-using modern_win32::threading::manual_reset_event;
+#include "modern_win32/crypto_provider.h"
 
-using modern_win32::test::context;
-constexpr auto TEST_TIMOUT = std::chrono::milliseconds(250);
+using modern_win32::bcrypt_get_random_bytes;
 
-TEST(auto_reset_event, is_reset_after_wait) 
+TEST(rsa_crypto_provider, bcrypt_get_random_bytes_returns_different_returns_true_on_success)
 {
-    // Arrange
-    context context{TEST_TIMOUT};
-    auto_reset_event event{false};
+    int first{};
+    auto const result = bcrypt_get_random_bytes(reinterpret_cast<byte*>(&first), sizeof(first));
 
-    // Act
-    auto const signalled = context::get_second_wait_result(event);
-    context.complete = true;
-
-    // Assert
-    ASSERT_TRUE(!signalled && !context.get_timed_out());
+    ASSERT_TRUE(result);
 }
 
-TEST(manual_reset_event, is_reset_after_wait) 
+TEST(rsa_crypto_provider, get_bytes_returns_different_value_after_subsequent_calls)
 {
-    // Arrange
-    context context{TEST_TIMOUT};
-    manual_reset_event event{false};
 
-    // Act
-    auto const signalled = context::get_second_wait_result(event);
-    context.complete = true;
+    int first{};
+    int second{};
+    static_cast<void>(bcrypt_get_random_bytes(reinterpret_cast<byte*>(&first), sizeof(first)));
+    static_cast<void>(bcrypt_get_random_bytes(reinterpret_cast<byte*>(&second), sizeof(second)));
 
-    // Assert
-    ASSERT_TRUE(signalled && !context.get_timed_out());
+    ASSERT_NE(first, second);
 }

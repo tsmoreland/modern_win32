@@ -23,9 +23,11 @@ namespace modern_win32::impl
     running_details get_running_details(process::native_handle_type const process_handle)
     {
         process::exit_code_type exit_code{};
-        auto const getExitProcessSuccess = GetExitCodeProcess(process_handle, &exit_code);
-        if (!getExitProcessSuccess)
+        
+        if (auto const getExitProcessSuccess = GetExitCodeProcess(process_handle, &exit_code);
+            !getExitProcessSuccess) {
             throw windows_exception("Unable to get exit code for the requested process");
+        }
 
         using std::make_tuple;
         return exit_code == STILL_ACTIVE
@@ -41,15 +43,16 @@ namespace modern_win32::impl
     [[nodiscard]]
     process_id_type get_process_id(process::native_handle_type const handle)
     {
-        auto const id = GetProcessId(handle);
-        if (id != 0)
+        if (auto const id = GetProcessId(handle);
+            id != 0) {
             return id;
+        }
 
         windows_error_details const error_details;
-
-        auto [is_running, exit_code] = get_running_details(handle);
-        if (!is_running)
+        if (auto [is_running, exit_code] = get_running_details(handle);
+            !is_running) {
             return 0;
+        }
 
         throw windows_exception(error_details);
     }

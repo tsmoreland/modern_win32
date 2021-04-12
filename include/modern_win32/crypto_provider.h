@@ -11,42 +11,32 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#pragma warning(push, 2)
-#include <gtest/gtest.h>
-#pragma warning(pop)
-#include <modern_win32/threading/event.h>
-#include "context.h"
+#ifndef MODERN_WIN32_CRYPTO_PROVIDER_
+#define MODERN_WIN32_CRYPTO_PROVIDER_  // NOLINT(clang-diagnostic-unused-macros)
+#ifdef _WIN32
 
-using modern_win32::threading::auto_reset_event;
-using modern_win32::threading::manual_reset_event;
+#include <Windows.h>
+#include <modern_win32/modern_win32_export.h>
 
-using modern_win32::test::context;
-constexpr auto TEST_TIMOUT = std::chrono::milliseconds(250);
+#pragma comment (lib, "bcrypt")
 
-TEST(auto_reset_event, is_reset_after_wait) 
+namespace modern_win32
 {
-    // Arrange
-    context context{TEST_TIMOUT};
-    auto_reset_event event{false};
 
-    // Act
-    auto const signalled = context::get_second_wait_result(event);
-    context.complete = true;
+    /// <summary>
+    /// generates a random number.
+    /// </summary>
+    /// <param name="data">
+    /// The address of a buffer that receives the random number.
+    /// The size of this buffer is specified by the length parameter
+    /// .</param>
+    /// <param name="length">The size, in bytes, of the data buffer.</param>
+    /// <returns>returns true on success; otherwise, false</returns>
+    [[nodiscard]]
+    MODERN_WIN32_EXPORT bool bcrypt_get_random_bytes(byte* data, unsigned long length) noexcept;
 
-    // Assert
-    ASSERT_TRUE(!signalled && !context.get_timed_out());
 }
 
-TEST(manual_reset_event, is_reset_after_wait) 
-{
-    // Arrange
-    context context{TEST_TIMOUT};
-    manual_reset_event event{false};
+#endif
+#endif
 
-    // Act
-    auto const signalled = context::get_second_wait_result(event);
-    context.complete = true;
-
-    // Assert
-    ASSERT_TRUE(signalled && !context.get_timed_out());
-}

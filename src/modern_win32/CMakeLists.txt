@@ -5,8 +5,11 @@ set(source_files
     "impl/process_impl.cpp"
 	"threading/slim_lock.cpp"
 	"threading/thread.cpp"
+    "crypto_provider.cpp"
 	"guid.cpp"
     "process.cpp" 
+    "process_module.cpp" 
+    
     "wait_for.cpp"
     "windows_error.cpp")
 
@@ -17,15 +20,18 @@ set (public_header_files
     "../../include/modern_win32/com_exception.h"
     "../../include/modern_win32/threading/event.h"
     "../../include/modern_win32/invalid_handle.h"
+    "../../include/modern_win32/crytp_provider.h"
     "../../include/modern_win32/guid.h"
     "../../include/modern_win32/modern_win32_export.h"
     "../../include/modern_win32/module_handle.h"
     "../../include/modern_win32/naive_stack_allocator.h"
     "../../include/modern_win32/null_handle.h"
     "../../include/modern_win32/process.h"
+    "../../include/modern_win32/process_module.h"
     "../../include/modern_win32/process_enums.h"
     "../../include/modern_win32/process_information.h"
     "../../include/modern_win32/process_startup_info.h"
+    "../../include/modern_win32/rsa_crytp_provider.h"
     "../../include/modern_win32/shared_utilities.h"
     "../../include/modern_win32/threading/slim_lock.h"
     "../../include/modern_win32/threading/thread.h"
@@ -40,7 +46,7 @@ set (public_header_files
 source_group("public header files" FILES ${public_header_files})
 
 # Target
-add_library(${PROJECT_NAME} SHARED ${source_files} "process_module.cpp")
+add_library(${PROJECT_NAME} SHARED ${source_files})
 
 include(GenerateExportHeader)
 generate_export_header(${PROJECT_NAME})

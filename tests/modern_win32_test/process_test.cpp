@@ -92,14 +92,14 @@ TEST(process_should, report_is_running_when_active)
 
 TEST(process_should, report_correct_exit_code)
 {
-    auto const process = start_process(CommandExe, "/c exit 5");
+    auto const process = start_process(CommandExe, "/c Ping 127.0.0.1");
     EXPECT_TRUE(process.wait_for_exit(milliseconds(2500)));
-    ASSERT_EQ(process::exit_code_type(5),  process.get_exit_code());
+    ASSERT_EQ(process::exit_code_type{ 5 }, process.get_exit_code());
 }
 
 TEST(process_should, report_has_exited_after_exit)
 {
-    auto const process = start_process(CommandExe, "/c Sleep 1");
+    auto const process = start_process(CommandExe, "/c Ping 127.0.0.1");
     EXPECT_TRUE(process.wait_for_exit(milliseconds(2500)));
     ASSERT_TRUE(process.has_exited());
     ASSERT_TRUE(!process.is_running());
@@ -107,7 +107,7 @@ TEST(process_should, report_has_exited_after_exit)
 
 TEST(process_should, timeout_when_waiting_too_long)
 {
-    auto const process = start_process(CommandExe, "/c Sleep 1");
+    auto const process = start_process(CommandExe, "/c Ping 127.0.0.1");
     auto const timeout = process.wait_for_exit(milliseconds(250));
 
     process.wait_for_exit();

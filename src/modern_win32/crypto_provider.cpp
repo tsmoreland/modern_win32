@@ -11,42 +11,21 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#pragma warning(push, 2)
-#include <gtest/gtest.h>
-#pragma warning(pop)
-#include <modern_win32/threading/event.h>
-#include "context.h"
+#include "modern_win32/crypto_provider.h"
+#include "modern_win32/windows_exception.h"
+#include <ntstatus.h>
+#include <bcrypt.h>
 
-using modern_win32::threading::auto_reset_event;
-using modern_win32::threading::manual_reset_event;
-
-using modern_win32::test::context;
-constexpr auto TEST_TIMOUT = std::chrono::milliseconds(250);
-
-TEST(auto_reset_event, is_reset_after_wait) 
+namespace modern_win32
 {
-    // Arrange
-    context context{TEST_TIMOUT};
-    auto_reset_event event{false};
 
-    // Act
-    auto const signalled = context::get_second_wait_result(event);
-    context.complete = true;
+    bool bcrypt_get_random_bytes(byte* data, unsigned long length) noexcept
+    {
+        if (auto const result = BCryptGenRandom(BCRYPT_RNG_ALG_HANDLE, data, length, 0);
+            result != STATUS_SUCCESS) {
+            return false;
+        }
+        return true;
+    }
 
-    // Assert
-    ASSERT_TRUE(!signalled && !context.get_timed_out());
-}
-
-TEST(manual_reset_event, is_reset_after_wait) 
-{
-    // Arrange
-    context context{TEST_TIMOUT};
-    manual_reset_event event{false};
-
-    // Act
-    auto const signalled = context::get_second_wait_result(event);
-    context.complete = true;
-
-    // Assert
-    ASSERT_TRUE(signalled && !context.get_timed_out());
 }

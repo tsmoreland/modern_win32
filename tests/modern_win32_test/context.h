@@ -19,7 +19,7 @@
 #include <modern_win32/threading/event.h>
 #include <modern_win32/threading/thread_start.h>
 
-namespace util::test
+namespace modern_win32::test
 {
     void wait_for(bool const& complete, std::chrono::milliseconds const& interval);
     void fail_if_not_complete_after(std::chrono::milliseconds timeout, bool& complete, bool& timed_out);
