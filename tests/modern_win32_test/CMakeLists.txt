@@ -11,7 +11,7 @@ add_executable(${TEST_PROJECT_NAME} ${TEST_SOURCES}
     "event_test.cpp" 
     "guid_test.cpp" 
     "process_test.cpp"
-    "rsa_crypto_provider_test.cpp"
+    "bcrypt_random_test.cpp"
     "slim_lock_test.cpp" 
     "thread_test.cpp" )
 

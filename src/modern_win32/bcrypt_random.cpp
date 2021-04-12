@@ -11,29 +11,21 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#pragma warning(push, 1)
-#include <gtest/gtest.h>
-#pragma warning(pop)
+#include "modern_win32/bcrypt_random.h"
+#include "modern_win32/windows_exception.h"
+#include <ntstatus.h>
+#include <bcrypt.h>
 
-#include "modern_win32/crypto_provider.h"
-
-using modern_win32::bcrypt_get_random_bytes;
-
-TEST(rsa_crypto_provider, bcrypt_get_random_bytes_returns_different_returns_true_on_success)
-{
-    int first{};
-    auto const result = bcrypt_get_random_bytes(reinterpret_cast<byte*>(&first), sizeof(first));
-
-    ASSERT_TRUE(result);
-}
-
-TEST(rsa_crypto_provider, get_bytes_returns_different_value_after_subsequent_calls)
+namespace modern_win32
 {
 
-    int first{};
-    int second{};
-    static_cast<void>(bcrypt_get_random_bytes(reinterpret_cast<byte*>(&first), sizeof(first)));
-    static_cast<void>(bcrypt_get_random_bytes(reinterpret_cast<byte*>(&second), sizeof(second)));
+    bool bcrypt_get_random_bytes(byte* data, unsigned long length) noexcept
+    {
+        if (auto const result = BCryptGenRandom(BCRYPT_RNG_ALG_HANDLE, data, length, 0);
+            result != STATUS_SUCCESS) {
+            return false;
+        }
+        return true;
+    }
 
-    ASSERT_NE(first, second);
 }
