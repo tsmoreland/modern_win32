@@ -32,6 +32,7 @@ set (public_header_files
     "../../include/modern_win32/process_information.h"
     "../../include/modern_win32/process_startup_info.h"
     "../../include/modern_win32/rsa_crytp_provider.h"
+    "../../include/modern_win32/threading/semaphore.h"
     "../../include/modern_win32/shared_utilities.h"
     "../../include/modern_win32/threading/slim_lock.h"
     "../../include/modern_win32/threading/thread.h"
