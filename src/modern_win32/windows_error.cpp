@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Terry Moreland
+// Copyright Â© 2021 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -51,7 +51,7 @@ windows_error_details::operator bool() const noexcept
 /// <summary>
 /// Returns the <see cref="windows_error"/> formed using the original native error code if a match is found; otherwise <see cref="windows_error::unknown"/>
 /// </summary>
-/// <returns><see cref="windows_error"/> formed using the original native error code if a match is found; otherwise <see cref="windows_error::unknown"/></returns>
+/// <returns><windows_error formed using the original native error code if a match is found; otherwise windows_error::unknown</returns>
 windows_error windows_error_details::get() const noexcept
 {
     switch (native_error_code_) {
