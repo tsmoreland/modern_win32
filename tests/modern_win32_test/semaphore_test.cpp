@@ -17,7 +17,29 @@
 #include <modern_win32/threading/semaphore.h>
 #include "context.h"
 
-TEST(sempahore_test, placeholder)
+using modern_win32::threading::semaphore;
+using modern_win32::windows_exception;
+
+TEST(sempahore_test, constructor__throws_windows_exception__when_initial_count_negative)
 {
-    ASSERT_TRUE(true);
+    ASSERT_THROW({ 
+        semaphore s( -1, 10);
+
+    }, std::invalid_argument);
+}
+TEST(sempahore_test, constructor__throws_windows_exception__when_maximum_count_negative)
+{
+    ASSERT_THROW({ 
+        semaphore s( 0, -1);
+
+    }, std::invalid_argument);
+}
+
+
+TEST(sempahore_test, constructor__throws_windows_exception__when_maximum_count_less_than_initial_count)
+{
+    ASSERT_THROW({ 
+        semaphore s( 5, 1);
+
+    }, std::invalid_argument);
 }
