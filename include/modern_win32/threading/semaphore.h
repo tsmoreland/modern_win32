@@ -17,6 +17,8 @@
 #ifdef _WIN32
 
 #include <stdexcept>
+#include <string>
+#include <sstream>
 #include <Windows.h>
 #include <modern_win32/null_handle.h>
 #include <modern_win32/windows_exception.h>
@@ -26,6 +28,16 @@ namespace modern_win32::threading
     struct SEMAPHORE_TRAITS
     {
         using modern_handle_type = modern_win32::null_handle;
+
+        static auto release(modern_handle_type handle, int count) 
+        {
+            return ReleaseSemaphore(handle.native_handle(), count, nullptr) == TRUE;
+        }
+
+        static auto get_error_details() 
+        {
+            return modern_win32::windows_error_details();
+        }
     };
 
     template <typename TRAITS = SEMAPHORE_TRAITS>
@@ -33,9 +45,33 @@ namespace modern_win32::threading
     {
         using modern_handle_type = SEMAPHORE_TRAITS::modern_handle_type;
 
-        modern_handle_type semaphore_{};
+        modern_handle_type handle_{};
+        int maximum_count_;
 
     public:
+
+        /// <summary>
+        /// Increases the semaphore count by a specified amount.
+        /// </summary>
+        /// <param name="count">
+        /// The amount by which the semaphore object's current count is to be increased. 
+        /// The value must be greater than zero. If the specified amount would cause the 
+        /// semaphore's count to exceed the maximum count that was specified when the 
+        /// semaphore was created, the count is not changed and the function returns false
+        /// </param>
+        /// <exception cref="std::invalid_argument">
+        /// if count is less than or equal to zero, or greater than maximum value
+        /// </exception>
+        void release(int count)
+        {
+            if (count <= 0 || count > maximum_count_) {
+                throw std::invalid_argument((std::string("invalid count value") + std::to_string(count)).c_str());
+            }
+
+            if (!TRAITS::release(handle_.native_handle(), count)) {
+                throw windows_exception();
+            }
+        }
 
         /// <summary>
         /// Instantiates a new instance of the semaphore class.
@@ -55,15 +91,42 @@ namespace modern_win32::threading
         /// <exception cref="std::invalid_argument">
         /// If initial_count is less than or equal to 0, or greater than maximum_count.
         /// If maximum_count is less than or equal to 0
-        /// </exception
+        /// </exception>
         explicit semaphore(int initial_count, int maximum_count)
-            : semaphore_{ CreateSemaphoreA(nullptr, initial_count, maximum_count, nullptr) }
+            : handle_{ CreateSemaphoreA(nullptr, initial_count, maximum_count, nullptr) }
+            , maximum_count_{ maximum_count }
         {
-            if (!static_cast<bool>(semaphore_)) {
-                throw windows_exception();
+            if (static_cast<bool>(handle_)) {
+                return;
             }
+
+            windows_error_details const error = TRAITS::get_error_details();
+
+            if (error.get() == windows_error::error_invalid_parameter) {
+                std::stringstream builder{};
+                builder << "Invalid arguments, either initial " << initial_count << " or maximum " << maximum_count << " count is out of range";
+                throw std::invalid_argument(builder.str().c_str());
+            }
+
+            throw windows_exception(error.native_error_code());
         }
 
+        ~semaphore() = default;
+        semaphore(semaphore&& other) noexcept
+            : handle_{ other.handle_.release() }
+            , maximum_count_{ other.maximum_count_ }
+        {
+            other.maximum_count_ = 0;
+        }
+        semaphore& operator=(semaphore&& other) noexcept
+        {
+            std::ignore = handle_.reset(other.handle_.release());
+            maximum_count_ = other.maximum_count_;
+
+            other.maximum_count_ = 0;
+
+            return *this;
+        }
         semaphore(semaphore const&) = delete;
         semaphore& operator=(semaphore const&) = delete;
     };

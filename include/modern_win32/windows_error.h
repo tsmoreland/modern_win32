@@ -15,6 +15,7 @@
 
 #include <Windows.h>
 #include <optional>
+#include <modern_win32/modern_win32_export.h>
 
 namespace modern_win32
 {
@@ -4977,7 +4978,7 @@ namespace modern_win32
 
     using native_windows_error = decltype(GetLastError());
 
-    class windows_error_details final 
+    class MODERN_WIN32_EXPORT windows_error_details final 
     {
     public:
 
