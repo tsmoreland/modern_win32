@@ -20,35 +20,49 @@
 #include <string>
 #include <sstream>
 #include <Windows.h>
+#include <modern_win32/modern_win32_export.h>
 #include <modern_win32/null_handle.h>
+#include <modern_win32/wait_for.h>
 #include <modern_win32/windows_exception.h>
 
 namespace modern_win32::threading
 {
-    struct SEMAPHORE_TRAITS
+    struct MODERN_WIN32_EXPORT semaphore_traits
     {
         using modern_handle_type = modern_win32::null_handle;
 
-        static auto release(modern_handle_type handle, int count) 
-        {
-            return ReleaseSemaphore(handle.native_handle(), count, nullptr) == TRUE;
-        }
+        [[nodiscard]]
+        static auto release(modern_handle_type handle, int count) -> bool;
 
-        static auto get_error_details() 
-        {
-            return modern_win32::windows_error_details();
-        }
+        [[nodiscard]]
+        static auto get_error_details() -> modern_win32::windows_error_details;
     };
 
-    template <typename TRAITS = SEMAPHORE_TRAITS>
+    template <typename TRAITS = semaphore_traits>
     class semaphore final
     {
-        using modern_handle_type = SEMAPHORE_TRAITS::modern_handle_type;
+        using modern_handle_type = typename TRAITS::modern_handle_type;
 
         modern_handle_type handle_{};
         int maximum_count_;
 
     public:
+
+        /// <summary>
+        /// wait for event to be signaled
+        /// </summary>
+        /// <param name="timeout">
+        /// The time-out interval, in milliseconds. If a nonzero value is specified, the function waits until the specified objects are signaled or the interval elapses.
+        /// If  zero, the function does not enter a wait state if the specified objects are not signaled; it always returns immediately.
+        /// If maximum value or maximum value of DWORD, the function will return only when the specified objects are signaled.
+        /// </param>
+        /// <returns>true if event was signaled; otherwise, false</returns>
+        /// <exception cref="windows_exception">if wait fails</exception>
+        [[nodiscard]]
+        bool wait_one(std::chrono::milliseconds const timeout = get_infinity_in_ms()) const 
+        {
+            return is_complete(modern_win32::wait_one(handle_, timeout));
+        }
 
         /// <summary>
         /// Increases the semaphore count by a specified amount.
@@ -74,6 +88,16 @@ namespace modern_win32::threading
         }
 
         /// <summary>
+        /// Swaps the values this and other.
+        /// </summary>
+        void swap(semaphore& other) noexcept
+        {
+            using std::swap;
+            swap(handle_, other.handle_);
+            swap(maximum_count_, other.maximum_count_);
+        }
+
+        /// <summary>
         /// Instantiates a new instance of the semaphore class.
         /// </summary>
         /// <param name="initial_count">
@@ -92,7 +116,7 @@ namespace modern_win32::threading
         /// If initial_count is less than or equal to 0, or greater than maximum_count.
         /// If maximum_count is less than or equal to 0
         /// </exception>
-        explicit semaphore(int initial_count, int maximum_count)
+        explicit semaphore(int const initial_count, int const maximum_count)
             : handle_{ CreateSemaphoreA(nullptr, initial_count, maximum_count, nullptr) }
             , maximum_count_{ maximum_count }
         {
@@ -129,7 +153,113 @@ namespace modern_win32::threading
         }
         semaphore(semaphore const&) = delete;
         semaphore& operator=(semaphore const&) = delete;
+
+#       if __cplusplus > 201703L || _MSVC_LANG > 201703L
+        [[nodiscard]]
+        auto operator<=>(semaphore const& other)
+        {
+            return handle_ <=> other.handle_;
+        }
+
+#       else
+        [[nodiscard]]
+        bool operator<(semaphore const& other)
+        {
+            return handle_ < other.handle_;
+        }
+
+        [[nodiscard]]
+        bool operator<=(semaphore const& other)
+        {
+            return !(other.handle_ < handle_);
+        }
+
+        [[nodiscard]]
+        bool operator>(semaphore const& other)
+        {
+            return other.handle_ < handle_;
+        }
+
+        [[nodiscard]]
+        bool operator>=(semaphore const& other)
+        {
+            return !(handle_ < other.handle_);
+        }
+
+        [[nodiscard]]
+        bool operator==(semaphore const& other)
+        {
+            return handle_ == other.handle_;
+        }
+
+        [[nodiscard]]
+        bool operator!=(semaphore const& other)
+        {
+            return !(handle_ == other.handle_);
+        }
+#       endif
     };
+
+#   if __cplusplus > 201703L || _MSVC_LANG > 201703L 
+    template <typename TRAITS = semaphore_traits>
+    [[nodiscard]]
+    auto operator<=>(semaphore<TRAITS> const& lhs, semaphore<TRAITS> const& rhs)
+    {
+        return lhs.operator<=>(rhs);
+    }
+
+#   else
+    template <typename TRAITS = semaphore_traits>
+    [[nodiscard]]
+    bool operator<(semaphore<TRAITS> const& lhs, semaphore<TRAITS> const& rhs)
+    {
+        return lhs.operator<(rhs);
+    }
+
+    template <typename TRAITS = semaphore_traits>
+    [[nodiscard]]
+    bool operator<=(semaphore<TRAITS> const& lhs, semaphore<TRAITS> const& rhs)
+    {
+        return lhs.operator<=(rhs);
+    }
+
+    template <typename TRAITS = semaphore_traits>
+    [[nodiscard]]
+    bool operator>(semaphore<TRAITS> const& lhs, semaphore<TRAITS> const& rhs)
+    {
+        return lhs.operator>(rhs);
+    }
+
+    template <typename TRAITS = semaphore_traits>
+    [[nodiscard]]
+    bool operator>=(semaphore<TRAITS> const& lhs, semaphore<TRAITS> const& rhs)
+    {
+        return lhs.operator>=(rhs);
+    }
+
+    template <typename TRAITS = semaphore_traits>
+    [[nodiscard]]
+    bool operator==(semaphore<TRAITS> const& lhs, semaphore<TRAITS> const& rhs)
+    {
+        return lhs.operator==(rhs);
+    }
+
+    template <typename TRAITS = semaphore_traits>
+    [[nodiscard]]
+    bool operator!=(semaphore<TRAITS> const& lhs, semaphore<TRAITS> const& rhs)
+    {
+        return lhs.operator!=(rhs);
+    }
+#   endif
+
+    /// <summary>
+    /// Swaps the values lhs and rhs.
+    /// </summary>
+    template <typename TRAITS = semaphore_traits>
+    void swap(semaphore<TRAITS>& lhs, semaphore<TRAITS>& rhs) noexcept
+    {
+        lhs.swap(rhs);
+    }
 }
 
 #endif

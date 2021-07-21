@@ -4,12 +4,12 @@ project(modern_win32 CXX)
 set(source_files
     "impl/process_impl.cpp"
 	"threading/slim_lock.cpp"
+    "threading/semaphore.cpp"
 	"threading/thread.cpp"
     "bcrypt_random.cpp"
 	"guid.cpp"
     "process.cpp" 
     "process_module.cpp" 
-    
     "wait_for.cpp"
     "windows_error.cpp")
 
