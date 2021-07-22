@@ -5,6 +5,7 @@ set(source_files
     "impl/process_impl.cpp"
 	"threading/slim_lock.cpp"
     "threading/semaphore.cpp"
+    "threading/timer.cpp"
 	"threading/thread.cpp"
     "bcrypt_random.cpp"
 	"guid.cpp"

@@ -19,7 +19,6 @@
 #include <stdexcept>
 #include <string>
 #include <sstream>
-#include <Windows.h>
 #include <modern_win32/modern_win32_export.h>
 #include <modern_win32/null_handle.h>
 #include <modern_win32/wait_for.h>
@@ -30,12 +29,13 @@ namespace modern_win32::threading
     struct MODERN_WIN32_EXPORT semaphore_traits
     {
         using modern_handle_type = modern_win32::null_handle;
+        using native_handle_type = modern_win32::null_handle::native_handle_type;
+
+        [[nodiscard]]
+        static auto create(int const initial_count, int const maximum_count) -> native_handle_type;
 
         [[nodiscard]]
         static auto release(modern_handle_type handle, int count) -> bool;
-
-        [[nodiscard]]
-        static auto get_error_details() -> modern_win32::windows_error_details;
     };
 
     template <typename TRAITS = semaphore_traits>
@@ -117,22 +117,9 @@ namespace modern_win32::threading
         /// If maximum_count is less than or equal to 0
         /// </exception>
         explicit semaphore(int const initial_count, int const maximum_count)
-            : handle_{ CreateSemaphoreA(nullptr, initial_count, maximum_count, nullptr) }
+            : handle_{ TRAITS::create(initial_count, maximum_count) }
             , maximum_count_{ maximum_count }
         {
-            if (static_cast<bool>(handle_)) {
-                return;
-            }
-
-            windows_error_details const error = TRAITS::get_error_details();
-
-            if (error.get() == windows_error::error_invalid_parameter) {
-                std::stringstream builder{};
-                builder << "Invalid arguments, either initial " << initial_count << " or maximum " << maximum_count << " count is out of range";
-                throw std::invalid_argument(builder.str().c_str());
-            }
-
-            throw windows_exception(error.native_error_code());
         }
 
         ~semaphore() = default;
@@ -144,6 +131,10 @@ namespace modern_win32::threading
         }
         semaphore& operator=(semaphore&& other) noexcept
         {
+            if (&other == this) {
+                return *this;
+            }
+
             std::ignore = handle_.reset(other.handle_.release());
             maximum_count_ = other.maximum_count_;
 
