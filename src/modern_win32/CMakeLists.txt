@@ -49,6 +49,7 @@ set (public_header_files
 source_group("public header files" FILES ${public_header_files})
 
 # Target
+
 add_library(${PROJECT_NAME} SHARED ${source_files})
 
 include(GenerateExportHeader)
@@ -69,7 +70,8 @@ if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
     set_target_properties(${PROJECT_NAME} PROPERTIES
         INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
     )
-elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
+elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86" 
+       OR "${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
     set_target_properties(${PROJECT_NAME} PROPERTIES
         INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
     )
@@ -94,7 +96,8 @@ if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         "_UNICODE"
         "MODERN_WIN32_EXPORTS"
     )
-elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
+elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86" 
+       OR "${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
     target_compile_definitions(${PROJECT_NAME} PRIVATE
         "$<$<CONFIG:Debug>:"
             "_DEBUG"
@@ -128,7 +131,8 @@ if(MSVC)
             ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT};
             ${DEFAULT_CXX_EXCEPTION_HANDLING}
         )
-    elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
+    elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86" 
+           OR "${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         target_compile_options(${PROJECT_NAME} PRIVATE
             $<$<CONFIG:Debug>:
                 ${DEFAULT_CXX_DEBUG_RUNTIME_LIBRARY}
@@ -158,7 +162,8 @@ if(MSVC)
             /DEBUG;
             /SUBSYSTEM:CONSOLE
         )
-    elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
+    elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86" 
+           OR "${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         target_link_options(${PROJECT_NAME} PRIVATE
             $<$<CONFIG:Debug>:
                 /INCREMENTAL

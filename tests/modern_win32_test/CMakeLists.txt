@@ -51,7 +51,8 @@ if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         "UNICODE;"
         "_UNICODE"
     )
-elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
+elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86" 
+       OR "${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
     target_compile_definitions(${TEST_PROJECT_NAME} PRIVATE
         "$<$<CONFIG:Debug>:"
             "_DEBUG"
@@ -87,7 +88,8 @@ if(MSVC)
             ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT};
             ${DEFAULT_CXX_EXCEPTION_HANDLING}
         )
-    elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
+    elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86" 
+           OR "${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")     
         target_compile_options(${TEST_PROJECT_NAME} PRIVATE
             $<$<CONFIG:Debug>:
                 ${DEFAULT_CXX_DEBUG_RUNTIME_LIBRARY}
