@@ -13,7 +13,6 @@
 
 #include <modern_win32/threading/thread.h>
 #include <modern_win32/module_handle.h>
-#include <modern_win32/naive_stack_allocator.h>
 #include <modern_win32/string_conversion.h>
 #include <modern_win32/wait_for.h>
 
@@ -179,7 +178,7 @@ namespace modern_win32::threading
 
     bool set_thread_name(thread_handle::native_handle_type const handle, char const* name) 
     {
-        auto const wide_name = convert::to_wstring<naive_stack_allocator<wchar_t, 4096>>(name);
+        auto const wide_name = convert::to_wstring(name);
         return set_thread_name(handle, wide_name.c_str());
     }
 

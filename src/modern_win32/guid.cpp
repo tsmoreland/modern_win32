@@ -15,7 +15,6 @@
 #include <algorithm>
 #include <memory>
 #include <modern_win32/com_exception.h>
-#include <modern_win32/naive_stack_allocator.h>
 #include <rpc.h>
 
 #pragma comment(lib, "rpcrt4.lib")

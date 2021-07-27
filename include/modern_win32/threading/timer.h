@@ -48,11 +48,15 @@ namespace modern_win32::threading
         explicit timer(TIMER_CALLBACK const& callback, STATE& state)
             : handle_{ TRAITS::create(MANUAL_RESET) }
             , callback_{ callback }
+            , state_{ state }
         {
         }
+        ~timer() = default;
 
         timer(timer&& other) noexcept
             : handle_{ other.handle_.release() }
+            , callback_{ other.callback_ }
+            , state_{ other.state_ }
         {
         }
         timer& operator=(timer&& other) noexcept
@@ -61,9 +65,12 @@ namespace modern_win32::threading
                 return *this;
             }
             std::ignore = handle_.reset(other.handle_.release());
+            callback_ = other.callback_;
+            state_ = other.state_;
 
             return *this;
         }
+
         timer(timer const&) = delete;
         timer& operator=(timer const&) = delete;
 
