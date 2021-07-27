@@ -248,8 +248,8 @@ namespace modern_win32
             throw windows_exception(ERROR_PROC_NOT_FOUND); // maybe a better choice here, ideally this should never happen, 
         }
 
-        for (auto index = 0ULL, upper_bound = bytes_required / sizeof(HMODULE); index < upper_bound; index++) {
-            modules.emplace_back(handle_.native_handle(), module_handles[index]);
+        for (DWORD index = 0ULL, upper_bound = bytes_required / sizeof(HMODULE); index < upper_bound; index++) {
+            modules.emplace_back(handle_.native_handle(), module_handles[static_cast<size_t>(index)]);
         }
 
         return modules;

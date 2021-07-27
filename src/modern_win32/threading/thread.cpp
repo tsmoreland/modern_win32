@@ -81,14 +81,14 @@ namespace modern_win32::threading
         return new_thread;
     }
 
-    bool thread::start(thread_proc const worker, thread_parameter parameter) 
+    bool thread::start(thread_proc worker, thread_parameter parameter) 
     {
         if (is_running() || thread_start_ != nullptr)
             return false;
         return handle_.reset(CreateThread(nullptr, 0, worker, parameter, 0, &thread_id_));  // NOLINT(clang-diagnostic-microsoft-cast)
     }
 
-    bool thread::start(thread_start* const worker) 
+    bool thread::start(thread_start* worker) 
     {
         if (is_running() || thread_start_ != nullptr)
             return false;

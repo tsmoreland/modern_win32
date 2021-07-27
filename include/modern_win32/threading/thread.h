@@ -64,7 +64,7 @@ namespace modern_win32::threading
         using modern_handle_type = thread_handle;
         using thread_worker = void (*)();
         using thread_parameter = void*;
-        using thread_proc = DWORD (*)(thread_parameter);
+        using thread_proc = DWORD (__stdcall *)(thread_parameter);
         using native_thread_id = DWORD;
 
         explicit thread(std::unique_ptr<thread_start> worker);
@@ -127,7 +127,7 @@ namespace modern_win32::threading
         /// <param name="parameter">parameter to use in thread creation</param>
         /// <returns>true if thread is started; otherwise, false</returns>
         [[nodiscard]]
-        bool start(thread_proc const worker, thread_parameter parameter);
+        bool start(thread_proc worker, thread_parameter parameter);
 
         /// <summary>
         /// starts the thread using <paramref name="worker"/> if not already running
@@ -138,7 +138,7 @@ namespace modern_win32::threading
         /// thread does not maintain lifetime of thread_start it is up to the caller to ensure that object exists until the thread completes
         /// </remarks>
         [[nodiscard]]
-        bool start(thread_start* const worker);
+        bool start(thread_start* worker);
 
         /// <summary>
         /// starts the thread usnig provided thread_start

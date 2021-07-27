@@ -47,7 +47,7 @@ namespace modern_win32::threading
         std::any state_;
 
         using thread_parameter = void*;
-        static DWORD thread_proc(thread_parameter const this_ptr)
+        static DWORD __stdcall thread_proc(thread_parameter this_ptr)
         {
             auto * that = static_cast<thread_start*>(this_ptr);
             if (that == nullptr)
