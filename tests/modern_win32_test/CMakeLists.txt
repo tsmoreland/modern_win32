@@ -18,6 +18,19 @@ add_executable(${TEST_PROJECT_NAME} ${TEST_SOURCES}
 
 add_test(NAME ${TEST_PROJECT_NAME} COMMAND ${TEST_PROJECT_NAME})
 
+if(MSVC)
+    target_compile_options(${PROJECT_NAME} PUBLIC "/Zc:__cplusplus")
+endif()
+
+if (CMAKE_CXX_STANDARD EQUAL 20)
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
+elseif (CMAKE_CXX_STANDARD EQUAL 17)
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+elseif (CMAKE_CXX_STANDARD EQUAL 14)
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_14)
+else()
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
+endif()
 
 set_target_properties(${TEST_PROJECT_NAME} PROPERTIES
     VS_GLOBAL_KEYWORD "Win32Proj"

@@ -52,6 +52,21 @@ source_group("public header files" FILES ${public_header_files})
 
 add_library(${PROJECT_NAME} SHARED ${source_files})
 
+if(MSVC)
+    target_compile_options(${PROJECT_NAME} PUBLIC "/Zc:__cplusplus")
+endif()
+
+if (CMAKE_CXX_STANDARD EQUAL 20)
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
+elseif (CMAKE_CXX_STANDARD EQUAL 17)
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+elseif (CMAKE_CXX_STANDARD EQUAL 14)
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_14)
+else()
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
+endif()
+
+
 include(GenerateExportHeader)
 generate_export_header(${PROJECT_NAME})
 
