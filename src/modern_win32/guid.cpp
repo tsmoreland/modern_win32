@@ -155,7 +155,7 @@ namespace modern_win32
 
     std::ostream& operator<<(std::ostream& os, const guid& obj)
     {
-        return os << to_string(obj);
+        return os << to_string(obj).c_str();
     }
 
     [[nodiscard]]

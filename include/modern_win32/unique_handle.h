@@ -18,10 +18,6 @@
 #include <tuple>
 #include <utility>
 
-#if __cplusplus > 201703L 
-#include <compare>
-#endif
-
 namespace modern_win32
 {
     /// <summary>

@@ -52,7 +52,7 @@ namespace modern_win32
         }
     }
 
-    constexpr auto get_infinity_in_ms()
+    constexpr auto get_infinity_in_ms() -> std::chrono::duration<millisecond_rep>
     {
         // same as std::chrono::millisecond::rep, done to show it can be done this way
         using millisecond_rep = decltype(std::declval<std::chrono::milliseconds>().count());
@@ -60,7 +60,7 @@ namespace modern_win32
     }
 
     template <typename NUMERIC>
-    constexpr auto as(std::chrono::milliseconds const& timeout)
+    constexpr auto as(std::chrono::milliseconds const& timeout) -> NUMERIC
     {
         static_assert(std::is_arithmetic<NUMERIC>::value);
 
@@ -82,7 +82,7 @@ namespace modern_win32
 
     template <typename HANDLE>
     [[nodiscard]]
-    auto wait_one(HANDLE const& handle, std::chrono::milliseconds const& timeout = get_infinity_in_ms()) noexcept
+    auto wait_one(HANDLE const& handle, std::chrono::milliseconds const& timeout = get_infinity_in_ms()) noexcept -> wait_for_result
     {
         return to_wait_for_result(WaitForSingleObject(handle.native_handle(), as<DWORD>(timeout)));
     }
@@ -99,7 +99,7 @@ namespace modern_win32
 
     template <typename... HANDLES>
     [[nodiscard]]
-    auto wait_any(HANDLES const & ... args, std::chrono::milliseconds const& timeout = get_infinity_in_ms()) noexcept
+    auto wait_any(HANDLES const & ... args, std::chrono::milliseconds const& timeout = get_infinity_in_ms()) noexcept 
     {
         static_assert(sizeof...(HANDLES) < static_cast<size_t>(MAXIMUM_WAIT_OBJECTS));
         HANDLE handles[sizeof...(HANDLES)];
