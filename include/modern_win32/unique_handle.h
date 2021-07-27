@@ -18,7 +18,7 @@
 #include <tuple>
 #include <utility>
 
-#if __cplusplus > 201703L || _MSVC_LANG > 201703L
+#if __cplusplus > 201703L 
 #include <compare>
 #endif
 
@@ -104,7 +104,7 @@ namespace modern_win32
             return TRAITS::invalid();
         }
 
-#       if __cplusplus > 201703L || _MSVC_LANG > 201703L
+#       if __cplusplus > 201703L 
         [[nodiscard]]
         friend auto operator<=>(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second) noexcept
         {

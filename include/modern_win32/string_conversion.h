@@ -71,7 +71,7 @@ namespace modern_win32::convert
         return to_string<ALLOC>(value.c_str());
     }
 
-#   if __cplusplus > 201703L || _MSVC_LANG > 201703L
+#   if __cplusplus > 201703L 
 
 #   endif
 

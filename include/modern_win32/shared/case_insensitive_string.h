@@ -65,7 +65,7 @@ namespace modern_win32::shared
     private:
         static int to_upper(int ch)
         {
-#           if __cplusplus > 201703L || _MSVC_LANG > 201703L
+#           if __cplusplus > 201703L 
             static_assert(!std::is_same_v<TCHARACTER, char8_t> && !std::is_same_v<TCHARACTER, char16_t> && !std::is_same_v<TCHARACTER, char32_t>, "unicode strings not supported due to lack of toupper method");
 #           endif
 

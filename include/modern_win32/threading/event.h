@@ -102,7 +102,7 @@ namespace modern_win32::threading
             return *this;
         }
 
-#       if __cplusplus > 201703L || _MSVC_LANG > 201703L
+#       if __cplusplus > 201703L 
         [[nodiscard]]
         auto operator<=>(event const& other)
         {
@@ -152,7 +152,7 @@ namespace modern_win32::threading
 
     };
 
-#   if __cplusplus > 201703L || _MSVC_LANG > 201703L 
+#   if __cplusplus > 201703L 
     template <event_type EVENT_TYPE>
     [[nodiscard]]
     auto operator<=>(event<EVENT_TYPE> const& lhs, event<EVENT_TYPE> const& rhs)

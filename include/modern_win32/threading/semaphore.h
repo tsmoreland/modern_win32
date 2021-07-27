@@ -145,7 +145,7 @@ namespace modern_win32::threading
         semaphore(semaphore const&) = delete;
         semaphore& operator=(semaphore const&) = delete;
 
-#       if __cplusplus > 201703L || _MSVC_LANG > 201703L
+#       if __cplusplus > 201703L 
         [[nodiscard]]
         auto operator<=>(semaphore const& other)
         {
@@ -191,7 +191,7 @@ namespace modern_win32::threading
 #       endif
     };
 
-#   if __cplusplus > 201703L || _MSVC_LANG > 201703L 
+#   if __cplusplus > 201703L 
     template <typename TRAITS = semaphore_traits>
     [[nodiscard]]
     auto operator<=>(semaphore<TRAITS> const& lhs, semaphore<TRAITS> const& rhs)
