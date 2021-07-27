@@ -45,8 +45,7 @@
             "cmakeCommandArgs": "",
             "buildCommandArgs": "",
             "ctestCommandArgs": "",
-            "inheritEnvironments": [ "clang_cl_x64_x64" ],
-            "variables": []
+            "inheritEnvironments": [ "clang_cl_x64_x64" ]
         },
         {
             "name": "x64-Clang-Release",
@@ -57,8 +56,43 @@
             "cmakeCommandArgs": "",
             "buildCommandArgs": "",
             "ctestCommandArgs": "",
-            "inheritEnvironments": [ "clang_cl_x64_x64" ],
-            "variables": []
+            "inheritEnvironments": [ "clang_cl_x64_x64" ]
+        },
+        {
+            "name": "x86-Debug",
+            "generator": "Ninja",
+            "configurationType": "Debug",
+            "buildRoot": "${projectDir}\\out\\build\\${name}",
+            "installRoot": "${projectDir}\\out\\install\\${name}",
+            "cmakeCommandArgs": "",
+            "buildCommandArgs": "",
+            "ctestCommandArgs": "",
+            "inheritEnvironments": [ "msvc_x86" ],
+            "variables": [
+                {
+                    "name": "CMAKE_TOOLCHAIN_FILE",
+                    "value": "${ENV.VCPKG_HOME}/scripts/buildsystems/vcpkg.cmake",
+                    "type": "FILEPATH"
+                }
+            ]
+        },
+        {
+            "name": "x86-Release",
+            "generator": "Ninja",
+            "configurationType": "Release",
+            "buildRoot": "${projectDir}\\out\\build\\${name}",
+            "installRoot": "${projectDir}\\out\\install\\${name}",
+            "cmakeCommandArgs": "",
+            "buildCommandArgs": "",
+            "ctestCommandArgs": "",
+            "inheritEnvironments": [ "msvc_x86" ],
+            "variables": [
+                {
+                    "name": "CMAKE_TOOLCHAIN_FILE",
+                    "value": "${ENV.VCPKG_HOME}/scripts/buildsystems/vcpkg.cmake",
+                    "type": "FILEPATH"
+                }
+            ]
         }
     ]
 }
