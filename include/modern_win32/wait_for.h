@@ -52,7 +52,7 @@ namespace modern_win32
         }
     }
 
-    constexpr auto get_infinity_in_ms() -> std::chrono::duration<millisecond_rep>
+    constexpr auto get_infinity_in_ms() -> std::chrono::duration<long long>
     {
         // same as std::chrono::millisecond::rep, done to show it can be done this way
         using millisecond_rep = decltype(std::declval<std::chrono::milliseconds>().count());
