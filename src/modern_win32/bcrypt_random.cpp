@@ -13,8 +13,11 @@
 
 #include "modern_win32/bcrypt_random.h"
 #include "modern_win32/windows_exception.h"
-#include <ntstatus.h>
 #include <bcrypt.h>
+
+
+// from ntstatus.h but that has all sorts of warnings so adding it directly
+#define STATUS_SUCCESS                   ((NTSTATUS)0x00000000L)    // ntsubauth  // NOLINT(cppcoreguidelines-macro-usage) -- we don't know the type, could use auto but vc141 complains
 
 namespace modern_win32
 {
