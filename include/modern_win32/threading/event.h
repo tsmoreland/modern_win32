@@ -76,12 +76,13 @@ namespace modern_win32::threading
         /// If  zero, the function does not enter a wait state if the specified objects are not signaled; it always returns immediately.
         /// If maximum value or maximum value of DWORD, the function will return only when the specified objects are signaled.
         /// </param>
+        /// <param name="alertable">if true wait can be interupted by alerts</param>
         /// <returns>true if event was signaled; otherwise, false</returns>
         /// <exception cref="windows_exception">if wait fails</exception>
         [[nodiscard]]
-        bool wait_one(std::chrono::milliseconds const timeout = get_infinity_in_ms()) const 
+        bool wait_one(std::chrono::milliseconds const timeout = get_infinity_in_ms(), bool const alertable = false) const 
         {
-            return is_complete(modern_win32::wait_one(event_, timeout));
+            return is_complete(modern_win32::wait_one(event_, timeout, alertable));
         }
 
         /// <summary>
@@ -110,42 +111,37 @@ namespace modern_win32::threading
         }
 
 #       else
-        [[nodiscard]]
         bool operator<(event const& other)
         {
             return event_ < other.event_;
         }
 
-        [[nodiscard]]
         bool operator<=(event const& other)
         {
             return !(other.event_ < event_);
         }
 
-        [[nodiscard]]
         bool operator>(event const& other)
         {
             return other.event_ < event_;
         }
 
-        [[nodiscard]]
         bool operator>=(event const& other)
         {
             return !(event_ < other.event_);
         }
 
-        [[nodiscard]]
+#       endif
+
         bool operator==(event const& other)
         {
             return event_ == other.event_;
         }
 
-        [[nodiscard]]
         bool operator!=(event const& other)
         {
             return !(event_ == other.event_);
         }
-#       endif
 
     private:
         modern_handle_type event_;

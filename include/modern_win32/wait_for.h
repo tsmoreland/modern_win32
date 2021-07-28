@@ -82,30 +82,30 @@ namespace modern_win32
 
     template <typename HANDLE>
     [[nodiscard]]
-    auto wait_one(HANDLE const& handle, std::chrono::milliseconds const& timeout = get_infinity_in_ms()) noexcept -> wait_for_result
+    auto wait_one(HANDLE const& handle, std::chrono::milliseconds const& timeout = get_infinity_in_ms(), bool const alertable = false) noexcept -> wait_for_result
     {
-        return to_wait_for_result(WaitForSingleObject(handle.native_handle(), as<DWORD>(timeout)));
+        return to_wait_for_result(WaitForSingleObjectEx(handle.native_handle(), as<DWORD>(timeout), alertable ? TRUE : FALSE));
     }
 
     template <typename... HANDLES>
     [[nodiscard]]
-    auto wait_all(HANDLES const & ... args, std::chrono::milliseconds const& timeout = get_infinity_in_ms()) noexcept
+    auto wait_all(HANDLES const & ... args, std::chrono::milliseconds const& timeout = get_infinity_in_ms(), bool const alertable = false) noexcept
     {
         static_assert(sizeof...(HANDLES) < static_cast<size_t>(MAXIMUM_WAIT_OBJECTS));
         HANDLE handles[sizeof...(HANDLES)];
         add_to_array(handles, args...);
-        return to_wait_for_result(WaitForMultipleObjects(sizeof...(HANDLES), handles, true, as<DWORD>(timeout)));
+        return to_wait_for_result(WaitForMultipleObjectsEx(sizeof...(HANDLES), handles, true, as<DWORD>(timeout), alertable ? TRUE : FALSE));
     }
 
     template <typename... HANDLES>
     [[nodiscard]]
-    auto wait_any(HANDLES const & ... args, std::chrono::milliseconds const& timeout = get_infinity_in_ms()) noexcept 
+    auto wait_any(HANDLES const & ... args, std::chrono::milliseconds const& timeout = get_infinity_in_ms(), bool const alertable = false) noexcept 
     {
         static_assert(sizeof...(HANDLES) < static_cast<size_t>(MAXIMUM_WAIT_OBJECTS));
         HANDLE handles[sizeof...(HANDLES)];
         add_to_array(handles, args...);
 
-        auto const native_result = WaitForMultipleObjects(sizeof...(HANDLES), handles, false, as<DWORD>(timeout));
+        auto const native_result = WaitForMultipleObjectsEx(sizeof...(HANDLES), handles, false, as<DWORD>(timeout), alertable ? TRUE : FALSE);
         auto const result = to_wait_for_result(native_result);
 
         switch (result) {
