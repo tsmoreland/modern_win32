@@ -11,23 +11,33 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#include <modern_win32/wait_for.h>
+#include <modern_win32/threading/semaphore.h>
+#include <modern_win32/windows_exception.h>
 
-namespace modern_win32
+namespace modern_win32::threading
 {
+    auto semaphore_traits::create(int const initial_count, int const maximum_count) -> native_handle_type
+    {
+        auto const handle = CreateSemaphoreA(nullptr, initial_count, maximum_count, nullptr);
 
-bool is_complete(wait_for_result const& result)
-{
-    switch (result) {
-    case wait_for_result::object:
-        return true;
-    case wait_for_result::abandonded:
-        throw std::runtime_error("unexpected handle type");
-    case wait_for_result::failed:
-        throw windows_exception();
-    default:
-        return false;
+        if (handle != nullptr) {
+            return handle;
+        }
+
+        windows_error_details const error = modern_win32::windows_error_details();
+
+        if (error.get() == windows_error::error_invalid_parameter) {
+
+            std::stringstream builder{};
+            builder << "Invalid arguments, either initial " << initial_count << " or maximum " << maximum_count << " count is out of range";
+            throw std::invalid_argument(builder.str().c_str());
+        }
+
+        throw windows_exception(error.native_error_code());
     }
-}
 
+    auto semaphore_traits::release(modern_handle_type handle, int count) -> bool
+    {
+        return ReleaseSemaphore(handle.native_handle(), count, nullptr) == TRUE;
+    }
 }

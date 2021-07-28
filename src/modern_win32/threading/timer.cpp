@@ -11,23 +11,33 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#include <modern_win32/wait_for.h>
+#include <modern_win32/threading/timer.h>
+#include <modern_win32/windows_exception.h>
 
-namespace modern_win32
+namespace modern_win32::threading
 {
-
-bool is_complete(wait_for_result const& result)
-{
-    switch (result) {
-    case wait_for_result::object:
-        return true;
-    case wait_for_result::abandonded:
-        throw std::runtime_error("unexpected handle type");
-    case wait_for_result::failed:
-        throw windows_exception();
-    default:
-        return false;
+    auto timer_traits::create(bool manual_reset) -> native_handle_type
+    {
+        auto const handle = CreateWaitableTimerW(nullptr, manual_reset ? TRUE : FALSE, nullptr);
+        if (handle == nullptr) {
+            throw windows_exception();
+        }
+        return handle;
     }
-}
 
+    auto timer_traits::set_waitable_timer(
+            native_handle_type handle,
+            LARGE_INTEGER& due_time,
+            LONG period,
+            _In_opt_ PTIMERAPCROUTINE callback,
+            void *state,
+            bool const restore) -> bool
+    {
+        return SetWaitableTimer(handle, &due_time, period, callback, state, restore ? TRUE : FALSE) == TRUE;
+    }
+
+    bool timer_traits::cancel_waitable_timer(native_handle_type handle)
+    {
+        return CancelWaitableTimer(handle) == TRUE;
+    }
 }

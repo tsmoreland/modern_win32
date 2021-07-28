@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Terry Moreland
+// Copyright Â© 2021 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -11,8 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __MODERN_WIN32_THREADING_THREAD_START_H__
-#define __MODERN_WIN32_THREADING_THREAD_START_H__
+#ifndef MODERN_WIN32_THREADING_THREAD_START_H_
+#define MODERN_WIN32_THREADING_THREAD_START_H_
 #ifdef _WIN32
 
 #include <Windows.h>
@@ -25,7 +25,7 @@ namespace modern_win32::threading
     public:
         thread_start() = default;
         explicit thread_start(std::any state) 
-            : m_state(std::move(state))
+            : state_(std::move(state))
         {
         }
         thread_start(thread_start&& other) noexcept = default;
@@ -38,15 +38,16 @@ namespace modern_win32::threading
 
         friend class thread;
     protected:
-        [[nodiscard]] std::any const& get_state() const
+        [[nodiscard]]
+        std::any const& get_state() const
         {
-            return m_state;
+            return state_;
         }
     private:
-        std::any m_state;
+        std::any state_;
 
         using thread_parameter = void*;
-        static DWORD thread_proc(thread_parameter const this_ptr)
+        static DWORD __stdcall thread_proc(thread_parameter this_ptr)
         {
             auto * that = static_cast<thread_start*>(this_ptr);
             if (that == nullptr)

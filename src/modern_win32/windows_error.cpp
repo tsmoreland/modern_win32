@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Terry Moreland
+// Copyright Â© 2021 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -22,11 +22,11 @@ windows_error_details::windows_error_details() noexcept
 }
 
 windows_error_details::windows_error_details(windows_error const error_code) noexcept
-    : m_native_error_code(static_cast<native_windows_error>(error_code))
+    : native_error_code_(static_cast<native_windows_error>(error_code))
 {
 }
 windows_error_details::windows_error_details(native_windows_error const error_code) noexcept
-    : m_native_error_code(error_code)
+    : native_error_code_(error_code)
 {
 }
 
@@ -36,7 +36,7 @@ windows_error_details::windows_error_details(native_windows_error const error_co
 /// <returns>native windows error code value</returns>
 native_windows_error windows_error_details::native_error_code() const noexcept
 {
-    return m_native_error_code;
+    return native_error_code_;
 }
 
 /// <summary>
@@ -45,16 +45,16 @@ native_windows_error windows_error_details::native_error_code() const noexcept
 /// <returns>true if native_error_code is NO_ERROR</returns>
 windows_error_details::operator bool() const noexcept
 {
-    return m_native_error_code == static_cast<native_windows_error>(windows_error::none);
+    return native_error_code_ == static_cast<native_windows_error>(windows_error::none);
 }
 
 /// <summary>
 /// Returns the <see cref="windows_error"/> formed using the original native error code if a match is found; otherwise <see cref="windows_error::unknown"/>
 /// </summary>
-/// <returns><see cref="windows_error"/> formed using the original native error code if a match is found; otherwise <see cref="windows_error::unknown"/></returns>
+/// <returns><windows_error formed using the original native error code if a match is found; otherwise windows_error::unknown</returns>
 windows_error windows_error_details::get() const noexcept
 {
-    switch (m_native_error_code) {
+    switch (native_error_code_) {
         case static_cast<native_windows_error>(windows_error::none):
             return windows_error::none;
         

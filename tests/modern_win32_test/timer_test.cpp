@@ -11,44 +11,49 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#pragma warning(push)
-#pragma warning(disable : 26495 26812)
+#pragma warning(push,2)
 #include <gtest/gtest.h>
 #pragma warning(pop)
+
+#include <chrono>
+#include <modern_win32/threading/timer.h>
 #include <modern_win32/threading/event.h>
 #include "context.h"
 
-using modern_win32::threading::auto_reset_event;
+using std::chrono::milliseconds;
 using modern_win32::threading::manual_reset_event;
+using modern_win32::threading::delayed_callback;
+using modern_win32::threading::synchronization_timer;
 
-using modern_win32::test::context;
-constexpr auto TEST_TIMOUT = std::chrono::milliseconds(250);
+#pragma warning(disable : 4455)
+using std::literals::chrono_literals::operator ""ms;
+using std::literals::chrono_literals::operator ""s;
 
-TEST(auto_reset_event, is_reset_after_wait) 
+TEST(delayed_callback, constructor__does_not_throw__when_state_is_trivial)
 {
-    // Arrange
-    context context{TEST_TIMOUT};
-    auto_reset_event event{false};
-
-    // Act
-    auto const signalled = context::get_second_wait_result(event);
-    context.complete = true;
-
-    // Assert
-    ASSERT_TRUE(!signalled && !context.get_timed_out());
+    ASSERT_NO_THROW({
+        delayed_callback<int> delay([](int) { /* ... */ }, 3);
+    });
 }
 
-TEST(manual_reset_event, is_reset_after_wait) 
+
+TEST(delay_callback, start__begins_timer__when_arguments_are_greater_than_or_equal_to_zero)
 {
-    // Arrange
-    context context{TEST_TIMOUT};
-    manual_reset_event event{false};
+    manual_reset_event callback_event{ false };
+    bool called{ false };
+    int const expected_state = 3;
+    auto callback = [&called, &callback_event, expected_state](int state) {
+        if (state == expected_state) {
+            called = true;
+            std::ignore = callback_event.set();
+        }
+    };
 
-    // Act
-    auto const signalled = context::get_second_wait_result(event);
-    context.complete = true;
+    delayed_callback<int, decltype(callback)> timer(callback, expected_state);
 
-    // Assert
-    ASSERT_TRUE(signalled && !context.get_timed_out());
+    timer.start(10ms, 100ms);
+
+    std::ignore = callback_event.wait_one(1s);
+
+    ASSERT_TRUE(called);
 }
-

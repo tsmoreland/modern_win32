@@ -11,23 +11,32 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#include <modern_win32/wait_for.h>
+#ifndef MODERN_WIN32_CRYPTO_PROVIDER_
+#define MODERN_WIN32_CRYPTO_PROVIDER_  // NOLINT(clang-diagnostic-unused-macros)
+#ifdef _WIN32
+
+#include <Windows.h>
+#include <modern_win32/modern_win32_export.h>
+
+#pragma comment (lib, "bcrypt")
 
 namespace modern_win32
 {
 
-bool is_complete(wait_for_result const& result)
-{
-    switch (result) {
-    case wait_for_result::object:
-        return true;
-    case wait_for_result::abandonded:
-        throw std::runtime_error("unexpected handle type");
-    case wait_for_result::failed:
-        throw windows_exception();
-    default:
-        return false;
-    }
-}
+    /// <summary>
+    /// generates a random number.
+    /// </summary>
+    /// <param name="data">
+    /// The address of a buffer that receives the random number.
+    /// The size of this buffer is specified by the length parameter
+    /// .</param>
+    /// <param name="length">The size, in bytes, of the data buffer.</param>
+    /// <returns>returns true on success; otherwise, false</returns>
+    [[nodiscard]]
+    MODERN_WIN32_EXPORT bool bcrypt_get_random_bytes(byte* data, unsigned long length) noexcept;
 
 }
+
+#endif
+#endif
+

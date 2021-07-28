@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Terry Moreland
+// Copyright Â© 2021 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -19,7 +19,7 @@
 #include <modern_win32/threading/event.h>
 #include <modern_win32/threading/thread_start.h>
 
-namespace util::test
+namespace modern_win32::test
 {
     void wait_for(bool const& complete, std::chrono::milliseconds const& interval);
     void fail_if_not_complete_after(std::chrono::milliseconds timeout, bool& complete, bool& timed_out);
@@ -31,35 +31,38 @@ namespace util::test
         
         explicit context(std::chrono::milliseconds const time_out)
         {
-            m_future_countdown = std::async(std::launch::async,
+            future_countdown_ = std::async(std::launch::async,
                 [this, time_out]()
                 {
-                    fail_if_not_complete_after(time_out, m_complete, m_timed_out);
+                    fail_if_not_complete_after(time_out, complete_, timed_out_);
                 });
         }
         context(context const& other) = delete;
         context(context&& other) noexcept = delete;
         ~context() 
         {
-            m_future_countdown.wait();
+            future_countdown_.wait();
         }
 
-        [[nodiscard]] bool get_timed_out() const
+        [[nodiscard]]
+        bool get_timed_out() const
         {
-            return m_timed_out;
+            return timed_out_;
         }
-        [[nodiscard]] bool get_complete() const
+        [[nodiscard]]
+        bool get_complete() const
         {
-            return m_complete;
+            return complete_;
         }
 
         void set_complete(bool const value) 
         {
-            m_complete = value;
+            complete_ = value;
         }
 
         template <event_type EVENT_TYPE>
-        [[nodiscard]] static bool get_second_wait_result(modern_win32::threading::event<EVENT_TYPE>& event)
+        [[nodiscard]]
+        static bool get_second_wait_result(modern_win32::threading::event<EVENT_TYPE>& event)
         {
             auto signaled = event.set();
             EXPECT_TRUE(signaled);
@@ -70,7 +73,8 @@ namespace util::test
             return event.wait_one(std::chrono::milliseconds(50));
         }
 
-        [[nodiscard]] static auto get_anonymous_thread_start(context& ctx)
+        [[nodiscard]]
+        static auto get_anonymous_thread_start(context& ctx)
         {
             return modern_win32::threading::anonymous_thread_start(
                 [&ctx]()
@@ -79,21 +83,22 @@ namespace util::test
                     std::this_thread::sleep_for(std::chrono::milliseconds(50));
                 });
         }
-        [[nodiscard]] static auto get_custom_thread_start(context& ctx)
+        [[nodiscard]]
+        static auto get_custom_thread_start(context& ctx)
         {
             class custom_thread_start final : public modern_win32::threading::thread_start
             {
             public:
                 explicit custom_thread_start(context& ctx)
-                    : m_context(ctx)
+                    : context_(ctx)
                 {
                 }
                 void operator()() override
                 {
-                    m_context.complete = true;
+                    context_.complete = true;
                 }
             private:
-                context& m_context;
+                context& context_;
             };
 
             return std::make_unique<custom_thread_start>(ctx);
@@ -105,9 +110,9 @@ namespace util::test
         context& operator=(context&& other) noexcept = delete;
     private:
 
-        bool m_timed_out{false};
-        bool m_complete{false};
-        std::future<void> m_future_countdown;
+        bool timed_out_{false};
+        bool complete_{false};
+        std::future<void> future_countdown_;
     };
     
 }

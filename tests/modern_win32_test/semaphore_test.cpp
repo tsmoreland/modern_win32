@@ -11,23 +11,35 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#include <modern_win32/wait_for.h>
+#pragma warning(push, 2)
+#include <gtest/gtest.h>
+#pragma warning(pop)
+#include <modern_win32/threading/semaphore.h>
+#include "context.h"
 
-namespace modern_win32
-{
+using modern_win32::threading::semaphore;
+using modern_win32::windows_exception;
 
-bool is_complete(wait_for_result const& result)
+TEST(sempahore_test, constructor__throws_windows_exception__when_initial_count_negative)
 {
-    switch (result) {
-    case wait_for_result::object:
-        return true;
-    case wait_for_result::abandonded:
-        throw std::runtime_error("unexpected handle type");
-    case wait_for_result::failed:
-        throw windows_exception();
-    default:
-        return false;
-    }
+    ASSERT_THROW({ 
+        semaphore s( -1, 10);
+
+    }, std::invalid_argument);
+}
+TEST(sempahore_test, constructor__throws_windows_exception__when_maximum_count_negative)
+{
+    ASSERT_THROW({ 
+        semaphore s( 0, -1);
+
+    }, std::invalid_argument);
 }
 
+
+TEST(sempahore_test, constructor__throws_windows_exception__when_maximum_count_less_than_initial_count)
+{
+    ASSERT_THROW({ 
+        semaphore s( 5, 1);
+
+    }, std::invalid_argument);
 }

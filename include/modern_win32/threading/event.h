@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Terry Moreland
+// Copyright Â© 2021 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -11,8 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __MODERN_WIN32_CONCURRENCY_SYNCHRONIZATION_EVENT_H__
-#define __MODERN_WIN32_CONCURRENCY_SYNCHRONIZATION_EVENT_H__
+#ifndef MODERN_WIN32_THREADING_EVENT_H_
+#define MODERN_WIN32_THREADING_EVENT_H_
 
 #ifdef _WIN32
 
@@ -37,12 +37,12 @@ namespace modern_win32::threading
         using modern_handle_type = modern_win32::null_handle;
     public:
         explicit event(bool const initial_state) noexcept
-            : m_event{CreateEvent(nullptr, EVENT_TYPE == event_type::manual_reset, initial_state ? TRUE : FALSE, nullptr)}
+            : event_{CreateEvent(nullptr, EVENT_TYPE == event_type::manual_reset, initial_state ? TRUE : FALSE, nullptr)}
         {
         }
         event(event const& other) = delete;
         event(event&& other) noexcept
-            : m_event(other.m_event.release())
+            : event_(other.event_.release())
         {
         }
         ~event() = default;
@@ -52,18 +52,20 @@ namespace modern_win32::threading
         /// </summary>
         /// <returns>true on success; otherwise, false</returns>
         // ReSharper disable once CppMemberFunctionMayBeConst it shouldn't be const because the state of the event is changing
-        [[nodiscard]] bool set() noexcept
+        [[nodiscard]]
+        bool set() noexcept
         {
-            return SetEvent(m_event.native_handle()) != 0;
+            return SetEvent(event_.native_handle()) != 0;
         }
         /// <summary>
         /// Sets the event object to the nonsignaled state.
         /// </summary>
         /// <returns>true on success; otherwise, false</returns>
         // ReSharper disable once CppMemberFunctionMayBeConst it shouldn't be const because the state of the event is changing
-        [[nodiscard]] bool clear() noexcept
+        [[nodiscard]]
+        bool clear() noexcept
         {
-            return ResetEvent(m_event.native_handle()) != 0;
+            return ResetEvent(event_.native_handle()) != 0;
         }
 
         /// <summary>
@@ -74,11 +76,13 @@ namespace modern_win32::threading
         /// If  zero, the function does not enter a wait state if the specified objects are not signaled; it always returns immediately.
         /// If maximum value or maximum value of DWORD, the function will return only when the specified objects are signaled.
         /// </param>
+        /// <param name="alertable">if true wait can be interupted by alerts</param>
         /// <returns>true if event was signaled; otherwise, false</returns>
         /// <exception cref="windows_exception">if wait fails</exception>
-        [[nodiscard]] bool wait_one(std::chrono::milliseconds const timeout = get_infinity_in_ms()) const 
+        [[nodiscard]]
+        bool wait_one(std::chrono::milliseconds const timeout = get_infinity_in_ms(), bool const alertable = false) const 
         {
-            return is_complete(modern_win32::wait_one(m_event, timeout));
+            return is_complete(modern_win32::wait_one(event_, timeout, alertable));
         }
 
         /// <summary>
@@ -87,7 +91,7 @@ namespace modern_win32::threading
         void swap(event& other) noexcept
         {
             using std::swap;
-            swap(m_event, other.m_event);
+            swap(event_, other.event_);
         }
 
         event& operator=(event const& other) = delete;
@@ -95,93 +99,102 @@ namespace modern_win32::threading
         {
             if (this == &other)
                 return *this;
-            static_cast<void>(m_event.reset(other.m_event.release()));
+            static_cast<void>(event_.reset(other.event_.release()));
             return *this;
         }
 
-#       if __cplusplus > 201703L || _MSVC_LANG > 201703L
-        [[nodiscard]] auto operator<=>(event const& other)
+#       if __cplusplus > 201703L 
+        [[nodiscard]]
+        auto operator<=>(event const& other)
         {
-            return m_event <=> other.m_event;
+            return event_ <=> other.event_;
         }
 
 #       else
-        [[nodiscard]] bool operator<(event const& other)
+        bool operator<(event const& other)
         {
-            return m_event < other.m_event;
+            return event_ < other.event_;
         }
 
-        [[nodiscard]] bool operator<=(event const& other)
+        bool operator<=(event const& other)
         {
-            return !(other.m_event < m_event);
+            return !(other.event_ < event_);
         }
 
-        [[nodiscard]] bool operator>(event const& other)
+        bool operator>(event const& other)
         {
-            return other.m_event < m_event;
+            return other.event_ < event_;
         }
 
-        [[nodiscard]] bool operator>=(event const& other)
+        bool operator>=(event const& other)
         {
-            return !(m_event < other.m_event);
+            return !(event_ < other.event_);
         }
 
-        [[nodiscard]] bool operator==(event const& other)
-        {
-            return m_event == other.m_event;
-        }
-
-        [[nodiscard]] bool operator!=(event const& other)
-        {
-            return !(m_event == other.m_event);
-        }
 #       endif
 
+        bool operator==(event const& other)
+        {
+            return event_ == other.event_;
+        }
+
+        bool operator!=(event const& other)
+        {
+            return !(event_ == other.event_);
+        }
+
     private:
-        modern_handle_type m_event;
+        modern_handle_type event_;
 
     };
 
-#   if __cplusplus > 201703L || _MSVC_LANG > 201703L 
+#   if __cplusplus > 201703L 
     template <event_type EVENT_TYPE>
-    [[nodiscard]] auto operator<=>(event<EVENT_TYPE> const& lhs, event<EVENT_TYPE> const& rhs)
+    [[nodiscard]]
+    auto operator<=>(event<EVENT_TYPE> const& lhs, event<EVENT_TYPE> const& rhs)
     {
         return lhs.operator<=>(rhs);
     }
 
 #   else
     template <event_type EVENT_TYPE>
-    [[nodiscard]] bool operator<(event<EVENT_TYPE> const& lhs, event<EVENT_TYPE> const& rhs)
+    [[nodiscard]]
+    bool operator<(event<EVENT_TYPE> const& lhs, event<EVENT_TYPE> const& rhs)
     {
         return lhs.operator<(rhs);
     }
 
     template <event_type EVENT_TYPE>
-    [[nodiscard]] bool operator<=(event<EVENT_TYPE> const& lhs, event<EVENT_TYPE> const& rhs)
+    [[nodiscard]]
+    bool operator<=(event<EVENT_TYPE> const& lhs, event<EVENT_TYPE> const& rhs)
     {
         return lhs.operator<=(rhs);
     }
 
     template <event_type EVENT_TYPE>
-    [[nodiscard]] bool operator>(event<EVENT_TYPE> const& lhs, event<EVENT_TYPE> const& rhs)
+    [[nodiscard]]
+    bool operator>(event<EVENT_TYPE> const& lhs, event<EVENT_TYPE> const& rhs)
     {
         return lhs.operator>(rhs);
     }
 
     template <event_type EVENT_TYPE>
-    [[nodiscard]] bool operator>=(event<EVENT_TYPE> const& lhs, event<EVENT_TYPE> const& rhs)
+    [[nodiscard]]
+    bool operator>=(event<EVENT_TYPE> const& lhs, event<EVENT_TYPE> const& rhs)
     {
         return lhs.operator>=(rhs);
     }
 
     template <event_type EVENT_TYPE>
-    [[nodiscard]] bool operator==(event<EVENT_TYPE> const& lhs, event<EVENT_TYPE> const& rhs)
+    [[nodiscard]]
+    bool operator==(event<EVENT_TYPE> const& lhs, event<EVENT_TYPE> const& rhs)
     {
         return lhs.operator==(rhs);
     }
 
     template <event_type EVENT_TYPE>
-    [[nodiscard]] bool operator!=(event<EVENT_TYPE> const& lhs, event<EVENT_TYPE> const& rhs)
+    [[nodiscard]]
+    bool operator!=(event<EVENT_TYPE> const& lhs, event<EVENT_TYPE> const& rhs)
     {
         return lhs.operator!=(rhs);
     }

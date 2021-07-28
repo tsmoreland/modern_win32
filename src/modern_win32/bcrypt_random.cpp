@@ -11,23 +11,24 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#include <modern_win32/wait_for.h>
+#include "modern_win32/bcrypt_random.h"
+#include "modern_win32/windows_exception.h"
+#include <bcrypt.h>
+
+
+// from ntstatus.h but that has all sorts of warnings so adding it directly
+#define STATUS_SUCCESS                   ((NTSTATUS)0x00000000L)    // ntsubauth  // NOLINT(cppcoreguidelines-macro-usage) -- we don't know the type, could use auto but vc141 complains
 
 namespace modern_win32
 {
 
-bool is_complete(wait_for_result const& result)
-{
-    switch (result) {
-    case wait_for_result::object:
+    bool bcrypt_get_random_bytes(byte* data, unsigned long length) noexcept
+    {
+        if (auto const result = BCryptGenRandom(BCRYPT_RNG_ALG_HANDLE, data, length, 0);
+            result != STATUS_SUCCESS) {
+            return false;
+        }
         return true;
-    case wait_for_result::abandonded:
-        throw std::runtime_error("unexpected handle type");
-    case wait_for_result::failed:
-        throw windows_exception();
-    default:
-        return false;
     }
-}
 
 }

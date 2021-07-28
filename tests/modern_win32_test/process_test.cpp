@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Terry Moreland
+// Copyright Â© 2021 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -46,23 +46,23 @@ public:
     using char_type = TCHAR;
 
     test_context(TCHAR const* command, TCHAR const* arguments)
-        : m_command(command)
-        , m_arguments(arguments)
+        : command_(command)
+        , arguments_(arguments)
     {
     }
 
     TCHAR const* get_command() const noexcept
     {
-        return m_command;
+        return command_;
     }
     TCHAR const* get_arguments() const noexcept
     {
-        return m_arguments;
+        return arguments_;
     }
 
 private:
-    TCHAR const* m_command{};
-    TCHAR const* m_arguments{};
+    TCHAR const* command_{};
+    TCHAR const* arguments_{};
     
 };
 
@@ -93,22 +93,22 @@ TEST(process, is_running_should_return_true_when_active)
 
 TEST(process, wait_for_exit_should_report_correct_exit_code)
 {
-    auto const process = start_process(CommandExe, "/c exit 5");
+    auto const process = start_process(CommandExe, "/c exit 3");
     EXPECT_TRUE(process.wait_for_exit(milliseconds(2500)));
-    ASSERT_EQ(process::exit_code_type(5),  process.get_exit_code());
+    ASSERT_EQ(process::exit_code_type{ 3 }, process.get_exit_code());
 }
 
 TEST(process, has_exit_should_report_true_after_exit)
 {
-    auto const process = start_process(CommandExe, "/c Sleep 1");
-    EXPECT_TRUE(process.wait_for_exit(milliseconds(2500)));
+    auto const process = start_process(CommandExe, "/c Ping -n 2 127.0.0.1");
+    EXPECT_TRUE(process.wait_for_exit(milliseconds(5000)));
     ASSERT_TRUE(process.has_exited());
     ASSERT_TRUE(!process.is_running());
 }
 
 TEST(process, wait_for_exit_should_timeout_when_waiting_too_long)
 {
-    auto const process = start_process(CommandExe, "/c Sleep 1");
+    auto const process = start_process(CommandExe, "/c Ping 127.0.0.1");
     auto const timeout = process.wait_for_exit(milliseconds(250));
 
     process.wait_for_exit();

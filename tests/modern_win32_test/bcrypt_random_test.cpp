@@ -11,23 +11,29 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#include <modern_win32/wait_for.h>
+#pragma warning(push, 1)
+#include <gtest/gtest.h>
+#pragma warning(pop)
 
-namespace modern_win32
-{
+#include "modern_win32/bcrypt_random.h"
 
-bool is_complete(wait_for_result const& result)
+using modern_win32::bcrypt_get_random_bytes;
+
+TEST(bcrypt_random, bcrypt_get_random_bytes_returns_different_returns_true_on_success)
 {
-    switch (result) {
-    case wait_for_result::object:
-        return true;
-    case wait_for_result::abandonded:
-        throw std::runtime_error("unexpected handle type");
-    case wait_for_result::failed:
-        throw windows_exception();
-    default:
-        return false;
-    }
+    int first{};
+    auto const result = bcrypt_get_random_bytes(reinterpret_cast<byte*>(&first), sizeof(first));
+
+    ASSERT_TRUE(result);
 }
 
+TEST(bcrypt_random, get_bytes_returns_different_value_after_subsequent_calls)
+{
+
+    int first{};
+    int second{};
+    static_cast<void>(bcrypt_get_random_bytes(reinterpret_cast<byte*>(&first), sizeof(first)));
+    static_cast<void>(bcrypt_get_random_bytes(reinterpret_cast<byte*>(&second), sizeof(second)));
+
+    ASSERT_NE(first, second);
 }

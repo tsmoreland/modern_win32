@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Terry Moreland
+// Copyright Â© 2021 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -11,17 +11,19 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __MODERN_WIN32_PROCESS_H__
-#define __MODERN_WIN32_PROCESS_H__
+#ifndef MODERN_WIN32_PROCESS_H_
+#define MODERN_WIN32_PROCESS_H_
 #ifdef _WIN32
 
 #include <modern_win32/modern_win32_export.h>
 #include <modern_win32/null_handle.h>
 #include <modern_win32/process_enums.h>
+#include <modern_win32/process_module.h>
 #include <modern_win32/process_startup_info.h>
 
 #include <chrono>
 #include <optional>
+#include <string>
 #include <Windows.h>
 
 namespace modern_win32
@@ -36,11 +38,13 @@ namespace modern_win32
         using exit_code_type = unsigned long;
         using deconstruct_type = std::pair<process_id_type, native_handle_type>;
 
-        [[nodiscard]] static constexpr deconstruct_type make_deconstruct_type(process_id_type id, native_handle_type handle)
+        [[nodiscard]]
+        static constexpr deconstruct_type make_deconstruct_type(process_id_type id, native_handle_type handle)
         {
             return deconstruct_type{id, handle};
         }
-        [[nodiscard]] static constexpr deconstruct_type empty() noexcept
+        [[nodiscard]]
+        static constexpr deconstruct_type empty() noexcept
         {
             return make_deconstruct_type(0UL, process_handle::invalid());
         }
@@ -63,36 +67,42 @@ namespace modern_win32
         /// <summary>
         /// Returns true if process handle is not invalid
         /// </summary>
-        [[nodiscard]] explicit operator bool() const noexcept;
+        [[nodiscard]]
+        explicit operator bool() const noexcept;
 
         /// <summary>swaps the value of <paramref name="lhs"/> and <paramref name="rhs"/></summary>
         MODERN_WIN32_EXPORT friend void swap(process& first, process& second) noexcept;
 
         /// <summary>replaces the managed object</summary>
         /// <returns>true if the replacement represents a valid process; otherwise, false</returns>
-        [[nodiscard]] bool reset(deconstruct_type const& process = empty());
+        [[nodiscard]]
+        bool reset(deconstruct_type const& process = empty());
 
         /// <summary>replaces the managed object</summary>
         /// <returns>true if the replacement represents a valid process; otherwise, false</returns>
-        [[nodiscard]] bool reset(native_handle_type const handle = process_handle::invalid());
+        [[nodiscard]]
+        bool reset(native_handle_type const handle = process_handle::invalid());
 
         /// <summary>
         /// releases the ownership of the process handle if any,
         /// </summary>
         /// <returns><see cref="native_handle_type"/> containing the contents of the managed object</returns>
-        [[nodiscard]] deconstruct_type release();
+        [[nodiscard]]
+        deconstruct_type release();
 
         /// <summary>
         /// Returns the underlying implementation-defined native handle object.
         /// </summary>
         /// <returns>implementation-defined native handle object.</returns>
-        [[nodiscard]] native_handle_type native_handle() const noexcept;
+        [[nodiscard]]
+        native_handle_type native_handle() const noexcept;
 
         /// <summary>
         /// Returns a reference to the managed handle object.
         /// </summary>
         /// <returns>reference to the managed handle object.</returns>
-        [[nodiscard]] process_handle& get() noexcept;
+        [[nodiscard]]
+        process_handle& get() noexcept;
 
         /// <summary>
         /// Retrieves the process identifier of the process.
@@ -101,29 +111,34 @@ namespace modern_win32
         /// the process identifier of the process, if found; otherise <see cref="std::nullopt"/>
         /// </returns>
         /// <exception cref="windows_exception">if call to native GetProcessId fails</exception>
-        [[nodiscard]] std::optional<process_id_type> get_process_id() const;
+        [[nodiscard]]
+        std::optional<process_id_type> get_process_id() const;
 
         /// <summary>returns true if a process is currently owned and is running; otherwise, false</summary>
         /// <exception cref="windows_exception">if an error occurs calling the Win32 API</exception>
-        [[nodiscard]] bool is_running() const;
+        [[nodiscard]]
+        bool is_running() const;
 
         /// <summary>Gets a value indicating whether the associated process has been terminated.</summary>
         /// <exception cref="windows_exception">if an error occurs calling the Win32 API</exception>
-        [[nodiscard]] bool has_exited() const;
+        [[nodiscard]]
+        bool has_exited() const;
 
         /// <summary>
         /// Returns the priority of the process if running; otherwise std::nullopt
         /// </summary>
         /// <returns>priority of the process if running; otherwise std::nullopt</returns>
         /// <exception cref="windows_exception">if native api (GetPriorityClass) fails</exception>
-        [[nodiscard]] std::optional<process_priority> get_priority() const;
+        [[nodiscard]]
+        std::optional<process_priority> get_priority() const;
 
         /// <summary>
         /// Returns the process exit code if it is no longer running; otherwise <see cref="std::nullopt"/>
         /// </summary>
         /// <returns>process exit code if process has exited</returns>
         /// <exception cref="windows_exception">if an error occurs calling the Win32 API</exception>
-        [[nodiscard]] std::optional<exit_code_type> get_exit_code() const;
+        [[nodiscard]]
+        std::optional<exit_code_type> get_exit_code() const;
 
         /// <summary>waits for process to exit</summary>
         /// <exception cref="windows_exception">if an error occurs calling the Win32 API</exception>
@@ -141,15 +156,34 @@ namespace modern_win32
         /// <exception cref="std::runtime_exception">
         /// if process_information was incorectly built from mutex which was abandoned
         /// </exception>
-        [[nodiscard]] bool wait_for_exit(std::chrono::milliseconds const& timeout) const; 
+        [[nodiscard]]
+        bool wait_for_exit(std::chrono::milliseconds const& timeout) const; 
+
+        /// <summary>
+        /// returns the first module of the process
+        /// </summary>
+        /// <returns>the first module of the process</returns>
+        /// <exception cref="windows_exception">if error occurs with Win32 API</exception>
+        [[nodiscard]]
+        process_module get_primary_module() const;
+
+        /// <summary>
+        /// returns a collection of all modules in the process
+        /// </summary>
+        /// <param name="max_count">maximum number of modules to retrieve</param>
+        /// <returns>a collection of all modules in the process</returns>
+        /// <exception cref="windows_exception">if error occurs with Win32 API</exception>
+        /// <exception cref="std::invalid_argument">if max_count is 0</exception>
+        [[nodiscard]]
+        std::vector<process_module> get_modules(DWORD max_count = 1024) const;
 
     private:
 
 #       pragma warning(push)
 #       pragma warning(disable : 4251)
-        process_handle m_handle;
+        process_handle handle_;
 #       pragma warning(pop)
-        process_id_type m_id;
+        process_id_type id_;
 
         void close() noexcept;
     };
@@ -168,7 +202,8 @@ namespace modern_win32
     /// <returns></returns>
     /// <exception cref="std::invalid_argument">if <paramref name="process_id"/> is 0</exception>
     /// <exception cref="access_denied_exception">if insufficent access to open process</exception>
-    [[nodiscard]] MODERN_WIN32_EXPORT process open_process(process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles = false);
+    [[nodiscard]]
+    MODERN_WIN32_EXPORT process open_process(process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles = false);
 
     /// <summary>
     /// Starts the process resource that is specified by the parameter containing process start information
@@ -204,7 +239,8 @@ namespace modern_win32
     /// </returns>
     /// <exception cref="std::filesystem::filesystem_error">thrown if thte filename specified in <paramref name="startup_info"/> is not found.</exception>
     /// <exception cref="windows_exception">if there is an error in the native CreateProcess call</exception>
-    [[nodiscard]] process start_process(wide_process_startup_info const& startup_info);
+    [[nodiscard]]
+    process start_process(wide_process_startup_info const& startup_info);
 
     /// <summary>
     /// Starts a process resource by specifying the name of an application and
@@ -220,10 +256,12 @@ namespace modern_win32
     /// already true.
     /// In this case, the started process may have activated an existing instance of itself and then exited.
     /// </returns>
-    [[nodiscard]] MODERN_WIN32_EXPORT process start_process(char const* filename, char const* arguments);
+    [[nodiscard]]
+    MODERN_WIN32_EXPORT process start_process(char const* filename, char const* arguments);
 
     /// <summary><see cref="start(std::filesystem::path, char const*)"/></summary>
-    [[nodiscard]] MODERN_WIN32_EXPORT process start_process(wchar_t const* filename, wchar_t const* arguments);
+    [[nodiscard]]
+    MODERN_WIN32_EXPORT process start_process(wchar_t const* filename, wchar_t const* arguments);
 
 }
 

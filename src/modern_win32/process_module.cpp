@@ -11,39 +11,51 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef MODERN_WIN32_COM_EXCEPTION_H_
-#define MODERN_WIN32_COM_EXCEPTION_H_
-#ifdef _WIN32
-
-#include <Windows.h>
-#include <exception>
+#include "modern_win32/process_module.h"
+#include <Psapi.h>
+#include <memory>
 
 namespace modern_win32
 {
-    class com_exception final : public std::exception
+
+    [[nodiscard]]
+    std::wstring get_module_filename(HANDLE process, HMODULE module, DWORD size) 
     {
-    public:
-        using native_handle_type = HRESULT;
-        explicit com_exception(HRESULT const result)
-            : exception()
-            , result_(result)
-        {
-        }
-        explicit com_exception(HRESULT const result, char const* message)
-            : exception(message)
-            , result_(result)
-        {
+
+        auto buffer = std::make_unique<WCHAR[]>(size);
+        auto const length = GetModuleFileNameExW(process, module, buffer.get(), size - 1);
+        if (length == 0) {
+            throw windows_exception();
         }
 
-        [[nodiscard]]
-        native_handle_type get() const noexcept
-        {
-            return result_;
+        if (length >= size) {
+            buffer.reset();
+            return get_module_filename(process, module, length + 1);
         }
-    private:
-        native_handle_type result_;
-    };
+        return std::wstring(buffer.get());
+    }
+
+    std::wstring process_module::get_name() const
+    {
+        WCHAR name[MAX_PATH + 1]{};
+        if (auto const result = GetModuleBaseNameW(process_, module_, name, MAX_PATH);
+            result == 0) {
+            throw windows_exception();
+        }
+
+        return name;
+    }
+
+    std::wstring process_module::get_filename() const
+    {
+        return get_module_filename(process_, module_, MAX_PATH + 1);
+    }
+
+    process_module::process_module(native_process_handle_type process, native_module_handle_type module)
+        : process_{ process }
+        , module_{ module }
+    {
+    }
+
+
 }
-
-#endif
-#endif

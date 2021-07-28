@@ -1,5 +1,5 @@
 
-// Copyright © 2020 Terry Moreland
+// Copyright Â© 2021 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -9,13 +9,13 @@
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-#ifndef __MODERN_WIN32_WINDOWS_ERROR_H__
-#define __MODERN_WIN32_WINDOWS_ERROR_H__
+#ifndef MODERN_WIN32_WINDOWS_ERROR_H_
+#define MODERN_WIN32_WINDOWS_ERROR_H_
 #ifdef _WIN32
 
 #include <Windows.h>
 #include <optional>
-#include <tuple>
+#include <modern_win32/modern_win32_export.h>
 
 namespace modern_win32
 {
@@ -727,7 +727,7 @@ namespace modern_win32
         /// <summary>Attempt to access invalid address.</summary>
         error_invalid_address = ERROR_INVALID_ADDRESS,
         /// <summary>Driver Verifier Volatile settings cannot be set when CFG is enabled.</summary>
-        error_vrf_cfg_enabled = ERROR_VRF_CFG_ENABLED,
+        error_vrf_cfg_enabled = 1183L, //ERROR_VRF_CFG_ENABLED,
         /// <summary>An attempt was made to access a partition that has begun termination.</summary>
         error_partition_terminating = ERROR_PARTITION_TERMINATING,
         /// <summary>User profile cannot be loaded.</summary>
@@ -4978,7 +4978,7 @@ namespace modern_win32
 
     using native_windows_error = decltype(GetLastError());
 
-    class windows_error_details final 
+    class MODERN_WIN32_EXPORT windows_error_details final 
     {
     public:
 
@@ -4990,7 +4990,8 @@ namespace modern_win32
         /// Returns the native windows error code value
         /// </summary>
         /// <returns>native windows error code value</returns>
-        [[nodiscard]] native_windows_error native_error_code() const noexcept;
+        [[nodiscard]]
+        native_windows_error native_error_code() const noexcept;
 
         /// <summary>
         /// Returns true if native_error_code is NO_ERROR
@@ -5002,7 +5003,8 @@ namespace modern_win32
         /// Returns the <see cref="windows_error"/> formed using the original native error code if a match is found; otherwise <see cref="windows_error::unknown"/>
         /// </summary>
         /// <returns><see cref="windows_error"/> formed using the original native error code if a match is found; otherwise <see cref="windows_error::unknown"/></returns>
-        [[nodiscard]] windows_error get() const noexcept;
+        [[nodiscard]]
+        windows_error get() const noexcept;
 
 
         /// <summary>
@@ -5010,7 +5012,7 @@ namespace modern_win32
         /// </summary>
         operator windows_error() const noexcept;
     private:
-        native_windows_error m_native_error_code;
+        native_windows_error native_error_code_;
     };
 
 }

@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Terry Moreland
+// Copyright Â© 2021 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -24,7 +24,7 @@
 using std::chrono::milliseconds;
 using namespace modern_win32::threading;
 
-using util::test::context;
+using modern_win32::test::context;
 constexpr auto TEST_TIMOUT = std::chrono::milliseconds(250);
 
 TEST(thread, thread_throws_invalid_argument_on_null_worker)

@@ -8,14 +8,32 @@ set(SOURCES ${TEST_SOURCES})
 
 add_executable(${TEST_PROJECT_NAME} ${TEST_SOURCES} 
     "context.cpp" 
+    "environment_test.cpp"
     "event_test.cpp" 
     "guid_test.cpp" 
     "process_test.cpp"
+    "semaphore_test.cpp"
+    "bcrypt_random_test.cpp"
     "slim_lock_test.cpp" 
-    "thread_test.cpp" "environment_test.cpp")
+    "thread_test.cpp" 
+    "thread_test.cpp"  
+    "timer_test.cpp")
 
 add_test(NAME ${TEST_PROJECT_NAME} COMMAND ${TEST_PROJECT_NAME})
 
+if(MSVC)
+    target_compile_options(${PROJECT_NAME} PUBLIC "/Zc:__cplusplus")
+endif()
+
+if (CMAKE_CXX_STANDARD EQUAL 20)
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
+elseif (CMAKE_CXX_STANDARD EQUAL 17)
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+elseif (CMAKE_CXX_STANDARD EQUAL 14)
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_14)
+else()
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
+endif()
 
 set_target_properties(${TEST_PROJECT_NAME} PROPERTIES
     VS_GLOBAL_KEYWORD "Win32Proj"
@@ -49,7 +67,8 @@ if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         "UNICODE;"
         "_UNICODE"
     )
-elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
+elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86" 
+       OR "${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
     target_compile_definitions(${TEST_PROJECT_NAME} PRIVATE
         "$<$<CONFIG:Debug>:"
             "_DEBUG"
@@ -85,7 +104,8 @@ if(MSVC)
             ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT};
             ${DEFAULT_CXX_EXCEPTION_HANDLING}
         )
-    elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
+    elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86" 
+           OR "${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")     
         target_compile_options(${TEST_PROJECT_NAME} PRIVATE
             $<$<CONFIG:Debug>:
                 ${DEFAULT_CXX_DEBUG_RUNTIME_LIBRARY}
