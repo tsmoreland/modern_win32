@@ -97,6 +97,9 @@ namespace modern_win32::threading
         void stop()
         {
             std::lock_guard lock{ lock_ };
+
+            TRAITS::cancel_waitable_timer(handle_.native_handle());
+
             shutdown_ = true;
             std::ignore = shutdown_event_.set();
         }

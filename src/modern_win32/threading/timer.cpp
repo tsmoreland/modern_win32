@@ -16,21 +16,6 @@
 
 namespace modern_win32::threading
 {
-    VOID CALLBACK TimerAPCProc(
-       LPVOID lpArg,               // Data value
-       DWORD dwTimerLowValue,      // Timer low value
-       DWORD dwTimerHighValue )    // Timer high value
-
-    {
-       // Formal parameters not used in this example.
-       UNREFERENCED_PARAMETER(dwTimerLowValue);
-       UNREFERENCED_PARAMETER(dwTimerHighValue);
-
-       UNREFERENCED_PARAMETER(lpArg);
-
-    }
-
-
     auto timer_traits::create(bool manual_reset) -> native_handle_type
     {
         auto const handle = CreateWaitableTimerW(nullptr, manual_reset ? TRUE : FALSE, nullptr);
@@ -48,13 +33,7 @@ namespace modern_win32::threading
             void *state,
             bool const restore) -> bool
     {
-        LARGE_INTEGER due_now{};
-        long long const tm = -5*10000000;
-        due_now.LowPart  = (DWORD) ( tm & 0xFFFFFFFF );
-        due_now.HighPart = (LONG)  ( tm >> 32 );
-
         return SetWaitableTimer(handle, &due_time, period, callback, state, restore ? TRUE : FALSE) == TRUE;
-        //return SetWaitableTimer(handle, &due_now, period, TimerAPCProc, state, restore ? TRUE : FALSE) == TRUE;
     }
 
     bool timer_traits::cancel_waitable_timer(native_handle_type handle)
