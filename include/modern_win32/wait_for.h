@@ -89,7 +89,7 @@ namespace modern_win32
 
     template <typename... HANDLES>
     [[nodiscard]]
-    auto wait_all(HANDLES const & ... args, std::chrono::milliseconds const& timeout = get_infinity_in_ms()) noexcept
+    auto wait_all(HANDLES const & ... args, std::chrono::milliseconds const& timeout = get_infinity_in_ms()) noexcept -> wait_for_result
     {
         static_assert(sizeof...(HANDLES) < static_cast<size_t>(MAXIMUM_WAIT_OBJECTS));
         HANDLE handles[sizeof...(HANDLES)];
@@ -99,7 +99,7 @@ namespace modern_win32
 
     template <typename... HANDLES>
     [[nodiscard]]
-    auto wait_any(HANDLES const & ... args, std::chrono::milliseconds const& timeout = get_infinity_in_ms()) noexcept 
+    auto wait_any(HANDLES const & ... args, std::chrono::milliseconds const& timeout = get_infinity_in_ms()) noexcept -> std::tuple<wait_for_result, std::optional<HANDLE>>
     {
         static_assert(sizeof...(HANDLES) < static_cast<size_t>(MAXIMUM_WAIT_OBJECTS));
         HANDLE handles[sizeof...(HANDLES)];
