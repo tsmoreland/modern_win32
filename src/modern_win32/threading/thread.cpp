@@ -64,7 +64,7 @@ namespace modern_win32::threading
     }
 
 
-    thread start_thread(thread::thread_proc const worker, thread::thread_parameter const parameter)
+    thread start_thread(thread::thread_proc const worker, thread::thread_parameter parameter)
     {
         thread new_thread;
         if (!new_thread.start(worker, parameter))
