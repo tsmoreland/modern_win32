@@ -98,7 +98,7 @@ namespace modern_win32::threading
         {
             std::lock_guard lock{ lock_ };
 
-            TRAITS::cancel_waitable_timer(handle_.native_handle());
+            std::ignore = TRAITS::cancel_waitable_timer(handle_.native_handle());
 
             shutdown_ = true;
             std::ignore = shutdown_event_.set();
@@ -214,7 +214,7 @@ namespace modern_win32::threading
 
     private:
 
-        static void CALLBACK timer_proc(void* state, DWORD timer_low_value, DWORD timer_high_value)
+        static void CALLBACK timer_proc(void* state, DWORD, DWORD)
         {
             
             if (auto* timer_object = static_cast<timer*>(state);
