@@ -7,15 +7,14 @@ file(GLOB_RECURSE TEST_SOURCES LIST_DIRECTORIES false *.h *.cpp)
 set(SOURCES ${TEST_SOURCES})
 
 add_executable(${TEST_PROJECT_NAME} ${TEST_SOURCES} 
+    "bcrypt_random_test.cpp"
     "context.cpp" 
     "environment_test.cpp"
     "event_test.cpp" 
     "guid_test.cpp" 
     "process_test.cpp"
     "semaphore_test.cpp"
-    "bcrypt_random_test.cpp"
     "slim_lock_test.cpp" 
-    "thread_test.cpp" 
     "thread_test.cpp"  
     "timer_test.cpp")
 
@@ -27,12 +26,8 @@ endif()
 
 if (CMAKE_CXX_STANDARD EQUAL 20)
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
-elseif (CMAKE_CXX_STANDARD EQUAL 17)
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
-elseif (CMAKE_CXX_STANDARD EQUAL 14)
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_14)
 else()
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 endif()
 
 set_target_properties(${TEST_PROJECT_NAME} PROPERTIES
