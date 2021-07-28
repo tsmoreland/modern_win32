@@ -209,7 +209,7 @@ namespace modern_win32::threading
     /// <returns>the running thread</returns>
     /// <exception cref="windows_exception">thrown if unable to create thread</exception>
     [[nodiscard]]
-    MODERN_WIN32_EXPORT thread start_thread(thread::thread_proc const worker, thread::thread_parameter const parameter);
+    MODERN_WIN32_EXPORT thread start_thread(thread::thread_proc const worker, thread::thread_parameter parameter);
 
     /// <summary>
     /// starts the thread using <paramref name="worker"/> if not already running
