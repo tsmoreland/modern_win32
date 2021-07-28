@@ -9,12 +9,14 @@
 indent_style = space
 indent_size = 4
 charset = utf-8
+trim_trailing_whitespace = true
 
 cpp_indent_case_contents_when_block = true
 cpp_new_line_before_open_brace_namespace = same_line
 
 cpp_indent_multi_line_relative_to = innermost_parenthesis 
 cpp_indent_within_parentheses = indent
+cpp_indent_braces = false
 
 cpp_new_line_before_open_brace_namespace = new_line 
 cpp_new_line_before_open_brace_type = new_line
