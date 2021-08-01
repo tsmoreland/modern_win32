@@ -48,8 +48,24 @@ namespace modern_win32::threading
         static bool cancel_waitable_timer(native_handle_type handle);
     };
 
+    template <typename T, std::enable_if<std::is_move_constructible_v<T> && std::is_move_assignable_v<T>>>
+    [[nodiscard]]
+    T&& move_if_supported(T& value)
+    {
+        return std::move(value);
+    }
+
+    /*
+    template <typename T, std::enable_if<!std::is_move_constructible_v<T> || !std::is_move_assignable_v<T>>>
+    [[nodiscard]]
+    T& move_if_supported(T& value)
+    {
+        return value;
+    }
+    */
+
     // not really but it's not working yet so marking as deprecated until it is
-    template <bool MANUAL_RESET, typename STATE, class TIMER_CALLBACK = void (*)(STATE), typename TRAITS = timer_traits>
+    template <bool MANUAL_RESET, typename STATE, class TIMER_CALLBACK = void (*)(STATE&), typename TRAITS = timer_traits>
     class timer final
     {
         using modern_handle_type = typename TRAITS::modern_handle_type;
@@ -110,13 +126,25 @@ namespace modern_win32::threading
             return !shutdown_ && callback_thread_.has_value() && callback_thread_.value().is_running();
         }
 
-
         explicit timer(TIMER_CALLBACK callback, STATE const& state)
             : handle_{ TRAITS::create(MANUAL_RESET) }
             , callback_{ callback }
             , state_{ state }
         {
         }
+        explicit timer(TIMER_CALLBACK&& callback, STATE const& state)
+            : handle_{ TRAITS::create(MANUAL_RESET) }
+            , callback_{ std::move(callback) }
+            , state_{ state }
+        {
+        }
+        explicit timer(TIMER_CALLBACK callback, STATE&& state)
+            : handle_{ TRAITS::create(MANUAL_RESET) }
+            , callback_{ callback }
+            , state_{ std::move(state) }
+        {
+        }
+
         ~timer()
         {
             stop();
@@ -125,13 +153,15 @@ namespace modern_win32::threading
         timer(timer&& other) noexcept
             : handle_{ other.handle_.release() }
             , callback_{ other.callback_ }
-            , state_{ other.state_ }
+            //, state_{ (other.state_) }
+            , state_{ }
             , callback_thread_{ std::move(other.callback_thread_) }
             , timer_settings_{ std::move(other.timer_settings_) }
-            , shutdown_{ std::move(other.shutdown_) }
-            , lock_{ std::move(other.lock_) }
+            , shutdown_{ other.shutdown_.load() }
+            , lock_{ }
             , shutdown_event_{ std::move(other.shutdown_event_) }
         {
+            other.shutdown_ = true;
         }
         timer& operator=(timer&& other) noexcept
         {
@@ -145,8 +175,10 @@ namespace modern_win32::threading
             callback_thread_ = std::move(other.callback_thread_);
             timer_settings_ = std::move(other.timer_settings_);
             shutdown_ = std::move(other.shutdown_);
-            lock_ = std::move(other.lock_);
+            lock_ = other.lock_;
             shutdown_event_ = std::move(other.shutdown_event_);
+
+            other.shutdown_ = true;
 
             return *this;
         }
@@ -271,10 +303,10 @@ namespace modern_win32::threading
         }
     };
 
-    template <typename STATE, class TIMER_CALLBACK = void(*)(STATE), typename TRAITS = timer_traits>
+    template <typename STATE, class TIMER_CALLBACK = void(*)(STATE&), typename TRAITS = timer_traits>
     using delayed_callback = timer<false, STATE, TIMER_CALLBACK, TRAITS>;
 
-    template <typename STATE, class TIMER_CALLBACK = void(*)(STATE), typename TRAITS = timer_traits>
+    template <typename STATE, class TIMER_CALLBACK = void(*)(STATE&), typename TRAITS = timer_traits>
     using synchronization_timer = timer<true, STATE, TIMER_CALLBACK, TRAITS>;
 
 
@@ -286,7 +318,7 @@ namespace modern_win32::threading
     /// <typeparam name="TRAITS"></typeparam>
     /// <param name="left">one of the values to be swapped</param>
     /// <param name="right">one of the values to be swapped</param>
-    template <bool MANUAL_RESET, typename STATE, class TIMER_CALLBACK = void(*)(STATE), typename TRAITS = timer_traits>
+    template <bool MANUAL_RESET, typename STATE, class TIMER_CALLBACK = void(*)(STATE&), typename TRAITS = timer_traits>
     void swap(timer<MANUAL_RESET, STATE, TIMER_CALLBACK, TRAITS> left, timer<MANUAL_RESET, STATE, TIMER_CALLBACK, TRAITS> right)
     {
         left.swap(right);

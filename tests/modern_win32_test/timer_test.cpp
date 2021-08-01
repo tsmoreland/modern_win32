@@ -32,10 +32,23 @@ using std::literals::chrono_literals::operator ""s;
 TEST(delayed_callback, constructor__does_not_throw__when_state_is_trivial)
 {
     ASSERT_NO_THROW({
-        delayed_callback<int> delay([](int) { /* ... */ }, 3);
+        delayed_callback<int> delay([](int&) { /* ... */ }, 3);
     });
 }
 
+TEST(delayed_callback, constructor__does_not_throw__when_state_is_non_trivial)
+{
+    auto m = std::make_unique<int>(3);
+
+    ASSERT_NO_THROW({
+        delayed_callback<std::unique_ptr<int>> delay([](std::unique_ptr<int>& ref) { /* ... */ }, std::move(m));
+    });
+
+    auto n = std::make_unique<int>(3);
+    delayed_callback<std::unique_ptr<int>> delay2([](std::unique_ptr<int>& ref) { /* ... */ }, std::move(n));
+    delayed_callback<std::unique_ptr<int>> delay3{ std::move(delay2) };
+
+}
 
 TEST(delay_callback, start__begins_timer__when_arguments_are_greater_than_or_equal_to_zero)
 {
