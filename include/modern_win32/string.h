@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Terry Moreland
+// Copyright Â© 2020 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -11,8 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __MODERN_WIN32_STRING_H__
-#define __MODERN_WIN32_STRING_H__
+#ifndef MODERN_WIN32_STRING_H_
+#define MODERN_WIN32_STRING_H_
 #ifdef _WIN32
 
 #include <Windows.h>
@@ -27,8 +27,13 @@ namespace modern_win32
     [[nodiscard]] std::optional<typename std::basic_string<TCHAR>::size_type> index_of(TCHAR const* source, TCHAR const& value = 0)
     {
         using size_type = typename std::basic_string<TCHAR>::size_type;
+#       if __cplusplus > 201703L 
+        
+        if (size_type position = 0; value == 0) {
+#       else
         size_type position = 0;
         if (value == 0) {
+#       endif
             while (source[position] != 0)
                 ++position;
 
@@ -68,7 +73,7 @@ namespace modern_win32
             auto const size_needed = MultiByteToWideChar(CP_UTF8, 0, value, static_cast<int>(value_view.size()), nullptr, 0);
 
             string_custom_alloc output(static_cast<typename string_custom_alloc::size_type>(size_needed), 0);
-            if (0 != MultiByteToWideChar(CP_UTF8, 0, value, static_cast<int>(value_view.size()), &output[0], static_cast<std::wstring::size_type>(size_needed)))
+            if (0 != MultiByteToWideChar(CP_UTF8, 0, value, static_cast<int>(value_view.size()), &output[0], size_needed))
                 throw modern_win32::windows_exception();
             return output;
         }
