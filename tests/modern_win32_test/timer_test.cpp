@@ -29,6 +29,31 @@ using modern_win32::threading::synchronization_timer;
 using std::literals::chrono_literals::operator ""ms;
 using std::literals::chrono_literals::operator ""s;
 
+class timer_test : public testing::TestWithParam<std::chrono::milliseconds>
+{
+    std::chrono::milliseconds value_{ 0ms };
+public:
+    void SetUp() override
+    {
+        value_ = GetParam();
+    }
+
+protected:
+    [[nodiscard]]
+    auto value() const noexcept -> std::chrono::milliseconds const&
+    {
+        return value_;
+    }
+};
+
+class delayed_callback_test : public timer_test
+{
+};
+
+class synchronization_timer_test : public timer_test
+{
+};
+
 class foo
 {
     int x_{};
@@ -47,14 +72,14 @@ public:
     }
 };
 
-TEST(delayed_callback, constructor__does_not_throw__when_state_is_trivial)
+TEST(delayed_callback_test, constructor__does_not_throw__when_state_is_trivial)
 {
     ASSERT_NO_THROW({
         delayed_callback<int> delay([](int&) { /* ... */ }, 3);
     });
 }
 
-TEST(delayed_callback, constructor__does_not_throw__when_state_is_reference)
+TEST(delayed_callback_test, constructor__does_not_throw__when_state_is_reference)
 {
     foo bar{};
 
@@ -63,7 +88,29 @@ TEST(delayed_callback, constructor__does_not_throw__when_state_is_reference)
     });
 }
 
-TEST(delayed_callback, start__begins_timer__when_arguments_are_greater_than_or_equal_to_zero)
+TEST_P(delayed_callback_test, start__throws_invalid_argument__when_due_time_is_less_than_zero)
+{
+    try {
+        delayed_callback<int> delay([](int&) { /* ... */ }, 3);
+        delay.start(value(), 100ms);
+        FAIL();
+    } catch (std::invalid_argument const& e) {
+        ASSERT_EQ(e.what(), std::string_view("due_time must be greater than or equal to zero"));
+    }
+}
+
+TEST_P(delayed_callback_test, start__throws_invalid_argument__when_poll_period_is_less_than_zero)
+{
+    try {
+        delayed_callback<int> delay([](int&) { /* ... */ }, 3);
+        delay.start(0ms, value());
+        FAIL();
+    } catch (std::invalid_argument const& e) {
+        ASSERT_EQ(e.what(), std::string_view("period must be greater than or equal to zero"));
+    }
+}
+
+TEST(delayed_callback_test, start__begins_timer__when_arguments_are_greater_than_or_equal_to_zero)
 {
     manual_reset_event callback_event{ false };
     bool called{ false };
@@ -83,3 +130,66 @@ TEST(delayed_callback, start__begins_timer__when_arguments_are_greater_than_or_e
 
     ASSERT_TRUE(called);
 }
+
+
+TEST(synchronization_timer_test, constructor__does_not_throw__when_state_is_trivial)
+{
+    ASSERT_NO_THROW({
+        synchronization_timer<int> timer([](int&) { /* ... */ }, 3);
+    });
+}
+
+TEST(synchronization_timer_test, constructor__does_not_throw__when_state_is_reference)
+{
+    foo bar{};
+
+    ASSERT_NO_THROW({
+        synchronization_timer<std::reference_wrapper<foo>> timer([](std::reference_wrapper<foo>&) {  /* ... */ }, std::reference_wrapper(bar));
+    });
+}
+
+TEST(synchronization_timer_test, start__begins_timer__when_arguments_are_greater_than_or_equal_to_zero)
+{
+    manual_reset_event callback_event{ false };
+    bool called{ false };
+    int const expected_state = 3;
+    auto callback = [&called, &callback_event, expected_state](int& state) {
+        if (state == expected_state) {
+            called = true;
+            std::ignore = callback_event.set();
+        }
+    };
+
+    synchronization_timer<int, decltype(callback)> timer(callback, expected_state);
+
+    timer.start(10ms, 100ms);
+
+    std::ignore = callback_event.wait_one(1s);
+
+    ASSERT_TRUE(called);
+}
+
+TEST_P(synchronization_timer_test, start__throws_invalid_argument__when_due_time_is_less_than_zero)
+{
+    try {
+        synchronization_timer<int> timer([](int&) { /* ... */ }, 3);
+        timer.start(value(), 100ms);
+        FAIL();
+    } catch (std::invalid_argument const& e) {
+        ASSERT_EQ(e.what(), std::string_view("due_time must be greater than or equal to zero"));
+    }
+}
+
+TEST_P(synchronization_timer_test, start__throws_invalid_argument__when_poll_period_is_less_than_zero)
+{
+    try {
+        delayed_callback<int> delay([](int&) { /* ... */ }, 3);
+        delay.start(0ms, value());
+        FAIL();
+    } catch (std::invalid_argument const& e) {
+        ASSERT_EQ(e.what(), std::string_view("period must be greater than or equal to zero"));
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(data_driven, delayed_callback_test, testing::Values(-50ms, -100ms));
+INSTANTIATE_TEST_SUITE_P(data_driven, synchronization_timer_test, testing::Values(-50ms, -100ms));
