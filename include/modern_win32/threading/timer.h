@@ -48,26 +48,11 @@ namespace modern_win32::threading
         static bool cancel_waitable_timer(native_handle_type handle);
     };
 
-    template <typename T, std::enable_if<std::is_move_constructible_v<T> && std::is_move_assignable_v<T>>>
-    [[nodiscard]]
-    T&& move_if_supported(T& value)
-    {
-        return std::move(value);
-    }
-
-    /*
-    template <typename T, std::enable_if<!std::is_move_constructible_v<T> || !std::is_move_assignable_v<T>>>
-    [[nodiscard]]
-    T& move_if_supported(T& value)
-    {
-        return value;
-    }
-    */
-
     // not really but it's not working yet so marking as deprecated until it is
     template <bool MANUAL_RESET, typename STATE, class TIMER_CALLBACK = void (*)(STATE&), typename TRAITS = timer_traits>
     class timer final
     {
+        static_assert(std::is_trivially_copyable_v<STATE>, "STATE must be trivially copyable");
         using modern_handle_type = typename TRAITS::modern_handle_type;
 
         modern_handle_type handle_;
@@ -153,8 +138,7 @@ namespace modern_win32::threading
         timer(timer&& other) noexcept
             : handle_{ other.handle_.release() }
             , callback_{ other.callback_ }
-            //, state_{ (other.state_) }
-            , state_{ }
+            , state_{ (other.state_) }
             , callback_thread_{ std::move(other.callback_thread_) }
             , timer_settings_{ std::move(other.timer_settings_) }
             , shutdown_{ other.shutdown_.load() }

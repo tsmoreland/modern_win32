@@ -29,6 +29,24 @@ using modern_win32::threading::synchronization_timer;
 using std::literals::chrono_literals::operator ""ms;
 using std::literals::chrono_literals::operator ""s;
 
+class foo
+{
+    int x_{};
+public:
+    explicit foo() = default;
+
+    [[nodiscard]]
+    int const& x() const noexcept
+    {
+        return x_;
+    }
+    [[nodiscard]]
+    int& x() noexcept
+    {
+        return x_;
+    }
+};
+
 TEST(delayed_callback, constructor__does_not_throw__when_state_is_trivial)
 {
     ASSERT_NO_THROW({
@@ -36,26 +54,21 @@ TEST(delayed_callback, constructor__does_not_throw__when_state_is_trivial)
     });
 }
 
-TEST(delayed_callback, constructor__does_not_throw__when_state_is_non_trivial)
+TEST(delayed_callback, constructor__does_not_throw__when_state_is_reference)
 {
-    auto m = std::make_unique<int>(3);
+    foo bar{};
 
     ASSERT_NO_THROW({
-        delayed_callback<std::unique_ptr<int>> delay([](std::unique_ptr<int>& ref) { /* ... */ }, std::move(m));
+        delayed_callback<std::reference_wrapper<foo>> delay([](std::reference_wrapper<foo>&) {  /* ... */ }, std::reference_wrapper(bar));
     });
-
-    auto n = std::make_unique<int>(3);
-    delayed_callback<std::unique_ptr<int>> delay2([](std::unique_ptr<int>& ref) { /* ... */ }, std::move(n));
-    delayed_callback<std::unique_ptr<int>> delay3{ std::move(delay2) };
-
 }
 
-TEST(delay_callback, start__begins_timer__when_arguments_are_greater_than_or_equal_to_zero)
+TEST(delayed_callback, start__begins_timer__when_arguments_are_greater_than_or_equal_to_zero)
 {
     manual_reset_event callback_event{ false };
     bool called{ false };
     int const expected_state = 3;
-    auto callback = [&called, &callback_event, expected_state](int state) {
+    auto callback = [&called, &callback_event, expected_state](int& state) {
         if (state == expected_state) {
             called = true;
             std::ignore = callback_event.set();
