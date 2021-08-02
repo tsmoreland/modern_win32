@@ -104,13 +104,14 @@ namespace modern_win32::threading
 
     void thread::join() const
     {
-        if (is_running())
+        if (is_running() && thread_id_ != GetCurrentThreadId()) {
             static_cast<void>(wait_one(handle_));
+        }
     }
 
     bool thread::join(std::chrono::milliseconds const& timeout) const
     {
-        if (!is_running())
+        if (!is_running() && thread_id_ != GetCurrentThreadId())
             return false;
         return is_complete(wait_one(handle_, timeout));
     }
