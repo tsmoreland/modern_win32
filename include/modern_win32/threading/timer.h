@@ -22,7 +22,6 @@
 #include <modern_win32/threading/thread.h>
 #include <modern_win32/threading/event.h>
 #include <chrono>
-#include <modern_win32/windows_exception.h>
 #include <shared_mutex>
 
 namespace modern_win32::threading
