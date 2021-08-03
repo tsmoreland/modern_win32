@@ -48,7 +48,6 @@ namespace modern_win32::threading
         static bool cancel_waitable_timer(native_handle_type handle);
     };
 
-    // not really but it's not working yet so marking as deprecated until it is
     template <bool MANUAL_RESET, typename STATE, class TIMER_CALLBACK = void (*)(STATE&), typename TRAITS = timer_traits>
     class timer final
     {
@@ -60,9 +59,9 @@ namespace modern_win32::threading
         STATE state_;
         std::optional<thread> callback_thread_{};
         std::optional<std::pair<std::chrono::milliseconds, std::chrono::milliseconds>> timer_settings_{};
-        std::atomic<bool> shutdown_{};
-        std::shared_mutex lock_{};
-        manual_reset_event shutdown_event_{ false };
+        std::atomic<bool> stopped_{};
+        std::shared_timed_mutex lock_{};
+        manual_reset_event stop_event_{ false };
     public:
 
         /// <summary>
@@ -72,6 +71,7 @@ namespace modern_win32::threading
         /// <param name="period">period between subsequent callbacks</param>
         /// <exception cref="modern_win32::windows_exception">if internal API fails</exception>
         /// <exception cref="modern_win32::windows_exception">if internal API fails</exception>
+        template <bool T = MANUAL_RESET, typename = typename std::enable_if<!(T)>::type>
         void start(std::chrono::milliseconds const& due_time, std::chrono::milliseconds const& period)
         {
             // timer already active
@@ -95,20 +95,55 @@ namespace modern_win32::threading
 
         }
 
+        /// <summary>
+        /// Starts the timer 
+        /// </summary>
+        /// <param name="due_time">time before first callback is performed</param>
+        /// <exception cref="modern_win32::windows_exception">if internal API fails</exception>
+        /// <exception cref="modern_win32::windows_exception">if internal API fails</exception>
+        template <bool T = MANUAL_RESET, typename = typename std::enable_if<(T)>::type>
+        void start(std::chrono::milliseconds const& due_time)
+        {
+            // timer already active
+            std::lock_guard lock{ lock_ };
+
+            if (is_running()) {
+                return;
+            }
+
+            if (due_time < std::chrono::milliseconds(0)) {
+                throw std::invalid_argument("due_time must be greater than or equal to zero");
+            }
+            timer_settings_ = std::make_pair(due_time, std::chrono::milliseconds(0));
+
+            callback_thread_ = std::optional(start_thread(&timer::notification_thread_worker,
+                static_cast<thread::thread_parameter>(this)));
+
+        }
+
         void stop()
         {
             std::lock_guard lock{ lock_ };
-
             std::ignore = TRAITS::cancel_waitable_timer(handle_.native_handle());
 
-            shutdown_ = true;
-            std::ignore = shutdown_event_.set();
+            stopped_ = true;
+            std::ignore = stop_event_.set();
+
+            if (!callback_thread_.has_value()) {
+                return;
+            }
+
+            callback_thread_.value().join();
+            callback_thread_ = std::nullopt;
+            stopped_ = false;
+            std::ignore = stop_event_.clear();
+
         }
 
         [[nodiscard]]
         bool is_running() const
         {
-            return !shutdown_ && callback_thread_.has_value() && callback_thread_.value().is_running();
+            return !stopped_ && callback_thread_.has_value() && callback_thread_.value().is_running();
         }
 
         explicit timer(TIMER_CALLBACK callback, STATE const& state)
@@ -141,11 +176,11 @@ namespace modern_win32::threading
             , state_{ (other.state_) }
             , callback_thread_{ std::move(other.callback_thread_) }
             , timer_settings_{ std::move(other.timer_settings_) }
-            , shutdown_{ other.shutdown_.load() }
+            , stopped_{ other.stopped_.load() }
             , lock_{ }
-            , shutdown_event_{ std::move(other.shutdown_event_) }
+            , stop_event_{ std::move(other.stop_event_) }
         {
-            other.shutdown_ = true;
+            other.stopped_ = true;
         }
         timer& operator=(timer&& other) noexcept
         {
@@ -158,11 +193,11 @@ namespace modern_win32::threading
 
             callback_thread_ = std::move(other.callback_thread_);
             timer_settings_ = std::move(other.timer_settings_);
-            shutdown_ = std::move(other.shutdown_);
+            stopped_ = std::move(other.stopped_);
             lock_ = other.lock_;
-            shutdown_event_ = std::move(other.shutdown_event_);
+            stop_event_ = std::move(other.stop_event_);
 
-            other.shutdown_ = true;
+            other.stopped_ = true;
 
             return *this;
         }
@@ -188,9 +223,9 @@ namespace modern_win32::threading
             std::swap(state_, other.state_);
             swap(callback_thread_, other.callback_thread_);
             swap(timer_settings_, other.timer_settings_);
-            swap(shutdown_, other.shutdown_);
+            swap(stopped_, other.stopped_);
             swap(lock_, other.lock_);
-            swap(shutdown_event_, other.shutdown_event_);
+            swap(stop_event_, other.stop_event_);
         }
 
 #       if __cplusplus > 201703L 
@@ -250,9 +285,17 @@ namespace modern_win32::threading
             }
 
 
-            if (std::shared_lock lock(self->lock_);
-                !self->shutdown_)
+            // only stop should hold the lock this long
+            bool timer_started{ false };
+            //if (std::shared_lock lock(self->lock_, std::chrono::system_clock::now() + std::chrono::milliseconds(100));
+            if (std::shared_lock lock(self->lock_, std::chrono::milliseconds(100));
+                !self->stopped_)
             {
+                timer_started = true;
+
+                if (!lock.owns_lock()) {
+                    return 3UL;
+                }
                 
                 if (!self->timer_settings_.has_value()) {
                     return 2UL;
@@ -266,12 +309,15 @@ namespace modern_win32::threading
                         timer::timer_proc,
                         state,
                         false)) {
-                    throw windows_exception();
+                    return 4UL;
                 }
             }
+            if (!timer_started) {
+                return 5UL;
+            }
 
-            while (!self->shutdown_) {
-                std::ignore = self->shutdown_event_.wait_one(std::chrono::milliseconds(500), true);
+            while (!self->stopped_) {
+                std::ignore = self->stop_event_.wait_one(std::chrono::milliseconds(500), true);
             }
 
             return 0UL;
@@ -288,10 +334,10 @@ namespace modern_win32::threading
     };
 
     template <typename STATE, class TIMER_CALLBACK = void(*)(STATE&), typename TRAITS = timer_traits>
-    using delayed_callback = timer<false, STATE, TIMER_CALLBACK, TRAITS>;
+    using delayed_callback = timer<true, STATE, TIMER_CALLBACK, TRAITS>;
 
     template <typename STATE, class TIMER_CALLBACK = void(*)(STATE&), typename TRAITS = timer_traits>
-    using synchronization_timer = timer<true, STATE, TIMER_CALLBACK, TRAITS>;
+    using synchronization_timer = timer<false, STATE, TIMER_CALLBACK, TRAITS>;
 
 
     /// <summary>
