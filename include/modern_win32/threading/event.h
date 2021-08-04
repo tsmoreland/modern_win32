@@ -52,7 +52,7 @@ namespace modern_win32::threading
         /// </summary>
         /// <returns>true on success; otherwise, false</returns>
         // ReSharper disable once CppMemberFunctionMayBeConst it shouldn't be const because the state of the event is changing
-        [[nodiscard]]
+        [[maybe_unused]]
         bool set() noexcept
         {
             return SetEvent(event_.native_handle()) != 0;
@@ -62,7 +62,7 @@ namespace modern_win32::threading
         /// </summary>
         /// <returns>true on success; otherwise, false</returns>
         // ReSharper disable once CppMemberFunctionMayBeConst it shouldn't be const because the state of the event is changing
-        [[nodiscard]]
+        [[maybe_unused]]
         bool clear() noexcept
         {
             return ResetEvent(event_.native_handle()) != 0;
@@ -133,14 +133,16 @@ namespace modern_win32::threading
 
 #       endif
 
-        bool operator==(event const& other)
+        [[nodiscard]]
+        friend bool operator==(event const& left, event const& right)
         {
-            return event_ == other.event_;
+            return left.event_ == right.event_;
         }
 
-        bool operator!=(event const& other)
+        [[nodiscard]]
+        friend bool operator!=(event const& left, event const& right)
         {
-            return !(event_ == other.event_);
+            return !(left == right);
         }
 
     private:
