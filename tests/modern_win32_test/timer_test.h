@@ -18,6 +18,7 @@
 #include <gtest/gtest.h>
 #pragma warning(pop)
 
+#include <Windows.h>
 #include <chrono>
 
 #pragma warning(disable : 4455)
@@ -42,6 +43,100 @@ namespace modern_win32::test
             return value_;
         }
     };
+
+    class fake_handle
+    {
+        int value_;
+    public:
+        using native_handle_type = int;
+
+        constexpr explicit fake_handle(native_handle_type const value) noexcept
+            : value_(value)
+        {
+            
+        }
+
+        [[nodiscard]]
+        constexpr native_handle_type& native_handle() noexcept
+        {
+            return value_;
+        }
+        [[nodiscard]]
+        constexpr native_handle_type const& native_handle() const noexcept
+        {
+            return value_;
+        }
+
+        [[nodiscard]]
+        inline native_handle_type release()
+        {
+            auto const value = value_;
+            value_ = 0;
+            return value;
+        }
+
+        [[nodiscard]]
+        inline bool reset(native_handle_type value)
+        {
+            value_ = value;
+            return value_ != 0;
+        }
+
+        [[nodiscard]]
+        friend bool operator==(fake_handle const& left, fake_handle const& right)
+        {
+            return left.value_ == right.value_;
+        }
+        [[nodiscard]]
+        friend bool operator!=(fake_handle const& left, fake_handle const& right)
+        {
+            return !(left == right);
+        }
+
+    };
+
+
+    class fake_timer_traits
+    {
+        // destruction of these may not be realiable as they're static but it's for unit testing purposes only so we'll ignore for now
+        using get_create_result_type = std::function<int()>;
+
+        static get_create_result_type get_create_result_;
+
+    public:
+        using modern_handle_type = fake_handle;
+        using native_handle_type = int;
+
+        [[nodiscard]]
+        static inline auto create(bool) -> native_handle_type
+        {
+            return get_create_result_();
+        }
+
+        [[nodiscard]]
+        static inline auto set_waitable_timer(
+            native_handle_type,
+            LARGE_INTEGER&,
+            LONG,
+            _In_opt_ PTIMERAPCROUTINE,
+            void*,
+            bool const) -> bool
+        {
+            return true;
+        }
+
+        [[nodiscard]]
+        static inline bool cancel_waitable_timer(native_handle_type)
+        {
+            return true;
+        }
+
+        static constexpr get_create_result_type& get_create_result()
+        {
+            return get_create_result_;
+        }
+    };
+
 }
 
 #endif
