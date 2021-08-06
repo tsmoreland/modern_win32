@@ -63,6 +63,15 @@ namespace modern_win32::threading
         return get_thread_name(handle_.native_handle());
     }
 
+    std::optional<thread::native_thread_id> thread::id() const 
+    {
+        using empty_thread_id = std::optional<thread::native_thread_id>;
+        auto const id = thread_id_;
+        return is_running()
+            ? std::optional{ id }
+            : empty_thread_id{};
+    }
+
 
     thread start_thread(thread::thread_proc const worker, thread::thread_parameter parameter)
     {
