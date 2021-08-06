@@ -18,11 +18,12 @@
 
 #include <Windows.h>
 #include <modern_win32/modern_win32_export.h>
+#include <modern_win32/shared/timed_lock_guard.h>
 #include "modern_win32/null_handle.h"
 #include <modern_win32/threading/thread.h>
 #include <modern_win32/threading/event.h>
 #include <chrono>
-#include <shared_mutex>
+#include <mutex>
 
 namespace modern_win32::threading
 {
@@ -51,6 +52,8 @@ namespace modern_win32::threading
     class timer final
     {
         static_assert(std::is_trivially_copyable_v<STATE>, "STATE must be trivially copyable");
+        friend class timer_test;
+
         using modern_handle_type = typename TRAITS::modern_handle_type;
 
         modern_handle_type handle_;
@@ -59,7 +62,7 @@ namespace modern_win32::threading
         std::optional<thread> callback_thread_{};
         std::optional<std::pair<std::chrono::milliseconds, std::chrono::milliseconds>> timer_settings_{};
         std::atomic<bool> stopped_{};
-        std::shared_timed_mutex lock_{};
+        mutable std::recursive_timed_mutex lock_{};
         manual_reset_event stop_event_{ false };
     public:
 
@@ -105,6 +108,7 @@ namespace modern_win32::threading
         {
             // timer already active
             std::lock_guard lock{ lock_ };
+            stop();
 
             if (is_running()) {
                 return;
@@ -144,6 +148,16 @@ namespace modern_win32::threading
         {
             return !stopped_ && callback_thread_.has_value() && callback_thread_.value().is_running();
         }
+
+        [[nodiscard]]
+        auto  get_timer_thread_id() const -> std::optional<thread::native_thread_id>
+        {
+            std::lock_guard lock{ lock_ };
+            return callback_thread_.has_value()
+                ? std::optional{ callback_thread_->id() }
+                : std::optional<thread::native_thread_id>{};
+        }
+
 
         explicit timer(TIMER_CALLBACK callback, STATE const& state)
             : handle_{ TRAITS::create(MANUAL_RESET) }
@@ -277,25 +291,23 @@ namespace modern_win32::threading
         }
         static DWORD __stdcall notification_thread_worker(thread::thread_parameter state)
         {
+            // TODO: add constants for these error codes, even if they're inaccessible they shouldn't be magic
             auto self = static_cast<timer*>(state);
 
             if (self == nullptr) {
                 return 1UL;
             }
 
-
             // only stop should hold the lock this long
             bool timer_started{ false };
-            //if (std::shared_lock lock(self->lock_, std::chrono::system_clock::now() + std::chrono::milliseconds(100));
-            if (std::shared_lock lock(self->lock_, std::chrono::milliseconds(100));
-                !self->stopped_)
-            {
+            if (modern_win32::shared::timed_lock_guard lock(self->lock_, std::chrono::milliseconds(100));
+                !self->stopped_) {
                 timer_started = true;
 
                 if (!lock.owns_lock()) {
                     return 3UL;
                 }
-                
+
                 if (!self->timer_settings_.has_value()) {
                     return 2UL;
                 }
