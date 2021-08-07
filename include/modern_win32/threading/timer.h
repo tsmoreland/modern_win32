@@ -73,8 +73,10 @@ namespace modern_win32::threading
         /// <param name="period">period between subsequent callbacks</param>
         /// <exception cref="modern_win32::windows_exception">if internal API fails</exception>
         /// <exception cref="modern_win32::windows_exception">if internal API fails</exception>
-        template <bool T = MANUAL_RESET, typename = typename std::enable_if<!(T)>::type>
-        void start(std::chrono::milliseconds const& due_time, std::chrono::milliseconds const& period)
+        template <class DUE_REP, class DUE_PERIOD, class PERIOD_REP, class PERIOD_PERIOD, bool T = MANUAL_RESET, typename = std::enable_if_t<!(T)>>
+        void start(
+            std::chrono::duration<DUE_REP, DUE_PERIOD> const& due_time,
+            std::chrono::duration<PERIOD_REP, PERIOD_PERIOD> const& period)
         {
             // timer already active
             std::lock_guard lock{ lock_ };
@@ -83,14 +85,17 @@ namespace modern_win32::threading
                 return;
             }
 
-            if (due_time < std::chrono::milliseconds(0)) {
+            using std::chrono::duration_cast;
+            using std::chrono::milliseconds;
+
+            if (duration_cast<milliseconds>(due_time) < milliseconds(0)) {
                 throw std::invalid_argument("due_time must be greater than or equal to zero");
             }
-            if (period < std::chrono::milliseconds(0)) {
+            if (duration_cast<milliseconds>(period) < milliseconds(0)) {
                 throw std::invalid_argument("period must be greater than or equal to zero");
             }
 
-            timer_settings_ = std::make_pair(due_time, period);
+            timer_settings_ = std::make_pair(duration_cast<milliseconds>(due_time), duration_cast<milliseconds>(period));
 
             callback_thread_ = std::optional(start_thread(&timer::notification_thread_worker,
                 static_cast<thread::thread_parameter>(this)));
@@ -103,8 +108,8 @@ namespace modern_win32::threading
         /// <param name="due_time">time before first callback is performed</param>
         /// <exception cref="modern_win32::windows_exception">if internal API fails</exception>
         /// <exception cref="modern_win32::windows_exception">if internal API fails</exception>
-        template <bool T = MANUAL_RESET, typename = typename std::enable_if<(T)>::type>
-        void start(std::chrono::milliseconds const& due_time)
+        template <class REP, class PERIOD, bool T = MANUAL_RESET, typename = std::enable_if_t<(T)>>
+        void start(std::chrono::duration<REP, PERIOD> const& due_time)
         {
             // timer already active
             std::lock_guard lock{ lock_ };
@@ -114,10 +119,13 @@ namespace modern_win32::threading
                 return;
             }
 
-            if (due_time < std::chrono::milliseconds(0)) {
+            using std::chrono::duration_cast;
+            using std::chrono::milliseconds;
+
+            if (duration_cast<milliseconds>(due_time) < milliseconds(0)) {
                 throw std::invalid_argument("due_time must be greater than or equal to zero");
             }
-            timer_settings_ = std::make_pair(due_time, std::chrono::milliseconds(0));
+            timer_settings_ = std::make_pair(duration_cast<milliseconds>(due_time), milliseconds(0));
 
             callback_thread_ = std::optional(start_thread(&timer::notification_thread_worker,
                 static_cast<thread::thread_parameter>(this)));
