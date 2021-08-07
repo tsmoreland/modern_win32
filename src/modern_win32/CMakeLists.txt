@@ -39,6 +39,7 @@ set (PUBLIC_HEADER_FILES
     "../../include/modern_win32/shared_utilities.h"
     "../../include/modern_win32/string.h"
     "../../include/modern_win32/shared/case_insensitive_string.h"
+    "../../include/modern_win32/shared/chrono_extensions.h"
     "../../include/modern_win32/shared/timed_lock_guard.h"
     "../../include/modern_win32/shared/timeout_exception.h"
     "../../include/modern_win32/threading/slim_lock.h"
