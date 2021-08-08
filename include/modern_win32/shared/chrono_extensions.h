@@ -37,7 +37,7 @@ namespace modern_win32::shared
     template <class REP, class PERIOD>
     [[nodiscard]]
     constexpr auto to_milliseconds(std::chrono::duration<REP, PERIOD> value) ->
-        std::chrono::duration<REP, PERIOD>
+        std::chrono::milliseconds
     {
         return std::chrono::duration_cast<std::chrono::milliseconds>(value);
     }
@@ -60,9 +60,9 @@ namespace modern_win32::shared
     template <class REP, class PERIOD>
     [[nodiscard]]
     constexpr auto to_seconds(std::chrono::duration<REP, PERIOD> value) ->
-        std::chrono::duration<REP, PERIOD>
+        std::chrono::seconds
     {
-        return std::chrono::duration_cast<std::chrono::milliseconds>(value);
+        return std::chrono::duration_cast<std::chrono::seconds>(value);
     }
 
 }
