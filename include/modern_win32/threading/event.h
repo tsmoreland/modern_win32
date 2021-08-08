@@ -99,9 +99,9 @@ namespace modern_win32::threading
         /// <exception cref="windows_exception">if wait fails</exception>
         template <class REP = long long, class PERIOD = std::milli>
         [[nodiscard]]
-        bool wait_one(std::chrono::duration<REP, PERIOD> const timeout = std::nullopt, bool const alertable = false) const 
+        bool wait_one(std::chrono::duration<REP, PERIOD> const timeout, bool const alertable = false) const 
         {
-            return wait_one(std::optional(timeout, alertable));
+            return wait_one(std::optional(timeout), alertable);
         }
 
         /// <summary>
