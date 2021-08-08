@@ -12,6 +12,7 @@
 // 
 
 #include <modern_win32/wait_for.h>
+#include <modern_win32/windows_exception.h>
 
 namespace modern_win32
 {
