@@ -58,8 +58,9 @@ namespace modern_win32::threading
         /// </param>
         /// <returns>true if event was signaled; otherwise, false</returns>
         /// <exception cref="windows_exception">if wait fails</exception>
+        template <class REP = long long, class PERIOD = std::milli>
         [[nodiscard]]
-        bool wait_one(std::chrono::milliseconds const timeout = get_infinity_in_ms()) const 
+        bool wait_one(std::optional<std::chrono::duration<REP, PERIOD>> const timeout = std::nullopt) const 
         {
             return is_complete(modern_win32::wait_one(handle_, timeout));
         }

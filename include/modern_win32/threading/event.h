@@ -79,10 +79,29 @@ namespace modern_win32::threading
         /// <param name="alertable">if true wait can be interupted by alerts</param>
         /// <returns>true if event was signaled; otherwise, false</returns>
         /// <exception cref="windows_exception">if wait fails</exception>
+        template <class REP = long long, class PERIOD = std::milli>
         [[nodiscard]]
-        bool wait_one(std::chrono::milliseconds const timeout = get_infinity_in_ms(), bool const alertable = false) const 
+        bool wait_one(std::optional<std::chrono::duration<REP, PERIOD>> const timeout = std::nullopt, bool const alertable = false) const 
         {
             return is_complete(modern_win32::wait_one(event_, timeout, alertable));
+        }
+
+        /// <summary>
+        /// wait for event to be signaled
+        /// </summary>
+        /// <param name="timeout">
+        /// The time-out interval, in milliseconds. If a nonzero value is specified, the function waits until the specified objects are signaled or the interval elapses.
+        /// If  zero, the function does not enter a wait state if the specified objects are not signaled; it always returns immediately.
+        /// If maximum value or maximum value of DWORD, the function will return only when the specified objects are signaled.
+        /// </param>
+        /// <param name="alertable">if true wait can be interupted by alerts</param>
+        /// <returns>true if event was signaled; otherwise, false</returns>
+        /// <exception cref="windows_exception">if wait fails</exception>
+        template <class REP = long long, class PERIOD = std::milli>
+        [[nodiscard]]
+        bool wait_one(std::chrono::duration<REP, PERIOD> const timeout = std::nullopt, bool const alertable = false) const 
+        {
+            return wait_one(std::optional(timeout, alertable));
         }
 
         /// <summary>
