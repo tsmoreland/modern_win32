@@ -26,9 +26,12 @@ bool is_complete(wait_for_result const& result)
         throw std::runtime_error("unexpected handle type");
     case wait_for_result::failed:
         throw windows_exception();
-    default:
+    case wait_for_result::io_completion:
+    case wait_for_result::timeout:
         return false;
     }
+
+    return false;
 }
 
 }
