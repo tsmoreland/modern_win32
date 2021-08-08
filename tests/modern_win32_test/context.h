@@ -70,7 +70,7 @@ namespace modern_win32::test
             signaled = event.wait_one(); 
             EXPECT_TRUE(signaled);
 
-            return event.wait_one(std::chrono::milliseconds(50));
+            return event.wait_one(std::optional(std::chrono::milliseconds(50)));
         }
 
         [[nodiscard]]

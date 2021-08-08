@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Terry Moreland
+// Copyright Â© 2020 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -66,7 +66,7 @@ bool try_get_all_environment_variables(environment_map<char>& environment)
 #   undef GetEnvironmentStrings
     auto deleter = [](char*& character) { FreeEnvironmentStringsA(character); };
     auto const env_block = std::unique_ptr<char, decltype(deleter)>{GetEnvironmentStrings(), deleter};
-#   define GetEnvironmentStrings GetEnvironmentStringsW  // NOLINT(cppcoreguidelines-macro-usage) -- re-enabling GetEnvironmentStrings macro
+#   define GetEnvironmentStrings GetEnvironmentStringsW  // NOLINT(cppcoreguidelines-macro-usage, clang-diagnostic-unused-macros) -- re-enabling GetEnvironmentStrings macro
 #   else 
     auto deleter = [](char* character) { FreeEnvironmentStringsA(character); };
     auto env_block = std::unique_ptr<char, decltype(free)>{GetEnvironmentStrings(), deleter};
@@ -81,7 +81,7 @@ bool try_get_all_environment_variables(environment_map<char>& environment)
 }
 
 template <>
-bool try_get_all_environment_variables(environment_map<wchar_t>& environment)
+bool try_get_all_environment_variables(environment_map<wchar_t>&)
 {
     auto deleter = [](wchar_t*& character) { FreeEnvironmentStringsW(character); };
     auto const env_block = std::unique_ptr<wchar_t, decltype(deleter)>{GetEnvironmentStringsW(), deleter};
