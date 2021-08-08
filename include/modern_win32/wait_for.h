@@ -74,13 +74,14 @@ namespace modern_win32
     constexpr auto to_numeric_milliseconds(std::chrono::duration<REP, PERIOD> const& timeout) -> NUMERIC
     {
         static_assert(std::is_arithmetic_v<NUMERIC>);
+        // extra set of () around std::numeric_limits<>::max to circumvent windows max macro
+        static_assert((std::numeric_limits<NUMERIC>::max)() <= (std::numeric_limits<std::chrono::milliseconds::rep>::max)());
 
         using std::chrono::milliseconds;
-        using millisecond_rep = decltype(std::declval<milliseconds>().count());
-        // extra set of () around std::numeric_limits<>::max to circumvent windows max macro
         using modern_win32::shared::to_milliseconds;
 
-        return to_milliseconds(timeout) > milliseconds(static_cast<millisecond_rep>((std::numeric_limits<NUMERIC>::max)()))
+        auto const timeout_in_milliseconds = to_milliseconds(timeout);
+        return timeout_in_milliseconds.count() >= static_cast<std::chrono::milliseconds::rep>((std::numeric_limits<NUMERIC>::max)())
             ? (std::numeric_limits<NUMERIC>::max)()
             : static_cast<NUMERIC>(timeout.count());
     }
