@@ -72,6 +72,12 @@ namespace modern_win32::threading
             : empty_thread_id{};
     }
 
+    thread::native_thread_id thread::current_thread_id() noexcept
+    {
+        return GetCurrentThreadId();
+    }
+
+
 
     thread start_thread(thread::thread_proc const worker, thread::thread_parameter parameter)
     {

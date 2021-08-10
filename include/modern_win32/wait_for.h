@@ -83,7 +83,7 @@ namespace modern_win32
         auto const timeout_in_milliseconds = to_milliseconds(timeout);
         return timeout_in_milliseconds.count() >= static_cast<std::chrono::milliseconds::rep>((std::numeric_limits<NUMERIC>::max)())
             ? (std::numeric_limits<NUMERIC>::max)()
-            : static_cast<NUMERIC>(timeout.count());
+            : static_cast<NUMERIC>(timeout_in_milliseconds.count());
     }
 
     template <typename T, typename... ARGS>

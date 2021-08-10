@@ -129,7 +129,6 @@ namespace modern_win32::threading
 
             callback_thread_ = std::optional(start_thread(&timer::notification_thread_worker,
                 static_cast<thread::thread_parameter>(this)));
-
         }
 
         void stop()
@@ -141,14 +140,15 @@ namespace modern_win32::threading
             std::ignore = stop_event_.set();
 
             if (!callback_thread_.has_value()) {
+                reset_stopped();
                 return;
             }
 
-            callback_thread_.value().join();
-            callback_thread_ = std::nullopt;
-            stopped_ = false;
-            std::ignore = stop_event_.clear();
-
+            if (thread::current_thread_id() != callback_thread_.value().id()) {
+                callback_thread_.value().join();
+                callback_thread_ = std::nullopt;
+            }
+            reset_stopped();
         }
 
         [[nodiscard]]
@@ -275,16 +275,21 @@ namespace modern_win32::threading
 
 #       endif
 
-        friend bool operator==(timer const& first, timer const& second)
+        friend static bool operator==(timer const& first, timer const& second)
         {
             return first.handle_ == second.handle_;
         }
-        friend bool operator!=(timer const& first, timer const& second)
+        friend static bool operator!=(timer const& first, timer const& second)
         {
             return !(first == second);
         }
 
     private:
+        void reset_stopped()
+        {
+            stopped_ = false;
+            std::ignore = stop_event_.clear();
+        }
 
         static void CALLBACK timer_proc(void* state, DWORD, DWORD)
         {

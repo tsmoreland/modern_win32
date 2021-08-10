@@ -108,6 +108,13 @@ namespace modern_win32::threading
         std::optional<native_thread_id> id() const;
 
         /// <summary>
+        /// Returns the thread id of the current thread
+        /// </summary>
+        /// <returns>thread id of the current thread</returns>
+        [[nodiscard]]
+        static native_thread_id current_thread_id() noexcept;
+
+        /// <summary>
         /// starts the thread using <paramref name="worker"/> if not already running
         /// </summary>
         /// <typeparam name="WORKER"></typeparam>
