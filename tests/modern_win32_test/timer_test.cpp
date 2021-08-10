@@ -24,4 +24,8 @@ namespace modern_win32::test
 
     std::function<int()> fake_timer_traits::get_create_result_ = get_default_create_result;  // NOLINT(clang-diagnostic-exit-time-destructors)
 
+    void fake_timer_traits::reset()
+    {
+        get_create_result_ = get_default_create_result;  // NOLINT(clang-diagnostic-exit-time-destructors)
+    }
 }

@@ -135,6 +135,8 @@ namespace modern_win32::test
         {
             return get_create_result_;
         }
+
+        static void reset();
     };
 
 }
