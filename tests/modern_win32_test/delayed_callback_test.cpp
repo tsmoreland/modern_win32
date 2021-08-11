@@ -26,7 +26,9 @@ using std::chrono::milliseconds;
 using modern_win32::threading::manual_reset_event;
 using modern_win32::threading::delayed_callback;
 using modern_win32::threading::synchronization_timer;
+
 using modern_win32::test::simple_object;
+using modern_win32::test::fake_timer_traits;
 
 class delayed_callback_test : public modern_win32::test::timer_test
 {
@@ -63,8 +65,8 @@ TEST(delayed_callback_test, start__begins_timer__when_arguments_are_greater_than
 {
     manual_reset_event callback_event{ false };
     bool called{ false };
-    int const expected_state = 3;
-    auto callback = [&called, &callback_event, expected_state](int& state) {
+    constexpr int expected_state = 3;
+    auto callback = [&called, &callback_event, expected_state](int const& state) {
         if (state == expected_state) {
             called = true;
             std::ignore = callback_event.set();
@@ -73,12 +75,28 @@ TEST(delayed_callback_test, start__begins_timer__when_arguments_are_greater_than
 
     delayed_callback<int, decltype(callback)> timer(callback, expected_state);
 
-    timer.start(10ms);
+    timer.start(100ms);
 
-    std::ignore = callback_event.wait_one(1s);
-
+    std::ignore = callback_event.wait_one(5s);
     ASSERT_TRUE(called);
 }
+
+TEST(delayed_callback_test, start__creates_new_thread__when_is_running_true)
+{
+    auto callback = [](int&) { /* ... */ };
+    delayed_callback<int, decltype(callback), fake_timer_traits> timer(callback, 3);
+
+    timer.start(50s);
+
+    auto const expected = timer.get_timer_thread_id();
+    
+    timer.start(50s);
+
+    auto const actual = timer.get_timer_thread_id();
+
+    ASSERT_NE(actual.value_or(1), expected.value_or(1));
+}
+
 
 TEST(delayed_callback_test, is_running__returns_false__before_start_is_called)
 {
@@ -102,6 +120,68 @@ TEST(delayed_callback_test, is_running__returns_false__after_stop_is_called)
     delay.stop();
 
     ASSERT_TRUE(!delay.is_running());
+}
+
+TEST(delayed_callback_test, operator_equals__returns_true__when_timer_handles_equal)
+{
+    fake_timer_traits::reset();
+    auto callback = [](int&) { /* ... */ };
+
+    using delayed_callback_t = delayed_callback<int, decltype(callback), fake_timer_traits>;
+    delayed_callback_t const first(callback, 3);
+    delayed_callback_t const second(callback, 3);
+
+    ASSERT_TRUE(first == second);
+}
+
+TEST(delayed_callback_test, operator_equals__returns_false__when_timer_handles_not_equal)
+{
+    fake_timer_traits::reset();
+    auto callback = [](int&) { /* ... */ };
+
+    int handle_value = 1;
+    fake_timer_traits::get_create_result() = [&handle_value]() {
+        return handle_value++;
+    };
+
+    using delayed_callback_t = delayed_callback<int, decltype(callback), fake_timer_traits>;
+
+    delayed_callback_t const first(callback, 3);
+    delayed_callback_t const second(callback, 3);
+
+    ASSERT_FALSE(first == second);
+
+}
+
+TEST(delayed_callback_test, operator_not_equals__returns_false__when_timer_handles_equal)
+{
+    fake_timer_traits::reset();
+    auto callback = [](int&) { /* ... */ };
+
+    using delayed_callback_t = delayed_callback<int, decltype(callback), fake_timer_traits>;
+
+    delayed_callback_t const first(callback, 3);
+    delayed_callback_t const second(callback, 3);
+
+    ASSERT_FALSE(first != second);
+}
+
+// TODO: move away from templates to more default functors for this fake traits approach
+
+TEST(delayed_callback_test, operator_not_equals__returns_true__when_timer_handles_not_equal)
+{
+    fake_timer_traits::reset();
+    auto callback = [](int&) { /* ... */ };
+
+    int handle_value = 1;
+    fake_timer_traits::get_create_result() = [&handle_value]() {
+        return handle_value++;
+    };
+    using delayed_callback_t = delayed_callback<int, decltype(callback), fake_timer_traits>;
+    delayed_callback_t const first(callback, 3);
+    delayed_callback_t const second(callback, 3);
+
+    ASSERT_TRUE(first != second);
 }
 
 
