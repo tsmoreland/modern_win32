@@ -165,117 +165,154 @@ namespace modern_win32
         error_write_protect = 19L,
 #       endif
 
-#       ifdef ERROR_BAD_UNIT
         /// <summary>The system cannot find the device specified.</summary>
+#       ifdef ERROR_BAD_UNIT
         error_bad_unit = ERROR_BAD_UNIT,
 #       else
+        error_bad_unit = 20L,
 #       endif
 
         /// <summary>The device is not ready.</summary>
 #       ifdef ERROR_NOT_READY
         error_not_ready = ERROR_NOT_READY,
 #       else
-        error_not_ready = 20L,
+        error_not_ready = 21L,
 #       endif
 
-#       ifdef ERROR_BAD_COMMAND
         /// <summary>The device does not recognize the command.</summary>
+#       ifdef ERROR_BAD_COMMAND
         error_bad_command = ERROR_BAD_COMMAND,
 #       else
+        error_bad_command = 22L,
 #       endif
 
-#       ifdef ERROR_CRC
         /// <summary>Data error (cyclic redundancy check).</summary>
+#       ifdef ERROR_CRC
         error_crc = ERROR_CRC,
 #       else
+        error_crc = 23L,
 #       endif
 
-#       ifdef ERROR_BAD_LENGTH
         /// <summary>The program issued a command but the command length is incorrect.</summary>
+#       ifdef ERROR_BAD_LENGTH
         error_bad_length = ERROR_BAD_LENGTH,
 #       else
+        error_bad_length = 24L,
 #       endif
+
         /// <summary>The drive cannot locate a specific area or track on the disk.</summary>
 #       ifdef ERROR_SEEK
         error_seek = ERROR_SEEK,
 #       else
+        error_seek = 25L,
 #       endif
+
         /// <summary>The specified disk or diskette cannot be accessed.</summary>
 #       ifdef ERROR_NOT_DOS_DISK
         error_not_dos_disk = ERROR_NOT_DOS_DISK,
 #       else
+        error_not_dos_disk = 26L,
 #       endif
+
         /// <summary>The drive cannot find the sector requested.</summary>
 #       ifdef ERROR_SECTOR_NOT_FOUND
         error_sector_not_found = ERROR_SECTOR_NOT_FOUND,
 #       else
+        error_sector_not_found = 27L,
 #       endif
+
         /// <summary>The printer is out of paper.</summary>
 #       ifdef ERROR_OUT_OF_PAPER
         error_out_of_paper = ERROR_OUT_OF_PAPER,
 #       else
+        error_out_of_paper = 28L,
 #       endif
+
         /// <summary>The system cannot write to the specified device.</summary>
 #       ifdef ERROR_WRITE_FAULT
         error_write_fault = ERROR_WRITE_FAULT,
 #       else
+        error_write_fault = 29L,
 #       endif
+
         /// <summary>The system cannot read from the specified device.</summary>
 #       ifdef ERROR_READ_FAULT
         error_read_fault = ERROR_READ_FAULT,
 #       else
+        error_read_fault = 30L,
 #       endif
+
         /// <summary>A device attached to the system is not functioning.</summary>
 #       ifdef ERROR_GEN_FAILURE
         error_gen_failure = ERROR_GEN_FAILURE,
 #       else
+        error_gen_failure = 31L,
 #       endif
+
         /// <summary>The process cannot access the file because it is being used by another process.</summary>
 #       ifdef ERROR_SHARING_VIOLATION
         error_sharing_violation = ERROR_SHARING_VIOLATION,
 #       else
+        error_sharing_violation = 32L,
 #       endif
+
         /// <summary>The process cannot access the file because another process has locked a portion of the file.</summary>
 #       ifdef ERROR_LOCK_VIOLATION
         error_lock_violation = ERROR_LOCK_VIOLATION,
 #       else
+        error_lock_violation = 33L,
 #       endif
+
         /// <summary>The wrong diskette is in the drive.</summary>
         /// <summary>Insert %2 (Volume Serial Number: %3) into drive %1.</summary>
 #       ifdef ERROR_WRONG_DISK
         error_wrong_disk = ERROR_WRONG_DISK,
 #       else
+        error_wrong_disk = 34L,
 #       endif
+
         /// <summary>Too many files opened for sharing.</summary>
 #       ifdef ERROR_SHARING_BUFFER_EXCEEDED
         error_sharing_buffer_exceeded = ERROR_SHARING_BUFFER_EXCEEDED,
 #       else
+        error_sharing_buffer_exceeded = 36L,
 #       endif
+
         /// <summary>Reached the end of the file.</summary>
 #       ifdef ERROR_HANDLE_EOF
         error_handle_eof = ERROR_HANDLE_EOF,
 #       else
+        error_handle_eof = 38L,
 #       endif
+
         /// <summary>The disk is full.</summary>
 #       ifdef ERROR_HANDLE_DISK_FULL
         error_handle_disk_full = ERROR_HANDLE_DISK_FULL,
 #       else
+        error_handle_disk_full = 39L,
 #       endif
+
         /// <summary>The request is not supported.</summary>
 #       ifdef ERROR_NOT_SUPPORTED
         error_not_supported = ERROR_NOT_SUPPORTED,
 #       else
+        error_not_supported = 50L,
 #       endif
+
         /// <summary>Windows cannot find the network path. Verify that the network path is correct and the destination computer is not busy or turned off. If Windows still cannot find the network path, contact your network administrator.</summary>
 #       ifdef ERROR_REM_NOT_LIST
         error_rem_not_list = ERROR_REM_NOT_LIST,
 #       else
+        error_rem_not_list = 51L,
 #       endif
+
         /// <summary>You were not connected because a duplicate name exists on the network. If joining a domain, go to System in Control Panel to change the computer name and try again. If joining a workgroup, choose another workgroup name.</summary>
 #       ifdef ERROR_DUP_NAME
         error_dup_name = ERROR_DUP_NAME,
 #       else
+        error_dup_name = 52L,
 #       endif
+
         /// <summary>The network path was not found.</summary>
 #       ifdef ERROR_BAD_NETPATH
         error_bad_netpath = ERROR_BAD_NETPATH,
