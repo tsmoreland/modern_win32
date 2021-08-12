@@ -8325,341 +8325,359 @@ namespace modern_win32
 #       ifdef ERROR_STREAM_MINIVERSION_NOT_FOUND
         error_stream_miniversion_not_found = ERROR_STREAM_MINIVERSION_NOT_FOUND,
 #       endif
-        /// <summary>The specified file miniversion was found but has been invalidated. Most likely cause is a transaction savepoint rollback.</summary>
 
 #       ifdef ERROR_STREAM_MINIVERSION_NOT_VALID
+        /// <summary>The specified file miniversion was found but has been invalidated. Most likely cause is a transaction savepoint rollback.</summary>
         error_stream_miniversion_not_valid = ERROR_STREAM_MINIVERSION_NOT_VALID,
 #       endif
-        /// <summary>A miniversion may only be opened in the context of the transaction that created it.</summary>
 
 #       ifdef ERROR_MINIVERSION_INACCESSIBLE_FROM_SPECIFIED_TRANSACTION
+        /// <summary>A miniversion may only be opened in the context of the transaction that created it.</summary>
         error_miniversion_inaccessible_from_specified_transaction = ERROR_MINIVERSION_INACCESSIBLE_FROM_SPECIFIED_TRANSACTION,
 #       endif
-        /// <summary>It is not possible to open a miniversion with modify access.</summary>
 
 #       ifdef ERROR_CANT_OPEN_MINIVERSION_WITH_MODIFY_INTENT
+        /// <summary>It is not possible to open a miniversion with modify access.</summary>
         error_cant_open_miniversion_with_modify_intent = ERROR_CANT_OPEN_MINIVERSION_WITH_MODIFY_INTENT,
 #       endif
-        /// <summary>It is not possible to create any more miniversions for this stream.</summary>
 
 #       ifdef ERROR_CANT_CREATE_MORE_STREAM_MINIVERSIONS
+        /// <summary>It is not possible to create any more miniversions for this stream.</summary>
         error_cant_create_more_stream_miniversions = ERROR_CANT_CREATE_MORE_STREAM_MINIVERSIONS,
 #       endif
-        /// <summary>The remote server sent mismatching version number or Fid for a file opened with transactions.</summary>
 
 #       ifdef ERROR_REMOTE_FILE_VERSION_MISMATCH
+        /// <summary>The remote server sent mismatching version number or Fid for a file opened with transactions.</summary>
         error_remote_file_version_mismatch = ERROR_REMOTE_FILE_VERSION_MISMATCH,
 #       endif
-        /// <summary>The handle has been invalidated by a transaction. The most likely cause is the presence of memory mapping on a file or an open handle when the transaction ended or rolled back to savepoint.</summary>
 
 #       ifdef ERROR_HANDLE_NO_LONGER_VALID
+        /// <summary>The handle has been invalidated by a transaction. The most likely cause is the presence of memory mapping on a file or an open handle when the transaction ended or rolled back to savepoint.</summary>
         error_handle_no_longer_valid = ERROR_HANDLE_NO_LONGER_VALID,
 #       endif
-        /// <summary>There is no transaction metadata on the file.</summary>
 
 #       ifdef ERROR_NO_TXF_METADATA
+        /// <summary>There is no transaction metadata on the file.</summary>
         error_no_txf_metadata = ERROR_NO_TXF_METADATA,
 #       endif
-        /// <summary>The log data is corrupt.</summary>
 
 #       ifdef ERROR_LOG_CORRUPTION_DETECTED
+        /// <summary>The log data is corrupt.</summary>
         error_log_corruption_detected = ERROR_LOG_CORRUPTION_DETECTED,
 #       endif
-        /// <summary>The file can't be recovered because there is a handle still open on it.</summary>
 
 #       ifdef ERROR_CANT_RECOVER_WITH_HANDLE_OPEN
+        /// <summary>The file can't be recovered because there is a handle still open on it.</summary>
         error_cant_recover_with_handle_open = ERROR_CANT_RECOVER_WITH_HANDLE_OPEN,
 #       endif
-        /// <summary>The transaction outcome is unavailable because the resource manager responsible for it has disconnected.</summary>
 
 #       ifdef ERROR_RM_DISCONNECTED
+        /// <summary>The transaction outcome is unavailable because the resource manager responsible for it has disconnected.</summary>
         error_rm_disconnected = ERROR_RM_DISCONNECTED,
 #       endif
-        /// <summary>The request was rejected because the enlistment in question is not a superior enlistment.</summary>
 
 #       ifdef ERROR_ENLISTMENT_NOT_SUPERIOR
+        /// <summary>The request was rejected because the enlistment in question is not a superior enlistment.</summary>
         error_enlistment_not_superior = ERROR_ENLISTMENT_NOT_SUPERIOR,
 #       endif
-        /// <summary>The transactional resource manager is already consistent. Recovery is not needed.</summary>
 
 #       ifdef ERROR_RECOVERY_NOT_NEEDED
+        /// <summary>The transactional resource manager is already consistent. Recovery is not needed.</summary>
         error_recovery_not_needed = ERROR_RECOVERY_NOT_NEEDED,
 #       endif
-        /// <summary>The transactional resource manager has already been started.</summary>
 
 #       ifdef ERROR_RM_ALREADY_STARTED
+        /// <summary>The transactional resource manager has already been started.</summary>
         error_rm_already_started = ERROR_RM_ALREADY_STARTED,
 #       endif
-        /// <summary>The file cannot be opened transactionally, because its identity depends on the outcome of an unresolved transaction.</summary>
 
 #       ifdef ERROR_FILE_IDENTITY_NOT_PERSISTENT
+        /// <summary>The file cannot be opened transactionally, because its identity depends on the outcome of an unresolved transaction.</summary>
         error_file_identity_not_persistent = ERROR_FILE_IDENTITY_NOT_PERSISTENT,
 #       endif
-        /// <summary>The operation cannot be performed because another transaction is depending on the fact that this property will not change.</summary>
 
 #       ifdef ERROR_CANT_BREAK_TRANSACTIONAL_DEPENDENCY
+        /// <summary>The operation cannot be performed because another transaction is depending on the fact that this property will not change.</summary>
         error_cant_break_transactional_dependency = ERROR_CANT_BREAK_TRANSACTIONAL_DEPENDENCY,
 #       endif
-        /// <summary>The operation would involve a single file with two transactional resource managers and is therefore not allowed.</summary>
 
 #       ifdef ERROR_CANT_CROSS_RM_BOUNDARY
+        /// <summary>The operation would involve a single file with two transactional resource managers and is therefore not allowed.</summary>
         error_cant_cross_rm_boundary = ERROR_CANT_CROSS_RM_BOUNDARY,
 #       endif
-        /// <summary>The $Txf directory must be empty for this operation to succeed.</summary>
 
 #       ifdef ERROR_TXF_DIR_NOT_EMPTY
+        /// <summary>The $Txf directory must be empty for this operation to succeed.</summary>
         error_txf_dir_not_empty = ERROR_TXF_DIR_NOT_EMPTY,
 #       endif
-        /// <summary>The operation would leave a transactional resource manager in an inconsistent state and is therefore not allowed.</summary>
 
 #       ifdef ERROR_INDOUBT_TRANSACTIONS_EXIST
+        /// <summary>The operation would leave a transactional resource manager in an inconsistent state and is therefore not allowed.</summary>
         error_indoubt_transactions_exist = ERROR_INDOUBT_TRANSACTIONS_EXIST,
 #       endif
-        /// <summary>The operation could not be completed because the transaction manager does not have a log.</summary>
 
 #       ifdef ERROR_TM_VOLATILE
+        /// <summary>The operation could not be completed because the transaction manager does not have a log.</summary>
         error_tm_volatile = ERROR_TM_VOLATILE,
 #       endif
-        /// <summary>A rollback could not be scheduled because a previously scheduled rollback has already executed or been queued for execution.</summary>
 
 #       ifdef ERROR_ROLLBACK_TIMER_EXPIRED
+        /// <summary>A rollback could not be scheduled because a previously scheduled rollback has already executed or been queued for execution.</summary>
         error_rollback_timer_expired = ERROR_ROLLBACK_TIMER_EXPIRED,
 #       endif
-        /// <summary>The transactional metadata attribute on the file or directory is corrupt and unreadable.</summary>
 
 #       ifdef ERROR_TXF_ATTRIBUTE_CORRUPT
+        /// <summary>The transactional metadata attribute on the file or directory is corrupt and unreadable.</summary>
         error_txf_attribute_corrupt = ERROR_TXF_ATTRIBUTE_CORRUPT,
 #       endif
-        /// <summary>The encryption operation could not be completed because a transaction is active.</summary>
 
 #       ifdef ERROR_EFS_NOT_ALLOWED_IN_TRANSACTION
+        /// <summary>The encryption operation could not be completed because a transaction is active.</summary>
         error_efs_not_allowed_in_transaction = ERROR_EFS_NOT_ALLOWED_IN_TRANSACTION,
 #       endif
-        /// <summary>This object is not allowed to be opened in a transaction.</summary>
 
 #       ifdef ERROR_TRANSACTIONAL_OPEN_NOT_ALLOWED
+        /// <summary>This object is not allowed to be opened in a transaction.</summary>
         error_transactional_open_not_allowed = ERROR_TRANSACTIONAL_OPEN_NOT_ALLOWED,
 #       endif
-        /// <summary>An attempt to create space in the transactional resource manager's log failed. The failure status has been recorded in the event log.</summary>
 
 #       ifdef ERROR_LOG_GROWTH_FAILED
+        /// <summary>An attempt to create space in the transactional resource manager's log failed. The failure status has been recorded in the event log.</summary>
         error_log_growth_failed = ERROR_LOG_GROWTH_FAILED,
 #       endif
-        /// <summary>Memory mapping (creating a mapped section) a remote file under a transaction is not supported.</summary>
 
 #       ifdef ERROR_TRANSACTED_MAPPING_UNSUPPORTED_REMOTE
+        /// <summary>Memory mapping (creating a mapped section) a remote file under a transaction is not supported.</summary>
         error_transacted_mapping_unsupported_remote = ERROR_TRANSACTED_MAPPING_UNSUPPORTED_REMOTE,
 #       endif
-        /// <summary>Transaction metadata is already present on this file and cannot be superseded.</summary>
 
 #       ifdef ERROR_TXF_METADATA_ALREADY_PRESENT
+        /// <summary>Transaction metadata is already present on this file and cannot be superseded.</summary>
         error_txf_metadata_already_present = ERROR_TXF_METADATA_ALREADY_PRESENT,
 #       endif
-        /// <summary>A transaction scope could not be entered because the scope handler has not been initialized.</summary>
 
 #       ifdef ERROR_TRANSACTION_SCOPE_CALLBACKS_NOT_SET
+        /// <summary>A transaction scope could not be entered because the scope handler has not been initialized.</summary>
         error_transaction_scope_callbacks_not_set = ERROR_TRANSACTION_SCOPE_CALLBACKS_NOT_SET,
 #       endif
-        /// <summary>Promotion was required in order to allow the resource manager to enlist, but the transaction was set to disallow it.</summary>
 
 #       ifdef ERROR_TRANSACTION_REQUIRED_PROMOTION
+        /// <summary>Promotion was required in order to allow the resource manager to enlist, but the transaction was set to disallow it.</summary>
         error_transaction_required_promotion = ERROR_TRANSACTION_REQUIRED_PROMOTION,
 #       endif
-        /// <summary>This file is open for modification in an unresolved transaction and may be opened for execute only by a transacted reader.</summary>
 
 #       ifdef ERROR_CANNOT_EXECUTE_FILE_IN_TRANSACTION
+        /// <summary>This file is open for modification in an unresolved transaction and may be opened for execute only by a transacted reader.</summary>
         error_cannot_execute_file_in_transaction = ERROR_CANNOT_EXECUTE_FILE_IN_TRANSACTION,
 #       endif
-        /// <summary>The request to thaw frozen transactions was ignored because transactions had not previously been frozen.</summary>
 
 #       ifdef ERROR_TRANSACTIONS_NOT_FROZEN
+        /// <summary>The request to thaw frozen transactions was ignored because transactions had not previously been frozen.</summary>
         error_transactions_not_frozen = ERROR_TRANSACTIONS_NOT_FROZEN,
 #       endif
-        /// <summary>Transactions cannot be frozen because a freeze is already in progress.</summary>
 
 #       ifdef ERROR_TRANSACTION_FREEZE_IN_PROGRESS
+        /// <summary>Transactions cannot be frozen because a freeze is already in progress.</summary>
         error_transaction_freeze_in_progress = ERROR_TRANSACTION_FREEZE_IN_PROGRESS,
 #       endif
-        /// <summary>The target volume is not a snapshot volume. This operation is only valid on a volume mounted as a snapshot.</summary>
 
 #       ifdef ERROR_NOT_SNAPSHOT_VOLUME
+        /// <summary>The target volume is not a snapshot volume. This operation is only valid on a volume mounted as a snapshot.</summary>
         error_not_snapshot_volume = ERROR_NOT_SNAPSHOT_VOLUME,
 #       endif
-        /// <summary>The savepoint operation failed because files are open on the transaction. This is not permitted.</summary>
 
 #       ifdef ERROR_NO_SAVEPOINT_WITH_OPEN_FILES
+        /// <summary>The savepoint operation failed because files are open on the transaction. This is not permitted.</summary>
         error_no_savepoint_with_open_files = ERROR_NO_SAVEPOINT_WITH_OPEN_FILES,
 #       endif
-        /// <summary>Windows has discovered corruption in a file, and that file has since been repaired. Data loss may have occurred.</summary>
 
 #       ifdef ERROR_DATA_LOST_REPAIR
+        /// <summary>Windows has discovered corruption in a file, and that file has since been repaired. Data loss may have occurred.</summary>
         error_data_lost_repair = ERROR_DATA_LOST_REPAIR,
 #       endif
-        /// <summary>The sparse operation could not be completed because a transaction is active on the file.</summary>
 
 #       ifdef ERROR_SPARSE_NOT_ALLOWED_IN_TRANSACTION
+        /// <summary>The sparse operation could not be completed because a transaction is active on the file.</summary>
         error_sparse_not_allowed_in_transaction = ERROR_SPARSE_NOT_ALLOWED_IN_TRANSACTION,
 #       endif
-        /// <summary>The call to create a TransactionManager object failed because the Tm Identity stored in the logfile does not match the Tm Identity that was passed in as an argument.</summary>
 
 #       ifdef ERROR_TM_IDENTITY_MISMATCH
+        /// <summary>The call to create a TransactionManager object failed because the Tm Identity stored in the logfile does not match the Tm Identity that was passed in as an argument.</summary>
         error_tm_identity_mismatch = ERROR_TM_IDENTITY_MISMATCH,
 #       endif
-        /// <summary>I/O was attempted on a section object that has been floated as a result of a transaction ending. There is no valid data.</summary>
 
 #       ifdef ERROR_FLOATED_SECTION
+        /// <summary>I/O was attempted on a section object that has been floated as a result of a transaction ending. There is no valid data.</summary>
         error_floated_section = ERROR_FLOATED_SECTION,
 #       endif
-        /// <summary>The transactional resource manager cannot currently accept transacted work due to a transient condition such as low resources.</summary>
 
 #       ifdef ERROR_CANNOT_ACCEPT_TRANSACTED_WORK
+        /// <summary>The transactional resource manager cannot currently accept transacted work due to a transient condition such as low resources.</summary>
         error_cannot_accept_transacted_work = ERROR_CANNOT_ACCEPT_TRANSACTED_WORK,
 #       endif
-        /// <summary>The transactional resource manager had too many transactions outstanding that could not be aborted. The transactional resource manger has been shut down.</summary>
 
 #       ifdef ERROR_CANNOT_ABORT_TRANSACTIONS
+        /// <summary>The transactional resource manager had too many transactions outstanding that could not be aborted. The transactional resource manger has been shut down.</summary>
         error_cannot_abort_transactions = ERROR_CANNOT_ABORT_TRANSACTIONS,
 #       endif
-        /// <summary>The operation could not be completed due to bad clusters on disk.</summary>
 
 #       ifdef ERROR_BAD_CLUSTERS
+        /// <summary>The operation could not be completed due to bad clusters on disk.</summary>
         error_bad_clusters = ERROR_BAD_CLUSTERS,
 #       endif
-        /// <summary>The compression operation could not be completed because a transaction is active on the file.</summary>
 
 #       ifdef ERROR_COMPRESSION_NOT_ALLOWED_IN_TRANSACTION
+        /// <summary>The compression operation could not be completed because a transaction is active on the file.</summary>
         error_compression_not_allowed_in_transaction = ERROR_COMPRESSION_NOT_ALLOWED_IN_TRANSACTION,
 #       endif
-        /// <summary>The operation could not be completed because the volume is dirty. Please run chkdsk and try again.</summary>
 
 #       ifdef ERROR_VOLUME_DIRTY
+        /// <summary>The operation could not be completed because the volume is dirty. Please run chkdsk and try again.</summary>
         error_volume_dirty = ERROR_VOLUME_DIRTY,
 #       endif
-        /// <summary>The link tracking operation could not be completed because a transaction is active.</summary>
 
 #       ifdef ERROR_NO_LINK_TRACKING_IN_TRANSACTION
+        /// <summary>The link tracking operation could not be completed because a transaction is active.</summary>
         error_no_link_tracking_in_transaction = ERROR_NO_LINK_TRACKING_IN_TRANSACTION,
 #       endif
-        /// <summary>This operation cannot be performed in a transaction.</summary>
 
 #       ifdef ERROR_OPERATION_NOT_SUPPORTED_IN_TRANSACTION
+        /// <summary>This operation cannot be performed in a transaction.</summary>
         error_operation_not_supported_in_transaction = ERROR_OPERATION_NOT_SUPPORTED_IN_TRANSACTION,
 #       endif
-        /// <summary>The handle is no longer properly associated with its transaction.  It may have been opened in a transactional resource manager that was subsequently forced to restart.  Please close the handle and open a new one.</summary>
 
 #       ifdef ERROR_EXPIRED_HANDLE
+        /// <summary>The handle is no longer properly associated with its transaction.  It may have been opened in a transactional resource manager that was subsequently forced to restart.  Please close the handle and open a new one.</summary>
         error_expired_handle = ERROR_EXPIRED_HANDLE,
 #       endif
-        /// <summary>The specified operation could not be performed because the resource manager is not enlisted in the transaction.</summary>
 
 #       ifdef ERROR_TRANSACTION_NOT_ENLISTED
+        /// <summary>The specified operation could not be performed because the resource manager is not enlisted in the transaction.</summary>
         error_transaction_not_enlisted = ERROR_TRANSACTION_NOT_ENLISTED,
 #       endif
-        /// <summary>The specified session name is invalid.</summary>
 
 #       ifdef ERROR_CTX_WINSTATION_NAME_INVALID
+        /// <summary>The specified session name is invalid.</summary>
         error_ctx_winstation_name_invalid = ERROR_CTX_WINSTATION_NAME_INVALID,
 #       endif
-        /// <summary>The specified protocol driver is invalid.</summary>
 
 #       ifdef ERROR_CTX_INVALID_PD
+        /// <summary>The specified protocol driver is invalid.</summary>
         error_ctx_invalid_pd = ERROR_CTX_INVALID_PD,
 #       endif
-        /// <summary>The specified protocol driver was not found in the system path.</summary>
 
 #       ifdef ERROR_CTX_PD_NOT_FOUND
+        /// <summary>The specified protocol driver was not found in the system path.</summary>
         error_ctx_pd_not_found = ERROR_CTX_PD_NOT_FOUND,
 #       endif
-        /// <summary>The specified terminal connection driver was not found in the system path.</summary>
 
 #       ifdef ERROR_CTX_WD_NOT_FOUND
+        /// <summary>The specified terminal connection driver was not found in the system path.</summary>
         error_ctx_wd_not_found = ERROR_CTX_WD_NOT_FOUND,
 #       endif
-        /// <summary>A registry key for event logging could not be created for this session.</summary>
 
 #       ifdef ERROR_CTX_CANNOT_MAKE_EVENTLOG_ENTRY
+        /// <summary>A registry key for event logging could not be created for this session.</summary>
         error_ctx_cannot_make_eventlog_entry = ERROR_CTX_CANNOT_MAKE_EVENTLOG_ENTRY,
 #       endif
-        /// <summary>A service with the same name already exists on the system.</summary>
 
 #       ifdef ERROR_CTX_SERVICE_NAME_COLLISION
+        /// <summary>A service with the same name already exists on the system.</summary>
         error_ctx_service_name_collision = ERROR_CTX_SERVICE_NAME_COLLISION,
 #       endif
 
-        /// <summary>A close operation is pending on the session.</summary>
 #       ifdef ERROR_CTX_CLOSE_PENDING
+        /// <summary>A close operation is pending on the session.</summary>
         error_ctx_close_pending = ERROR_CTX_CLOSE_PENDING,
 #       endif
-        /// <summary>There are no free output buffers available.</summary>
+
 #       ifdef ERROR_CTX_NO_OUTBUF
+        /// <summary>There are no free output buffers available.</summary>
         error_ctx_no_outbuf = ERROR_CTX_NO_OUTBUF,
 #       endif
-        /// <summary>The MODEM.INF file was not found.</summary>
+
 #       ifdef ERROR_CTX_MODEM_INF_NOT_FOUND
+        /// <summary>The MODEM.INF file was not found.</summary>
         error_ctx_modem_inf_not_found = ERROR_CTX_MODEM_INF_NOT_FOUND,
 #       endif
-        /// <summary>The modem name was not found in MODEM.INF.</summary>
+
 #       ifdef ERROR_CTX_INVALID_MODEMNAME
+        /// <summary>The modem name was not found in MODEM.INF.</summary>
         error_ctx_invalid_modemname = ERROR_CTX_INVALID_MODEMNAME,
 #       endif
-        /// <summary>The modem did not accept the command sent to it. Verify that the configured modem name matches the attached modem.</summary>
+
 #       ifdef ERROR_CTX_MODEM_RESPONSE_ERROR
+        /// <summary>The modem did not accept the command sent to it. Verify that the configured modem name matches the attached modem.</summary>
         error_ctx_modem_response_error = ERROR_CTX_MODEM_RESPONSE_ERROR,
 #       endif
-        /// <summary>The modem did not respond to the command sent to it. Verify that the modem is properly cabled and powered on.</summary>
+
 #       ifdef ERROR_CTX_MODEM_RESPONSE_TIMEOUT
+        /// <summary>The modem did not respond to the command sent to it. Verify that the modem is properly cabled and powered on.</summary>
         error_ctx_modem_response_timeout = ERROR_CTX_MODEM_RESPONSE_TIMEOUT,
 #       endif
-        /// <summary>Carrier detect has failed or carrier has been dropped due to disconnect.</summary>
+            
 #       ifdef ERROR_CTX_MODEM_RESPONSE_NO_CARRIER
+        /// <summary>Carrier detect has failed or carrier has been dropped due to disconnect.</summary>
         error_ctx_modem_response_no_carrier = ERROR_CTX_MODEM_RESPONSE_NO_CARRIER,
 #       endif
-        /// <summary>Dial tone not detected within the required time. Verify that the phone cable is properly attached and functional.</summary>
+
 #       ifdef ERROR_CTX_MODEM_RESPONSE_NO_DIALTONE
+        /// <summary>Dial tone not detected within the required time. Verify that the phone cable is properly attached and functional.</summary>
         error_ctx_modem_response_no_dialtone = ERROR_CTX_MODEM_RESPONSE_NO_DIALTONE,
 #       endif
-        /// <summary>Busy signal detected at remote site on callback.</summary>
+
 #       ifdef ERROR_CTX_MODEM_RESPONSE_BUSY
+        /// <summary>Busy signal detected at remote site on callback.</summary>
         error_ctx_modem_response_busy = ERROR_CTX_MODEM_RESPONSE_BUSY,
 #       endif
-        /// <summary>Voice detected at remote site on callback.</summary>
+
 #       ifdef ERROR_CTX_MODEM_RESPONSE_VOICE
+        /// <summary>Voice detected at remote site on callback.</summary>
         error_ctx_modem_response_voice = ERROR_CTX_MODEM_RESPONSE_VOICE,
 #       endif
-        /// <summary>Transport driver error</summary>
+
 #       ifdef ERROR_CTX_TD_ERROR
+        /// <summary>Transport driver error</summary>
         error_ctx_td_error = ERROR_CTX_TD_ERROR,
 #       endif
-        /// <summary>The specified session cannot be found.</summary>
+
 #       ifdef ERROR_CTX_WINSTATION_NOT_FOUND
+        /// <summary>The specified session cannot be found.</summary>
         error_ctx_winstation_not_found = ERROR_CTX_WINSTATION_NOT_FOUND,
 #       endif
-        /// <summary>The specified session name is already in use.</summary>
+
 #       ifdef ERROR_CTX_WINSTATION_ALREADY_EXISTS
+        /// <summary>The specified session name is already in use.</summary>
         error_ctx_winstation_already_exists = ERROR_CTX_WINSTATION_ALREADY_EXISTS,
 #       endif
-        /// <summary>The task you are trying to do can't be completed because Remote Desktop Services is currently busy. Please try again in a few minutes. Other users should still be able to log on.</summary>
+
 #       ifdef ERROR_CTX_WINSTATION_BUSY
+        /// <summary>The task you are trying to do can't be completed because Remote Desktop Services is currently busy. Please try again in a few minutes. Other users should still be able to log on.</summary>
         error_ctx_winstation_busy = ERROR_CTX_WINSTATION_BUSY,
 #       endif
-        /// <summary>An attempt has been made to connect to a session whose video mode is not supported by the current client.</summary>
+
 #       ifdef ERROR_CTX_BAD_VIDEO_MODE
+        /// <summary>An attempt has been made to connect to a session whose video mode is not supported by the current client.</summary>
         error_ctx_bad_video_mode = ERROR_CTX_BAD_VIDEO_MODE,
 #       endif
-        /// <summary>The application attempted to enable DOS graphics mode. DOS graphics mode is not supported.</summary>
+
 #       ifdef ERROR_CTX_GRAPHICS_INVALID
+        /// <summary>The application attempted to enable DOS graphics mode. DOS graphics mode is not supported.</summary>
         error_ctx_graphics_invalid = ERROR_CTX_GRAPHICS_INVALID,
 #       endif
-        /// <summary>Your interactive logon privilege has been disabled. Please contact your administrator.</summary>
+            
 #       ifdef ERROR_CTX_LOGON_DISABLED
+        /// <summary>Your interactive logon privilege has been disabled. Please contact your administrator.</summary>
         error_ctx_logon_disabled = ERROR_CTX_LOGON_DISABLED,
 #       endif
-        /// <summary>The requested operation can be performed only on the system console. This is most often the result of a driver or system DLL requiring direct console access.</summary>
+
 #       ifdef ERROR_CTX_NOT_CONSOLE
+        /// <summary>The requested operation can be performed only on the system console. This is most often the result of a driver or system DLL requiring direct console access.</summary>
         error_ctx_not_console = ERROR_CTX_NOT_CONSOLE,
 #       endif
-        /// <summary>The client failed to respond to the server connect message.</summary>
+
 #       ifdef ERROR_CTX_CLIENT_QUERY_TIMEOUT
+        /// <summary>The client failed to respond to the server connect message.</summary>
         error_ctx_client_query_timeout = ERROR_CTX_CLIENT_QUERY_TIMEOUT,
 #       endif
 
