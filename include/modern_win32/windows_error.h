@@ -317,1434 +317,1767 @@ namespace modern_win32
 #       ifdef ERROR_BAD_NETPATH
         error_bad_netpath = ERROR_BAD_NETPATH,
 #       else
+        error_bad_netpath = 53L,
 #       endif
+
         /// <summary>The network is busy.</summary>
 #       ifdef ERROR_NETWORK_BUSY
         error_network_busy = ERROR_NETWORK_BUSY,
 #       else
+        error_network_busy = 54L,
 #       endif
+
         /// <summary>The specified network resource or device is no longer available.</summary>
 #       ifdef ERROR_DEV_NOT_EXIST
         error_dev_not_exist = ERROR_DEV_NOT_EXIST,
 #       else
+        error_dev_not_exist = 55L,
 #       endif
+
         /// <summary>The network BIOS command limit has been reached.</summary>
 #       ifdef ERROR_TOO_MANY_CMDS
         error_too_many_cmds = ERROR_TOO_MANY_CMDS,
 #       else
+        error_too_many_cmds = 56L,
 #       endif
+
         /// <summary>A network adapter hardware error occurred.</summary>
 #       ifdef ERROR_ADAP_HDW_ERR
         error_adap_hdw_err = ERROR_ADAP_HDW_ERR,
 #       else
+        error_adap_hdw_err = 57L,
 #       endif
+
         /// <summary>The specified server cannot perform the requested operation.</summary>
 #       ifdef ERROR_BAD_NET_RESP
         error_bad_net_resp = ERROR_BAD_NET_RESP,
 #       else
+        error_bad_net_resp = 58L,
 #       endif
+
         /// <summary>An unexpected network error occurred.</summary>
 #       ifdef ERROR_UNEXP_NET_ERR
         error_unexp_net_err = ERROR_UNEXP_NET_ERR,
 #       else
+        error_unexp_net_err = 59L,
 #       endif
+
         /// <summary>The remote adapter is not compatible.</summary>
 #       ifdef ERROR_BAD_REM_ADAP
         error_bad_rem_adap = ERROR_BAD_REM_ADAP,
 #       else
+        error_bad_rem_adap = 60L,
 #       endif
+
         /// <summary>The printer queue is full.</summary>
 #       ifdef ERROR_PRINTQ_FULL
         error_printq_full = ERROR_PRINTQ_FULL,
 #       else
+        error_printq_full = 61L,
 #       endif
+
         /// <summary>Space to store the file waiting to be printed is not available on the server.</summary>
 #       ifdef ERROR_NO_SPOOL_SPACE
         error_no_spool_space = ERROR_NO_SPOOL_SPACE,
 #       else
+        error_no_spool_space = 62L,
 #       endif
+
         /// <summary>Your file waiting to be printed was deleted.</summary>
 #       ifdef ERROR_PRINT_CANCELLED
         error_print_cancelled = ERROR_PRINT_CANCELLED,
 #       else
+        error_print_cancelled = 63L,
 #       endif
+
         /// <summary>The specified network name is no longer available.</summary>
 #       ifdef ERROR_NETNAME_DELETED
         error_netname_deleted = ERROR_NETNAME_DELETED,
 #       else
+        error_netname_deleted = 64L,
 #       endif
+
         /// <summary>Network access is denied.</summary>
 #       ifdef ERROR_NETWORK_ACCESS_DENIED
         error_network_access_denied = ERROR_NETWORK_ACCESS_DENIED,
 #       else
+        error_network_access_denied = 65L,
 #       endif
+
         /// <summary>The network resource type is not correct.</summary>
 #       ifdef ERROR_BAD_DEV_TYPE
         error_bad_dev_type = ERROR_BAD_DEV_TYPE,
 #       else
+        error_bad_dev_type = 66L,
 #       endif
+
         /// <summary>The network name cannot be found.</summary>
 #       ifdef ERROR_BAD_NET_NAME
         error_bad_net_name = ERROR_BAD_NET_NAME,
 #       else
+        error_bad_net_name = 67L,
 #       endif
+
         /// <summary>The name limit for the local computer network adapter card was exceeded.</summary>
 #       ifdef ERROR_TOO_MANY_NAMES
         error_too_many_names = ERROR_TOO_MANY_NAMES,
 #       else
+        error_too_many_names = 68L,
 #       endif
+
         /// <summary>The network BIOS session limit was exceeded.</summary>
 #       ifdef ERROR_TOO_MANY_SESS
         error_too_many_sess = ERROR_TOO_MANY_SESS,
 #       else
+        error_too_many_sess = 69L,
 #       endif
+
         /// <summary>The remote server has been paused or is in the process of being started.</summary>
 #       ifdef ERROR_SHARING_PAUSED
         error_sharing_paused = ERROR_SHARING_PAUSED,
 #       else
+        error_sharing_paused = 70L,
 #       endif
+
         /// <summary>No more connections can be made to this remote computer at this time because there are already as many connections as the computer can accept.</summary>
 #       ifdef ERROR_REQ_NOT_ACCEP
         error_req_not_accep = ERROR_REQ_NOT_ACCEP,
 #       else
+        error_req_not_accep = 71L,
 #       endif
+
         /// <summary>The specified printer or disk device has been paused.</summary>
 #       ifdef ERROR_REDIR_PAUSED
         error_redir_paused = ERROR_REDIR_PAUSED,
 #       else
+        error_redir_paused = 72L,
 #       endif
+
         /// <summary>The file exists.</summary>
 #       ifdef ERROR_FILE_EXISTS
         error_file_exists = ERROR_FILE_EXISTS,
 #       else
+        error_file_exists = 80L,
 #       endif
+
         /// <summary>The directory or file cannot be created.</summary>
 #       ifdef ERROR_CANNOT_MAKE
         error_cannot_make = ERROR_CANNOT_MAKE,
 #       else
+        error_cannot_make = 82L,
 #       endif
+
         /// <summary>Fail on INT 24.</summary>
 #       ifdef ERROR_FAIL_I24
         error_fail_i24 = ERROR_FAIL_I24,
 #       else
+        error_fail_i24 = 83L,
 #       endif
+
         /// <summary>Storage to process this request is not available.</summary>
 #       ifdef ERROR_OUT_OF_STRUCTURES
         error_out_of_structures = ERROR_OUT_OF_STRUCTURES,
 #       else
+        error_out_of_structures = 84L,
 #       endif
+
         /// <summary>The local device name is already in use.</summary>
 #       ifdef ERROR_ALREADY_ASSIGNED
         error_already_assigned = ERROR_ALREADY_ASSIGNED,
 #       else
+        error_already_assigned = 85L,
 #       endif
+
         /// <summary>The specified network password is not correct.</summary>
 #       ifdef ERROR_INVALID_PASSWORD
         error_invalid_password = ERROR_INVALID_PASSWORD,
 #       else
+        error_invalid_password = 86L,
 #       endif
+
         /// <summary>The parameter is incorrect.</summary>
 #       ifdef ERROR_INVALID_PARAMETER
         error_invalid_parameter = ERROR_INVALID_PARAMETER,
 #       else
+        error_invalid_parameter = 87L,
 #       endif
+
         /// <summary>A write fault occurred on the network.</summary>
 #       ifdef ERROR_NET_WRITE_FAULT
         error_net_write_fault = ERROR_NET_WRITE_FAULT,
 #       else
+        error_net_write_fault = 88L,
 #       endif
+
         /// <summary>The system cannot start another process at this time.</summary>
 #       ifdef ERROR_NO_PROC_SLOTS
         error_no_proc_slots = ERROR_NO_PROC_SLOTS,
 #       else
+        error_no_proc_slots = 89L,
 #       endif
+
         /// <summary>Cannot create another system semaphore.</summary>
 #       ifdef ERROR_TOO_MANY_SEMAPHORES
         error_too_many_semaphores = ERROR_TOO_MANY_SEMAPHORES,
 #       else
+        error_too_many_semaphores = 100L,
 #       endif
+
         /// <summary>The exclusive semaphore is owned by another process.</summary>
 #       ifdef ERROR_EXCL_SEM_ALREADY_OWNED
         error_excl_sem_already_owned = ERROR_EXCL_SEM_ALREADY_OWNED,
 #       else
+        error_excl_sem_already_owned = 101L,
 #       endif
+
         /// <summary>The semaphore is set and cannot be closed.</summary>
 #       ifdef ERROR_SEM_IS_SET
         error_sem_is_set = ERROR_SEM_IS_SET,
 #       else
+        error_sem_is_set = 102L,
 #       endif
+
         /// <summary>The semaphore cannot be set again.</summary>
 #       ifdef ERROR_TOO_MANY_SEM_REQUESTS
         error_too_many_sem_requests = ERROR_TOO_MANY_SEM_REQUESTS,
 #       else
+        error_too_many_sem_requests = 103L,
 #       endif
+
         /// <summary>Cannot request exclusive semaphores at interrupt time.</summary>
 #       ifdef ERROR_INVALID_AT_INTERRUPT_TIME
         error_invalid_at_interrupt_time = ERROR_INVALID_AT_INTERRUPT_TIME,
 #       else
+        error_invalid_at_interrupt_time = 104L,
 #       endif
+
         /// <summary>The previous ownership of this semaphore has ended.</summary>
 #       ifdef ERROR_SEM_OWNER_DIED
         error_sem_owner_died = ERROR_SEM_OWNER_DIED,
 #       else
+        error_sem_owner_died = 105L,
 #       endif
+
         /// <summary>Insert the diskette for drive %1.</summary>
 #       ifdef ERROR_SEM_USER_LIMIT
         error_sem_user_limit = ERROR_SEM_USER_LIMIT,
 #       else
+        error_sem_user_limit = 106L,
 #       endif
+
         /// <summary>The program stopped because an alternate diskette was not inserted.</summary>
 #       ifdef ERROR_DISK_CHANGE
         error_disk_change = ERROR_DISK_CHANGE,
 #       else
+        error_disk_change = 107L,
 #       endif
+
         /// <summary>The disk is in use or locked by another process.</summary>
 #       ifdef ERROR_DRIVE_LOCKED
         error_drive_locked = ERROR_DRIVE_LOCKED,
 #       else
+        error_drive_locked = 108L,
 #       endif
+
         /// <summary>The pipe has been ended.</summary>
 #       ifdef ERROR_BROKEN_PIPE
         error_broken_pipe = ERROR_BROKEN_PIPE,
 #       else
+        error_broken_pipe = 109L,
 #       endif
+
         /// <summary>The system cannot open the device or file specified.</summary>
 #       ifdef ERROR_OPEN_FAILED
         error_open_failed = ERROR_OPEN_FAILED,
 #       else
+        error_open_failed = 110L,
 #       endif
+
         /// <summary>The file name is too long.</summary>
 #       ifdef ERROR_BUFFER_OVERFLOW
         error_buffer_overflow = ERROR_BUFFER_OVERFLOW,
 #       else
+        error_buffer_overflow = 111L,
 #       endif
+
         /// <summary>There is not enough space on the disk.</summary>
 #       ifdef ERROR_DISK_FULL
         error_disk_full = ERROR_DISK_FULL,
 #       else
+        error_disk_full = 112L,
 #       endif
+
         /// <summary>No more internal file identifiers available.</summary>
 #       ifdef ERROR_NO_MORE_SEARCH_HANDLES
         error_no_more_search_handles = ERROR_NO_MORE_SEARCH_HANDLES,
 #       else
+        error_no_more_search_handles = 113L,
 #       endif
+
         /// <summary>The target internal file identifier is incorrect.</summary>
 #       ifdef ERROR_INVALID_TARGET_HANDLE
         error_invalid_target_handle = ERROR_INVALID_TARGET_HANDLE,
 #       else
+        error_invalid_target_handle = 114L,
 #       endif
+
         /// <summary>The IOCTL call made by the application program is not correct.</summary>
 #       ifdef ERROR_INVALID_CATEGORY
         error_invalid_category = ERROR_INVALID_CATEGORY,
 #       else
+        error_invalid_category = 117L,
 #       endif
+
         /// <summary>The verify-on-write switch parameter value is not correct.</summary>
 #       ifdef ERROR_INVALID_VERIFY_SWITCH
         error_invalid_verify_switch = ERROR_INVALID_VERIFY_SWITCH,
 #       else
+        error_invalid_verify_switch = 118L,
 #       endif
+
         /// <summary>The system does not support the command requested.</summary>
 #       ifdef ERROR_BAD_DRIVER_LEVEL
         error_bad_driver_level = ERROR_BAD_DRIVER_LEVEL,
 #       else
+        error_bad_driver_level = 119L,
 #       endif
+
         /// <summary>This function is not supported on this system.</summary>
 #       ifdef ERROR_CALL_NOT_IMPLEMENTED
         error_call_not_implemented = ERROR_CALL_NOT_IMPLEMENTED,
 #       else
 #       endif
+
         /// <summary>The semaphore timeout period has expired.</summary>
 #       ifdef ERROR_SEM_TIMEOUT
         error_sem_timeout = ERROR_SEM_TIMEOUT,
 #       else
 #       endif
+
         /// <summary>The data area passed to a system call is too small.</summary>
 #       ifdef ERROR_INSUFFICIENT_BUFFER
         error_insufficient_buffer = ERROR_INSUFFICIENT_BUFFER,
 #       else
 #       endif
+
         /// <summary>The filename, directory name, or volume label syntax is incorrect.</summary>
 #       ifdef ERROR_INVALID_NAME
         error_invalid_name = ERROR_INVALID_NAME,
 #       else
 #       endif
+
         /// <summary>The system call level is not correct.</summary>
 #       ifdef ERROR_INVALID_LEVEL
         error_invalid_level = ERROR_INVALID_LEVEL,
 #       else
 #       endif
+
         /// <summary>The disk has no volume label.</summary>
 #       ifdef ERROR_NO_VOLUME_LABEL
         error_no_volume_label = ERROR_NO_VOLUME_LABEL,
 #       else
 #       endif
+
         /// <summary>The specified module could not be found.</summary>
 #       ifdef ERROR_MOD_NOT_FOUND
         error_mod_not_found = ERROR_MOD_NOT_FOUND,
 #       else
 #       endif
+
         /// <summary>The specified procedure could not be found.</summary>
 #       ifdef ERROR_PROC_NOT_FOUND
         error_proc_not_found = ERROR_PROC_NOT_FOUND,
 #       else
 #       endif
+
         /// <summary>There are no child processes to wait for.</summary>
 #       ifdef ERROR_WAIT_NO_CHILDREN
         error_wait_no_children = ERROR_WAIT_NO_CHILDREN,
 #       else
 #       endif
+
         /// <summary>The %1 application cannot be run in Win32 mode.</summary>
 #       ifdef ERROR_CHILD_NOT_COMPLETE
         error_child_not_complete = ERROR_CHILD_NOT_COMPLETE,
 #       else
 #       endif
+
         /// <summary>Attempt to use a file handle to an open disk partition for an operation other than raw disk I/O.</summary>
 #       ifdef ERROR_DIRECT_ACCESS_HANDLE
         error_direct_access_handle = ERROR_DIRECT_ACCESS_HANDLE,
 #       else
 #       endif
+
         /// <summary>An attempt was made to move the file pointer before the beginning of the file.</summary>
 #       ifdef ERROR_NEGATIVE_SEEK
         error_negative_seek = ERROR_NEGATIVE_SEEK,
 #       else
 #       endif
+
         /// <summary>The file pointer cannot be set on the specified device or file.</summary>
 #       ifdef ERROR_SEEK_ON_DEVICE
         error_seek_on_device = ERROR_SEEK_ON_DEVICE,
 #       else
 #       endif
+
         /// <summary>A JOIN or SUBST command cannot be used for a drive that contains previously joined drives.</summary>
 #       ifdef ERROR_IS_JOIN_TARGET
         error_is_join_target = ERROR_IS_JOIN_TARGET,
 #       else
 #       endif
+
         /// <summary>An attempt was made to use a JOIN or SUBST command on a drive that has already been joined.</summary>
 #       ifdef ERROR_IS_JOINED
         error_is_joined = ERROR_IS_JOINED,
 #       else
 #       endif
+
         /// <summary>An attempt was made to use a JOIN or SUBST command on a drive that has already been substituted.</summary>
 #       ifdef ERROR_IS_SUBSTED
         error_is_substed = ERROR_IS_SUBSTED,
 #       else
 #       endif
+
         /// <summary>The system tried to delete the JOIN of a drive that is not joined.</summary>
 #       ifdef ERROR_NOT_JOINED
         error_not_joined = ERROR_NOT_JOINED,
 #       else
 #       endif
+
         /// <summary>The system tried to delete the substitution of a drive that is not substituted.</summary>
 #       ifdef ERROR_NOT_SUBSTED
         error_not_substed = ERROR_NOT_SUBSTED,
 #       else
 #       endif
+
         /// <summary>The system tried to join a drive to a directory on a joined drive.</summary>
 #       ifdef ERROR_JOIN_TO_JOIN
         error_join_to_join = ERROR_JOIN_TO_JOIN,
 #       else
 #       endif
+
         /// <summary>The system tried to substitute a drive to a directory on a substituted drive.</summary>
 #       ifdef ERROR_SUBST_TO_SUBST
         error_subst_to_subst = ERROR_SUBST_TO_SUBST,
 #       else
 #       endif
+
         /// <summary>The system tried to join a drive to a directory on a substituted drive.</summary>
 #       ifdef ERROR_JOIN_TO_SUBST
         error_join_to_subst = ERROR_JOIN_TO_SUBST,
 #       else
 #       endif
+
         /// <summary>The system tried to SUBST a drive to a directory on a joined drive.</summary>
 #       ifdef ERROR_SUBST_TO_JOIN
         error_subst_to_join = ERROR_SUBST_TO_JOIN,
 #       else
 #       endif
+
         /// <summary>The system cannot perform a JOIN or SUBST at this time.</summary>
 #       ifdef ERROR_BUSY_DRIVE
         error_busy_drive = ERROR_BUSY_DRIVE,
 #       else
 #       endif
+
         /// <summary>The system cannot join or substitute a drive to or for a directory on the same drive.</summary>
 #       ifdef ERROR_SAME_DRIVE
         error_same_drive = ERROR_SAME_DRIVE,
 #       else
 #       endif
+
         /// <summary>The directory is not a subdirectory of the root directory.</summary>
 #       ifdef ERROR_DIR_NOT_ROOT
         error_dir_not_root = ERROR_DIR_NOT_ROOT,
 #       else
 #       endif
+
         /// <summary>The directory is not empty.</summary>
 #       ifdef ERROR_DIR_NOT_EMPTY
         error_dir_not_empty = ERROR_DIR_NOT_EMPTY,
 #       else
 #       endif
+
         /// <summary>The path specified is being used in a substitute.</summary>
 #       ifdef ERROR_IS_SUBST_PATH
         error_is_subst_path = ERROR_IS_SUBST_PATH,
 #       else
 #       endif
+
         /// <summary>Not enough resources are available to process this command.</summary>
 #       ifdef ERROR_IS_JOIN_PATH
         error_is_join_path = ERROR_IS_JOIN_PATH,
 #       else
 #       endif
+
         /// <summary>The path specified cannot be used at this time.</summary>
 #       ifdef ERROR_PATH_BUSY
         error_path_busy = ERROR_PATH_BUSY,
 #       else
 #       endif
+
         /// <summary>An attempt was made to join or substitute a drive for which a directory on the drive is the target of a previous substitute.</summary>
 #       ifdef ERROR_IS_SUBST_TARGET
         error_is_subst_target = ERROR_IS_SUBST_TARGET,
 #       else
 #       endif
+
         /// <summary>System trace information was not specified in your CONFIG.SYS file, or tracing is disallowed.</summary>
 #       ifdef ERROR_SYSTEM_TRACE
         error_system_trace = ERROR_SYSTEM_TRACE,
 #       else
 #       endif
+
         /// <summary>The number of specified semaphore events for DosMuxSemWait is not correct.</summary>
 #       ifdef ERROR_INVALID_EVENT_COUNT
         error_invalid_event_count = ERROR_INVALID_EVENT_COUNT,
 #       else
 #       endif
+
         /// <summary>DosMuxSemWait did not execute; too many semaphores are already set.</summary>
 #       ifdef ERROR_TOO_MANY_MUXWAITERS
         error_too_many_muxwaiters = ERROR_TOO_MANY_MUXWAITERS,
 #       else
 #       endif
+
         /// <summary>The DosMuxSemWait list is not correct.</summary>
 #       ifdef ERROR_INVALID_LIST_FORMAT
         error_invalid_list_format = ERROR_INVALID_LIST_FORMAT,
 #       else
 #       endif
+
         /// <summary>The volume label you entered exceeds the label character limit of the target file system.</summary>
 #       ifdef ERROR_LABEL_TOO_LONG
         error_label_too_long = ERROR_LABEL_TOO_LONG,
 #       else
 #       endif
+
         /// <summary>Cannot create another thread.</summary>
 #       ifdef ERROR_TOO_MANY_TCBS
         error_too_many_tcbs = ERROR_TOO_MANY_TCBS,
 #       else
 #       endif
+
         /// <summary>The recipient process has refused the signal.</summary>
 #       ifdef ERROR_SIGNAL_REFUSED
         error_signal_refused = ERROR_SIGNAL_REFUSED,
 #       else
 #       endif
+
         /// <summary>The segment is already discarded and cannot be locked.</summary>
 #       ifdef ERROR_DISCARDED
         error_discarded = ERROR_DISCARDED,
 #       else
 #       endif
+
         /// <summary>The segment is already unlocked.</summary>
 #       ifdef ERROR_NOT_LOCKED
         error_not_locked = ERROR_NOT_LOCKED,
 #       else
 #       endif
+
         /// <summary>The address for the thread ID is not correct.</summary>
 #       ifdef ERROR_BAD_THREADID_ADDR
         error_bad_threadid_addr = ERROR_BAD_THREADID_ADDR,
 #       else
 #       endif
+
         /// <summary>One or more arguments are not correct.</summary>
 #       ifdef ERROR_BAD_ARGUMENTS
         error_bad_arguments = ERROR_BAD_ARGUMENTS,
 #       else
 #       endif
+
         /// <summary>The specified path is invalid.</summary>
 #       ifdef ERROR_BAD_PATHNAME
         error_bad_pathname = ERROR_BAD_PATHNAME,
 #       else
 #       endif
+
         /// <summary>A signal is already pending.</summary>
 #       ifdef ERROR_SIGNAL_PENDING
         error_signal_pending = ERROR_SIGNAL_PENDING,
 #       else
 #       endif
+
         /// <summary>No more threads can be created in the system.</summary>
 #       ifdef ERROR_MAX_THRDS_REACHED
         error_max_thrds_reached = ERROR_MAX_THRDS_REACHED,
 #       else
 #       endif
+
         /// <summary>Unable to lock a region of a file.</summary>
 #       ifdef ERROR_LOCK_FAILED
         error_lock_failed = ERROR_LOCK_FAILED,
 #       else
 #       endif
+
         /// <summary>The requested resource is in use.</summary>
 #       ifdef ERROR_BUSY
         error_busy = ERROR_BUSY,
 #       else
 #       endif
+
         /// <summary>Device's command support detection is in progress.</summary>
 #       ifdef ERROR_DEVICE_SUPPORT_IN_PROGRESS
         error_device_support_in_progress = ERROR_DEVICE_SUPPORT_IN_PROGRESS,
 #       else
 #       endif
+
         /// <summary>A lock request was not outstanding for the supplied cancel region.</summary>
 #       ifdef ERROR_CANCEL_VIOLATION
         error_cancel_violation = ERROR_CANCEL_VIOLATION,
 #       else
 #       endif
+
         /// <summary>The file system does not support atomic changes to the lock type.</summary>
 #       ifdef ERROR_ATOMIC_LOCKS_NOT_SUPPORTED
         error_atomic_locks_not_supported = ERROR_ATOMIC_LOCKS_NOT_SUPPORTED,
 #       else
 #       endif
+
         /// <summary>The system detected a segment number that was not correct.</summary>
 #       ifdef ERROR_INVALID_SEGMENT_NUMBER
         error_invalid_segment_number = ERROR_INVALID_SEGMENT_NUMBER,
 #       else
 #       endif
+
         /// <summary>The operating system cannot run %1.</summary>
 #       ifdef ERROR_INVALID_ORDINAL
         error_invalid_ordinal = ERROR_INVALID_ORDINAL,
 #       else
 #       endif
+
         /// <summary>Cannot create a file when that file already exists.</summary>
 #       ifdef ERROR_ALREADY_EXISTS
         error_already_exists = ERROR_ALREADY_EXISTS,
 #       else
 #       endif
+
         /// <summary>The flag passed is not correct.</summary>
 #       ifdef ERROR_INVALID_FLAG_NUMBER
         error_invalid_flag_number = ERROR_INVALID_FLAG_NUMBER,
 #       else
 #       endif
+
         /// <summary>The specified system semaphore name was not found.</summary>
 #       ifdef ERROR_SEM_NOT_FOUND
         error_sem_not_found = ERROR_SEM_NOT_FOUND,
 #       else
 #       endif
+
         /// <summary>The operating system cannot run %1.</summary>
 #       ifdef ERROR_INVALID_STARTING_CODESEG
         error_invalid_starting_codeseg = ERROR_INVALID_STARTING_CODESEG,
 #       else
 #       endif
+
         /// <summary>The operating system cannot run %1.</summary>
 #       ifdef ERROR_INVALID_STACKSEG
         error_invalid_stackseg = ERROR_INVALID_STACKSEG,
 #       else
 #       endif
+
         /// <summary>The operating system cannot run %1.</summary>
 #       ifdef ERROR_INVALID_MODULETYPE
         error_invalid_moduletype = ERROR_INVALID_MODULETYPE,
 #       else
 #       endif
+
         /// <summary>Cannot run %1 in Win32 mode.</summary>
 #       ifdef ERROR_INVALID_EXE_SIGNATURE
         error_invalid_exe_signature = ERROR_INVALID_EXE_SIGNATURE,
 #       else
 #       endif
+
         /// <summary>The operating system cannot run %1.</summary>
 #       ifdef ERROR_EXE_MARKED_INVALID
         error_exe_marked_invalid = ERROR_EXE_MARKED_INVALID,
 #       else
 #       endif
+
         /// <summary>%1 is not a valid Win32 application.</summary>
 #       ifdef ERROR_BAD_EXE_FORMAT
         error_bad_exe_format = ERROR_BAD_EXE_FORMAT,
 #       else
 #       endif
+
         /// <summary>The operating system cannot run %1.</summary>
 #       ifdef ERROR_ITERATED_DATA_EXCEEDS_64k
         error_iterated_data_exceeds_64k = ERROR_ITERATED_DATA_EXCEEDS_64k,
 #       else
 #       endif
+
         /// <summary>The operating system cannot run %1.</summary>
 #       ifdef ERROR_INVALID_MINALLOCSIZE
         error_invalid_minallocsize = ERROR_INVALID_MINALLOCSIZE,
 #       else
 #       endif
+
         /// <summary>The operating system cannot run this application program.</summary>
 #       ifdef ERROR_DYNLINK_FROM_INVALID_RING
         error_dynlink_from_invalid_ring = ERROR_DYNLINK_FROM_INVALID_RING,
 #       else
 #       endif
+
         /// <summary>The operating system is not presently configured to run this application.</summary>
 #       ifdef ERROR_IOPL_NOT_ENABLED
         error_iopl_not_enabled = ERROR_IOPL_NOT_ENABLED,
 #       else
 #       endif
+
         /// <summary>The operating system cannot run %1.</summary>
 #       ifdef ERROR_INVALID_SEGDPL
         error_invalid_segdpl = ERROR_INVALID_SEGDPL,
 #       else
 #       endif
+
         /// <summary>The operating system cannot run this application program.</summary>
 #       ifdef ERROR_AUTODATASEG_EXCEEDS_64k
         error_autodataseg_exceeds_64k = ERROR_AUTODATASEG_EXCEEDS_64k,
 #       else
 #       endif
+
         /// <summary>The code segment cannot be greater than or equal to 64K.</summary>
 #       ifdef ERROR_RING2SEG_MUST_BE_MOVABLE
         error_ring2seg_must_be_movable = ERROR_RING2SEG_MUST_BE_MOVABLE,
 #       else
 #       endif
+
         /// <summary>The operating system cannot run %1.</summary>
 #       ifdef ERROR_RELOC_CHAIN_XEEDS_SEGLIM
         error_reloc_chain_xeeds_seglim = ERROR_RELOC_CHAIN_XEEDS_SEGLIM,
 #       else
 #       endif
+
         /// <summary>The operating system cannot run %1.</summary>
 #       ifdef ERROR_INFLOOP_IN_RELOC_CHAIN
         error_infloop_in_reloc_chain = ERROR_INFLOOP_IN_RELOC_CHAIN,
 #       else
 #       endif
+
         /// <summary>The system could not find the environment option that was entered.</summary>
 #       ifdef ERROR_ENVVAR_NOT_FOUND
         error_envvar_not_found = ERROR_ENVVAR_NOT_FOUND,
 #       else
 #       endif
+
         /// <summary>No process in the command subtree has a signal handler.</summary>
 #       ifdef ERROR_NO_SIGNAL_SENT
         error_no_signal_sent = ERROR_NO_SIGNAL_SENT,
 #       else
 #       endif
+
         /// <summary>The filename or extension is too long.</summary>
 #       ifdef ERROR_FILENAME_EXCED_RANGE
         error_filename_exced_range = ERROR_FILENAME_EXCED_RANGE,
 #       else
 #       endif
+
         /// <summary>The ring 2 stack is in use.</summary>
 #       ifdef ERROR_RING2_STACK_IN_USE
         error_ring2_stack_in_use = ERROR_RING2_STACK_IN_USE,
 #       else
 #       endif
+
         /// <summary>The global filename characters, * or ?, are entered incorrectly or too many global filename characters are specified.</summary>
 #       ifdef ERROR_META_EXPANSION_TOO_LONG
         error_meta_expansion_too_long = ERROR_META_EXPANSION_TOO_LONG,
 #       else
 #       endif
+
         /// <summary>The signal being posted is not correct.</summary>
 #       ifdef ERROR_INVALID_SIGNAL_NUMBER
         error_invalid_signal_number = ERROR_INVALID_SIGNAL_NUMBER,
 #       else
 #       endif
+
         /// <summary>The signal handler cannot be set.</summary>
 #       ifdef ERROR_THREAD_1_INACTIVE
         error_thread_1_inactive = ERROR_THREAD_1_INACTIVE,
 #       else
 #       endif
+
         /// <summary>The segment is locked and cannot be reallocated.</summary>
 #       ifdef ERROR_LOCKED
         error_locked = ERROR_LOCKED,
 #       else
 #       endif
+
         /// <summary>Too many dynamic-link modules are attached to this program or dynamic-link module.</summary>
 #       ifdef ERROR_TOO_MANY_MODULES
         error_too_many_modules = ERROR_TOO_MANY_MODULES,
 #       else
 #       endif
+
         /// <summary>Cannot nest calls to LoadModule.</summary>
 #       ifdef ERROR_NESTING_NOT_ALLOWED
         error_nesting_not_allowed = ERROR_NESTING_NOT_ALLOWED,
 #       else
 #       endif
+
         /// <summary>This version of %1 is not compatible with the version of Windows you're running. Check your computer's system information and then contact the software publisher.</summary>
 #       ifdef ERROR_EXE_MACHINE_TYPE_MISMATCH
         error_exe_machine_type_mismatch = ERROR_EXE_MACHINE_TYPE_MISMATCH,
 #       else
 #       endif
+
         /// <summary>The image file %1 is signed, unable to modify.</summary>
 #       ifdef ERROR_EXE_CANNOT_MODIFY_SIGNED_BINARY
         error_exe_cannot_modify_signed_binary = ERROR_EXE_CANNOT_MODIFY_SIGNED_BINARY,
 #       else
 #       endif
+
         /// <summary>The image file %1 is strong signed, unable to modify.</summary>
 #       ifdef ERROR_EXE_CANNOT_MODIFY_STRONG_SIGNED_BINARY
         error_exe_cannot_modify_strong_signed_binary = ERROR_EXE_CANNOT_MODIFY_STRONG_SIGNED_BINARY,
 #       else
 #       endif
+
         /// <summary>This file is checked out or locked for editing by another user.</summary>
 #       ifdef ERROR_FILE_CHECKED_OUT
         error_file_checked_out = ERROR_FILE_CHECKED_OUT,
 #       else
 #       endif
+
         /// <summary>The file must be checked out before saving changes.</summary>
 #       ifdef ERROR_CHECKOUT_REQUIRED
         error_checkout_required = ERROR_CHECKOUT_REQUIRED,
 #       else
 #       endif
+
         /// <summary>The file type being saved or retrieved has been blocked.</summary>
 #       ifdef ERROR_BAD_FILE_TYPE
         error_bad_file_type = ERROR_BAD_FILE_TYPE,
 #       else
 #       endif
+
         /// <summary>The file size exceeds the limit allowed and cannot be saved.</summary>
 #       ifdef ERROR_FILE_TOO_LARGE
         error_file_too_large = ERROR_FILE_TOO_LARGE,
 #       else
 #       endif
+
         /// <summary>Access Denied. Before opening files in this location, you must first add the web site to your trusted sites list, browse to the web site, and select the option to login automatically.</summary>
 #       ifdef ERROR_FORMS_AUTH_REQUIRED
         error_forms_auth_required = ERROR_FORMS_AUTH_REQUIRED,
 #       else
 #       endif
+
         /// <summary>Operation did not complete successfully because the file contains a virus or potentially unwanted software.</summary>
 #       ifdef ERROR_VIRUS_INFECTED
         error_virus_infected = ERROR_VIRUS_INFECTED,
 #       else
 #       endif
+
         /// <summary>This file contains a virus or potentially unwanted software and cannot be opened. Due to the nature of this virus or potentially unwanted software, the file has been removed from this location.</summary>
 #       ifdef ERROR_VIRUS_DELETED
         error_virus_deleted = ERROR_VIRUS_DELETED,
 #       else
 #       endif
+
         /// <summary>The pipe is local.</summary>
 #       ifdef ERROR_PIPE_LOCAL
         error_pipe_local = ERROR_PIPE_LOCAL,
 #       else
 #       endif
+
         /// <summary>The pipe state is invalid.</summary>
 #       ifdef ERROR_BAD_PIPE
         error_bad_pipe = ERROR_BAD_PIPE,
 #       else
 #       endif
+
         /// <summary>All pipe instances are busy.</summary>
 #       ifdef ERROR_PIPE_BUSY
         error_pipe_busy = ERROR_PIPE_BUSY,
 #       else
 #       endif
+
         /// <summary>The pipe is being closed.</summary>
 #       ifdef ERROR_NO_DATA
         error_no_data = ERROR_NO_DATA,
 #       else
 #       endif
+
         /// <summary>No process is on the other end of the pipe.</summary>
 #       ifdef ERROR_PIPE_NOT_CONNECTED
         error_pipe_not_connected = ERROR_PIPE_NOT_CONNECTED,
 #       else
 #       endif
+
         /// <summary>More data is available.</summary>
 #       ifdef ERROR_MORE_DATA
         error_more_data = ERROR_MORE_DATA,
 #       else
 #       endif
+
         /// <summary>The action requested resulted in no work being done. Error-style clean-up has been performed.</summary>
 #       ifdef ERROR_NO_WORK_DONE
         error_no_work_done = ERROR_NO_WORK_DONE,
 #       else
 #       endif
+
         /// <summary>The session was canceled.</summary>
 #       ifdef ERROR_VC_DISCONNECTED
         error_vc_disconnected = ERROR_VC_DISCONNECTED,
 #       else
 #       endif
+
         /// <summary>The specified extended attribute name was invalid.</summary>
 #       ifdef ERROR_INVALID_EA_NAME
         error_invalid_ea_name = ERROR_INVALID_EA_NAME,
 #       else
 #       endif
+
         /// <summary>The extended attributes are inconsistent.</summary>
 #       ifdef ERROR_EA_LIST_INCONSISTENT
         error_ea_list_inconsistent = ERROR_EA_LIST_INCONSISTENT,
 #       else
 #       endif
+
         /// <summary>The wait operation timed out.</summary>
 #       ifdef WAIT_TIMEOUT
         wait_timeout = WAIT_TIMEOUT,
 #       else
 #       endif
+
         /// <summary>No more data is available.</summary>
 #       ifdef ERROR_NO_MORE_ITEMS
         error_no_more_items = ERROR_NO_MORE_ITEMS,
 #       else
 #       endif
+
         /// <summary>The copy functions cannot be used.</summary>
 #       ifdef ERROR_CANNOT_COPY
         error_cannot_copy = ERROR_CANNOT_COPY,
 #       else
 #       endif
+
         /// <summary>The directory name is invalid.</summary>
 #       ifdef ERROR_DIRECTORY
         error_directory = ERROR_DIRECTORY,
 #       else
 #       endif
+
         /// <summary>The extended attributes did not fit in the buffer.</summary>
 #       ifdef ERROR_EAS_DIDNT_FIT
         error_eas_didnt_fit = ERROR_EAS_DIDNT_FIT,
 #       else
 #       endif
+
         /// <summary>The extended attribute file on the mounted file system is corrupt.</summary>
 #       ifdef ERROR_EA_FILE_CORRUPT
         error_ea_file_corrupt = ERROR_EA_FILE_CORRUPT,
 #       else
 #       endif
+
         /// <summary>The extended attribute table file is full.</summary>
 #       ifdef ERROR_EA_TABLE_FULL
         error_ea_table_full = ERROR_EA_TABLE_FULL,
 #       else
 #       endif
+
         /// <summary>The specified extended attribute handle is invalid.</summary>
 #       ifdef ERROR_INVALID_EA_HANDLE
         error_invalid_ea_handle = ERROR_INVALID_EA_HANDLE,
 #       else
 #       endif
+
         /// <summary>The mounted file system does not support extended attributes.</summary>
 #       ifdef ERROR_EAS_NOT_SUPPORTED
         error_eas_not_supported = ERROR_EAS_NOT_SUPPORTED,
 #       else
 #       endif
+
         /// <summary>Attempt to release mutex not owned by caller.</summary>
 #       ifdef ERROR_NOT_OWNER
         error_not_owner = ERROR_NOT_OWNER,
 #       else
 #       endif
+
         /// <summary>Too many posts were made to a semaphore.</summary>
 #       ifdef ERROR_TOO_MANY_POSTS
         error_too_many_posts = ERROR_TOO_MANY_POSTS,
 #       else
 #       endif
+
         /// <summary>Only part of a ReadProcessMemory or WriteProcessMemory request was completed.</summary>
 #       ifdef ERROR_PARTIAL_COPY
         error_partial_copy = ERROR_PARTIAL_COPY,
 #       else
 #       endif
+
         /// <summary>The oplock request is denied.</summary>
 #       ifdef ERROR_OPLOCK_NOT_GRANTED
         error_oplock_not_granted = ERROR_OPLOCK_NOT_GRANTED,
 #       else
 #       endif
+
         /// <summary>An invalid oplock acknowledgment was received by the system.</summary>
 #       ifdef ERROR_INVALID_OPLOCK_PROTOCOL
         error_invalid_oplock_protocol = ERROR_INVALID_OPLOCK_PROTOCOL,
 #       else
 #       endif
+
         /// <summary>The volume is too fragmented to complete this operation.</summary>
 #       ifdef ERROR_DISK_TOO_FRAGMENTED
         error_disk_too_fragmented = ERROR_DISK_TOO_FRAGMENTED,
 #       else
 #       endif
+
         /// <summary>The file cannot be opened because it is in the process of being deleted.</summary>
 #       ifdef ERROR_DELETE_PENDING
         error_delete_pending = ERROR_DELETE_PENDING,
 #       else
 #       endif
+
         /// <summary>Short name settings may not be changed on this volume due to the global registry setting.</summary>
 #       ifdef ERROR_INCOMPATIBLE_WITH_GLOBAL_SHORT_NAME_REGISTRY_SETTING
         error_incompatible_with_global_short_name_registry_setting = ERROR_INCOMPATIBLE_WITH_GLOBAL_SHORT_NAME_REGISTRY_SETTING,
 #       else
 #       endif
+
         /// <summary>Short names are not enabled on this volume.</summary>
 #       ifdef ERROR_SHORT_NAMES_NOT_ENABLED_ON_VOLUME
         error_short_names_not_enabled_on_volume = ERROR_SHORT_NAMES_NOT_ENABLED_ON_VOLUME,
 #       else
 #       endif
+
         /// <summary>The security stream for the given volume is in an inconsistent state.</summary>
         /// <summary>Please run CHKDSK on the volume.</summary>
 #       ifdef ERROR_SECURITY_STREAM_IS_INCONSISTENT
         error_security_stream_is_inconsistent = ERROR_SECURITY_STREAM_IS_INCONSISTENT,
 #       else
 #       endif
+
         /// <summary>A requested file lock operation cannot be processed due to an invalid byte range.</summary>
 #       ifdef ERROR_INVALID_LOCK_RANGE
         error_invalid_lock_range = ERROR_INVALID_LOCK_RANGE,
 #       else
 #       endif
+
         /// <summary>The subsystem needed to support the image type is not present.</summary>
 #       ifdef ERROR_IMAGE_SUBSYSTEM_NOT_PRESENT
         error_image_subsystem_not_present = ERROR_IMAGE_SUBSYSTEM_NOT_PRESENT,
 #       else
 #       endif
+
         /// <summary>The specified file already has a notification GUID associated with it.</summary>
 #       ifdef ERROR_NOTIFICATION_GUID_ALREADY_DEFINED
         error_notification_guid_already_defined = ERROR_NOTIFICATION_GUID_ALREADY_DEFINED,
 #       else
 #       endif
+
         /// <summary>An invalid exception handler routine has been detected.</summary>
 #       ifdef ERROR_INVALID_EXCEPTION_HANDLER
         error_invalid_exception_handler = ERROR_INVALID_EXCEPTION_HANDLER,
 #       else
 #       endif
+
         /// <summary>Duplicate privileges were specified for the token.</summary>
 #       ifdef ERROR_DUPLICATE_PRIVILEGES
         error_duplicate_privileges = ERROR_DUPLICATE_PRIVILEGES,
 #       else
 #       endif
+
         /// <summary>No ranges for the specified operation were able to be processed.</summary>
 #       ifdef ERROR_NO_RANGES_PROCESSED
         error_no_ranges_processed = ERROR_NO_RANGES_PROCESSED,
 #       else
 #       endif
+
         /// <summary>Operation is not allowed on a file system internal file.</summary>
 #       ifdef ERROR_NOT_ALLOWED_ON_SYSTEM_FILE
         error_not_allowed_on_system_file = ERROR_NOT_ALLOWED_ON_SYSTEM_FILE,
 #       else
 #       endif
+
         /// <summary>The physical resources of this disk have been exhausted.</summary>
 #       ifdef ERROR_DISK_RESOURCES_EXHAUSTED
         error_disk_resources_exhausted = ERROR_DISK_RESOURCES_EXHAUSTED,
 #       else
 #       endif
+
         /// <summary>The token representing the data is invalid.</summary>
 #       ifdef ERROR_INVALID_TOKEN
         error_invalid_token = ERROR_INVALID_TOKEN,
 #       else
 #       endif
+
         /// <summary>The device does not support the command feature.</summary>
 #       ifdef ERROR_DEVICE_FEATURE_NOT_SUPPORTED
         error_device_feature_not_supported = ERROR_DEVICE_FEATURE_NOT_SUPPORTED,
 #       else
 #       endif
+
         /// <summary>The system cannot find message text for message number 0x%1 in the message file for %2.</summary>
 #       ifdef ERROR_MR_MID_NOT_FOUND
         error_mr_mid_not_found = ERROR_MR_MID_NOT_FOUND,
 #       else
 #       endif
+
         /// <summary>The scope specified was not found.</summary>
 #       ifdef ERROR_SCOPE_NOT_FOUND
         error_scope_not_found = ERROR_SCOPE_NOT_FOUND,
 #       else
 #       endif
+
         /// <summary>The Central Access Policy specified is not defined on the target machine.</summary>
 #       ifdef ERROR_UNDEFINED_SCOPE
         error_undefined_scope = ERROR_UNDEFINED_SCOPE,
 #       else
 #       endif
+
         /// <summary>The Central Access Policy obtained from Active Directory is invalid.</summary>
 #       ifdef ERROR_INVALID_CAP
         error_invalid_cap = ERROR_INVALID_CAP,
 #       else
 #       endif
+
         /// <summary>The device is unreachable.</summary>
 #       ifdef ERROR_DEVICE_UNREACHABLE
         error_device_unreachable = ERROR_DEVICE_UNREACHABLE,
 #       else
 #       endif
+
         /// <summary>The target device has insufficient resources to complete the operation.</summary>
 #       ifdef ERROR_DEVICE_NO_RESOURCES
         error_device_no_resources = ERROR_DEVICE_NO_RESOURCES,
 #       else
 #       endif
+
         /// <summary>A data integrity checksum error occurred. Data in the file stream is corrupt.</summary>
 #       ifdef ERROR_DATA_CHECKSUM_ERROR
         error_data_checksum_error = ERROR_DATA_CHECKSUM_ERROR,
 #       else
 #       endif
+
         /// <summary>An attempt was made to modify both a KERNEL and normal Extended Attribute (EA) in the same operation.</summary>
 #       ifdef ERROR_INTERMIXED_KERNEL_EA_OPERATION
         error_intermixed_kernel_ea_operation = ERROR_INTERMIXED_KERNEL_EA_OPERATION,
 #       else
 #       endif
+
         /// <summary>Device does not support file-level TRIM.</summary>
 #       ifdef ERROR_FILE_LEVEL_TRIM_NOT_SUPPORTED
         error_file_level_trim_not_supported = ERROR_FILE_LEVEL_TRIM_NOT_SUPPORTED,
 #       else
 #       endif
+
         /// <summary>The command specified a data offset that does not align to the device's granularity/alignment.</summary>
 #       ifdef ERROR_OFFSET_ALIGNMENT_VIOLATION
         error_offset_alignment_violation = ERROR_OFFSET_ALIGNMENT_VIOLATION,
 #       else
 #       endif
+
         /// <summary>The command specified an invalid field in its parameter list.</summary>
 #       ifdef ERROR_INVALID_FIELD_IN_PARAMETER_LIST
         error_invalid_field_in_parameter_list = ERROR_INVALID_FIELD_IN_PARAMETER_LIST,
 #       else
 #       endif
+
         /// <summary>An operation is currently in progress with the device.</summary>
 #       ifdef ERROR_OPERATION_IN_PROGRESS
         error_operation_in_progress = ERROR_OPERATION_IN_PROGRESS,
 #       else
 #       endif
+
         /// <summary>An attempt was made to send down the command via an invalid path to the target device.</summary>
 #       ifdef ERROR_BAD_DEVICE_PATH
         error_bad_device_path = ERROR_BAD_DEVICE_PATH,
 #       else
 #       endif
+
         /// <summary>The command specified a number of descriptors that exceeded the maximum supported by the device.</summary>
 #       ifdef ERROR_TOO_MANY_DESCRIPTORS
         error_too_many_descriptors = ERROR_TOO_MANY_DESCRIPTORS,
 #       else
 #       endif
+
         /// <summary>Scrub is disabled on the specified file.</summary>
 #       ifdef ERROR_SCRUB_DATA_DISABLED
         error_scrub_data_disabled = ERROR_SCRUB_DATA_DISABLED,
 #       else
 #       endif
+
         /// <summary>The storage device does not provide redundancy.</summary>
 #       ifdef ERROR_NOT_REDUNDANT_STORAGE
         error_not_redundant_storage = ERROR_NOT_REDUNDANT_STORAGE,
 #       else
 #       endif
+
         /// <summary>An operation is not supported on a resident file.</summary>
 #       ifdef ERROR_RESIDENT_FILE_NOT_SUPPORTED
         error_resident_file_not_supported = ERROR_RESIDENT_FILE_NOT_SUPPORTED,
 #       else
 #       endif
+
         /// <summary>An operation is not supported on a compressed file.</summary>
 #       ifdef ERROR_COMPRESSED_FILE_NOT_SUPPORTED
         error_compressed_file_not_supported = ERROR_COMPRESSED_FILE_NOT_SUPPORTED,
 #       else
 #       endif
+
         /// <summary>An operation is not supported on a directory.</summary>
 #       ifdef ERROR_DIRECTORY_NOT_SUPPORTED
         error_directory_not_supported = ERROR_DIRECTORY_NOT_SUPPORTED,
 #       else
 #       endif
+
         /// <summary>The specified copy of the requested data could not be read.</summary>
 #       ifdef ERROR_NOT_READ_FROM_COPY
         error_not_read_from_copy = ERROR_NOT_READ_FROM_COPY,
 #       else
 #       endif
+
         /// <summary>The specified data could not be written to any of the copies.</summary>
 #       ifdef ERROR_FT_WRITE_FAILURE
         error_ft_write_failure = ERROR_FT_WRITE_FAILURE,
 #       else
 #       endif
+
         /// <summary>One or more copies of data on this device may be out of sync. No writes may be performed until a data integrity scan is completed.</summary>
 #       ifdef ERROR_FT_DI_SCAN_REQUIRED
         error_ft_di_scan_required = ERROR_FT_DI_SCAN_REQUIRED,
 #       else
 #       endif
+
         /// <summary>The supplied kernel information version is invalid.</summary>
 #       ifdef ERROR_INVALID_KERNEL_INFO_VERSION
         error_invalid_kernel_info_version = ERROR_INVALID_KERNEL_INFO_VERSION,
 #       else
 #       endif
+
         /// <summary>The supplied PEP information version is invalid.</summary>
 #       ifdef ERROR_INVALID_PEP_INFO_VERSION
         error_invalid_pep_info_version = ERROR_INVALID_PEP_INFO_VERSION,
 #       else
 #       endif
+
         /// <summary>This object is not externally backed by any provider.</summary>
 #       ifdef ERROR_OBJECT_NOT_EXTERNALLY_BACKED
         error_object_not_externally_backed = ERROR_OBJECT_NOT_EXTERNALLY_BACKED,
 #       else
 #       endif
+
         /// <summary>The external backing provider is not recognized.</summary>
 #       ifdef ERROR_EXTERNAL_BACKING_PROVIDER_UNKNOWN
         error_external_backing_provider_unknown = ERROR_EXTERNAL_BACKING_PROVIDER_UNKNOWN,
 #       else
 #       endif
+
         /// <summary>Compressing this object would not save space.</summary>
 #       ifdef ERROR_COMPRESSION_NOT_BENEFICIAL
         error_compression_not_beneficial = ERROR_COMPRESSION_NOT_BENEFICIAL,
 #       else
 #       endif
+
         /// <summary>The request failed due to a storage topology ID mismatch.</summary>
 #       ifdef ERROR_STORAGE_TOPOLOGY_ID_MISMATCH
         error_storage_topology_id_mismatch = ERROR_STORAGE_TOPOLOGY_ID_MISMATCH,
 #       else
 #       endif
+
         /// <summary>The operation was blocked by parental controls.</summary>
 #       ifdef ERROR_BLOCKED_BY_PARENTAL_CONTROLS
         error_blocked_by_parental_controls = ERROR_BLOCKED_BY_PARENTAL_CONTROLS,
 #       else
 #       endif
+
         /// <summary>A file system block being referenced has already reached the maximum reference count and can't be referenced any further.</summary>
 #       ifdef ERROR_BLOCK_TOO_MANY_REFERENCES
         error_block_too_many_references = ERROR_BLOCK_TOO_MANY_REFERENCES,
 #       else
 #       endif
+
         /// <summary>The requested operation failed because the file stream is marked to disallow writes.</summary>
 #       ifdef ERROR_MARKED_TO_DISALLOW_WRITES
         error_marked_to_disallow_writes = ERROR_MARKED_TO_DISALLOW_WRITES,
 #       else
 #       endif
+
         /// <summary>The requested operation failed with an architecture-specific failure code.</summary>
 #       ifdef ERROR_ENCLAVE_FAILURE
         error_enclave_failure = ERROR_ENCLAVE_FAILURE,
 #       else
 #       endif
+
         /// <summary>No action was taken as a system reboot is required.</summary>
 #       ifdef ERROR_FAIL_NOACTION_REBOOT
         error_fail_noaction_reboot = ERROR_FAIL_NOACTION_REBOOT,
 #       else
 #       endif
+
         /// <summary>The shutdown operation failed.</summary>
 #       ifdef ERROR_FAIL_SHUTDOWN
         error_fail_shutdown = ERROR_FAIL_SHUTDOWN,
 #       else
 #       endif
+
         /// <summary>The restart operation failed.</summary>
 #       ifdef ERROR_FAIL_RESTART
         error_fail_restart = ERROR_FAIL_RESTART,
 #       else
 #       endif
+
         /// <summary>The maximum number of sessions has been reached.</summary>
 #       ifdef ERROR_MAX_SESSIONS_REACHED
         error_max_sessions_reached = ERROR_MAX_SESSIONS_REACHED,
 #       else
 #       endif
+
         /// <summary>Windows Information Protection policy does not allow access to this network resource.</summary>
 #       ifdef ERROR_NETWORK_ACCESS_DENIED_EDP
         error_network_access_denied_edp = ERROR_NETWORK_ACCESS_DENIED_EDP,
 #       else
 #       endif
+
         /// <summary>The device hint name buffer is too small to receive the remaining name.</summary>
 #       ifdef ERROR_DEVICE_HINT_NAME_BUFFER_TOO_SMALL
         error_device_hint_name_buffer_too_small = ERROR_DEVICE_HINT_NAME_BUFFER_TOO_SMALL,
 #       else
 #       endif
+
         /// <summary>The requested operation was blocked by Windows Information Protection policy. For more information, contact your system administrator.</summary>
 #       ifdef ERROR_EDP_POLICY_DENIES_OPERATION
         error_edp_policy_denies_operation = ERROR_EDP_POLICY_DENIES_OPERATION,
 #       else
 #       endif
+
         /// <summary>The requested operation cannot be performed because hardware or software configuration of the device does not comply with Windows Information Protection under Lock policy. Please, verify that user PIN has been created. For more information, contact your system administrator.</summary>
 #       ifdef ERROR_EDP_DPL_POLICY_CANT_BE_SATISFIED
         error_edp_dpl_policy_cant_be_satisfied = ERROR_EDP_DPL_POLICY_CANT_BE_SATISFIED,
 #       else
 #       endif
+
         /// <summary>The cloud sync root metadata is corrupted.</summary>
 #       ifdef ERROR_CLOUD_FILE_SYNC_ROOT_METADATA_CORRUPT
         error_cloud_file_sync_root_metadata_corrupt = ERROR_CLOUD_FILE_SYNC_ROOT_METADATA_CORRUPT,
 #       else
 #       endif
+
         /// <summary>The device is in maintenance mode.</summary>
 #       ifdef ERROR_DEVICE_IN_MAINTENANCE
         error_device_in_maintenance = ERROR_DEVICE_IN_MAINTENANCE,
 #       else
 #       endif
+
         /// <summary>This operation is not supported on a DAX volume.</summary>
 #       ifdef ERROR_NOT_SUPPORTED_ON_DAX
         error_not_supported_on_dax = ERROR_NOT_SUPPORTED_ON_DAX,
 #       else
 #       endif
+
         /// <summary>The volume has active DAX mappings.</summary>
 #       ifdef ERROR_DAX_MAPPING_EXISTS
         error_dax_mapping_exists = ERROR_DAX_MAPPING_EXISTS,
 #       else
 #       endif
+
         /// <summary>The cloud file provider is not running.</summary>
 #       ifdef ERROR_CLOUD_FILE_PROVIDER_NOT_RUNNING
         error_cloud_file_provider_not_running = ERROR_CLOUD_FILE_PROVIDER_NOT_RUNNING,
 #       else
 #       endif
+
         /// <summary>The cloud file metadata is corrupt and unreadable.</summary>
 #       ifdef ERROR_CLOUD_FILE_METADATA_CORRUPT
         error_cloud_file_metadata_corrupt = ERROR_CLOUD_FILE_METADATA_CORRUPT,
 #       else
 #       endif
+
         /// <summary>The cloud file metadata is too large.</summary>
 #       ifdef ERROR_CLOUD_FILE_METADATA_TOO_LARGE
         error_cloud_file_metadata_too_large = ERROR_CLOUD_FILE_METADATA_TOO_LARGE,
 #       else
 #       endif
+
         /// <summary>The cloud file property is too large.</summary>
 #       ifdef ERROR_CLOUD_FILE_PROPERTY_BLOB_TOO_LARGE
         error_cloud_file_property_blob_too_large = ERROR_CLOUD_FILE_PROPERTY_BLOB_TOO_LARGE,
 #       else
 #       endif
+
         /// <summary>The cloud file property is possibly corrupt. The on-disk checksum does not match the computed checksum.</summary>
 #       ifdef ERROR_CLOUD_FILE_PROPERTY_BLOB_CHECKSUM_MISMATCH
         error_cloud_file_property_blob_checksum_mismatch = ERROR_CLOUD_FILE_PROPERTY_BLOB_CHECKSUM_MISMATCH,
 #       else
 #       endif
+
         /// <summary>The process creation has been blocked.</summary>
 #       ifdef ERROR_CHILD_PROCESS_BLOCKED
         error_child_process_blocked = ERROR_CHILD_PROCESS_BLOCKED,
 #       else
 #       endif
+
         /// <summary>The storage device has lost data or persistence.</summary>
 #       ifdef ERROR_STORAGE_LOST_DATA_PERSISTENCE
         error_storage_lost_data_persistence = ERROR_STORAGE_LOST_DATA_PERSISTENCE,
 #       else
 #       endif
+
         /// <summary>The provider that supports file system virtualization is temporarily unavailable.</summary>
 #       ifdef ERROR_FILE_SYSTEM_VIRTUALIZATION_UNAVAILABLE
         error_file_system_virtualization_unavailable = ERROR_FILE_SYSTEM_VIRTUALIZATION_UNAVAILABLE,
 #       else
 #       endif
+
         /// <summary>The metadata for file system virtualization is corrupt and unreadable.</summary>
 #       ifdef ERROR_FILE_SYSTEM_VIRTUALIZATION_METADATA_CORRUPT
         error_file_system_virtualization_metadata_corrupt = ERROR_FILE_SYSTEM_VIRTUALIZATION_METADATA_CORRUPT,
 #       else
 #       endif
+
         /// <summary>The provider that supports file system virtualization is too busy to complete this operation.</summary>
 #       ifdef ERROR_FILE_SYSTEM_VIRTUALIZATION_BUSY
         error_file_system_virtualization_busy = ERROR_FILE_SYSTEM_VIRTUALIZATION_BUSY,
 #       else
 #       endif
+
         /// <summary>The provider that supports file system virtualization is unknown.</summary>
 #       ifdef ERROR_FILE_SYSTEM_VIRTUALIZATION_PROVIDER_UNKNOWN
         error_file_system_virtualization_provider_unknown = ERROR_FILE_SYSTEM_VIRTUALIZATION_PROVIDER_UNKNOWN,
 #       else
 #       endif
+
         /// <summary>GDI handles were potentially leaked by the application.</summary>
 #       ifdef ERROR_GDI_HANDLE_LEAK
         error_gdi_handle_leak = ERROR_GDI_HANDLE_LEAK,
 #       else
 #       endif
+
         /// <summary>The maximum number of cloud file properties has been reached.</summary>
 #       ifdef ERROR_CLOUD_FILE_TOO_MANY_PROPERTY_BLOBS
         error_cloud_file_too_many_property_blobs = ERROR_CLOUD_FILE_TOO_MANY_PROPERTY_BLOBS,
 #       else
 #       endif
+
         /// <summary>The version of the cloud file property store is not supported.</summary>
 #       ifdef ERROR_CLOUD_FILE_PROPERTY_VERSION_NOT_SUPPORTED
         error_cloud_file_property_version_not_supported = ERROR_CLOUD_FILE_PROPERTY_VERSION_NOT_SUPPORTED,
 #       else
 #       endif
+
         /// <summary>The file is not a cloud file.</summary>
 #       ifdef ERROR_NOT_A_CLOUD_FILE
         error_not_a_cloud_file = ERROR_NOT_A_CLOUD_FILE,
 #       else
 #       endif
+
         /// <summary>The file is not in sync with the cloud.</summary>
 #       ifdef ERROR_CLOUD_FILE_NOT_IN_SYNC
         error_cloud_file_not_in_sync = ERROR_CLOUD_FILE_NOT_IN_SYNC,
 #       else
 #       endif
+
         /// <summary>The cloud sync root is already connected with another cloud sync provider.</summary>
 #       ifdef ERROR_CLOUD_FILE_ALREADY_CONNECTED
         error_cloud_file_already_connected = ERROR_CLOUD_FILE_ALREADY_CONNECTED,
 #       else
 #       endif
+
         /// <summary>The operation is not supported by the cloud sync provider.</summary>
 #       ifdef ERROR_CLOUD_FILE_NOT_SUPPORTED
         error_cloud_file_not_supported = ERROR_CLOUD_FILE_NOT_SUPPORTED,
 #       else
 #       endif
+
         /// <summary>The cloud operation is invalid.</summary>
 #       ifdef ERROR_CLOUD_FILE_INVALID_REQUEST
         error_cloud_file_invalid_request = ERROR_CLOUD_FILE_INVALID_REQUEST,
 #       else
 #       endif
+
         /// <summary>The cloud operation is not supported on a read-only volume.</summary>
 #       ifdef ERROR_CLOUD_FILE_READ_ONLY_VOLUME
         error_cloud_file_read_only_volume = ERROR_CLOUD_FILE_READ_ONLY_VOLUME,
 #       else
 #       endif
+
         /// <summary>The operation is reserved for a connected cloud sync provider.</summary>
 #       ifdef ERROR_CLOUD_FILE_CONNECTED_PROVIDER_ONLY
         error_cloud_file_connected_provider_only = ERROR_CLOUD_FILE_CONNECTED_PROVIDER_ONLY,
 #       else
 #       endif
+
         /// <summary>The cloud sync provider failed to validate the downloaded data.</summary>
 #       ifdef ERROR_CLOUD_FILE_VALIDATION_FAILED
         error_cloud_file_validation_failed = ERROR_CLOUD_FILE_VALIDATION_FAILED,
 #       else
 #       endif
+
         /// <summary>You can't connect to the file share because it's not secure. This share requires the obsolete SMB1 protocol, which is unsafe and could expose your system to attack.</summary>
         /// <summary>Your system requires SMB2 or higher. For more info on resolving this issue, see: https://go.microsoft.com/fwlink/?linkid=852747</summary>
 #       ifdef ERROR_SMB1_NOT_AVAILABLE
         error_smb1_not_available = ERROR_SMB1_NOT_AVAILABLE,
 #       else
 #       endif
+
         /// <summary>The virtualization operation is not allowed on the file in its current state.</summary>
 #       ifdef ERROR_FILE_SYSTEM_VIRTUALIZATION_INVALID_OPERATION
         error_file_system_virtualization_invalid_operation = ERROR_FILE_SYSTEM_VIRTUALIZATION_INVALID_OPERATION,
 #       else
 #       endif
+
         /// <summary>The cloud sync provider failed user authentication.</summary>
 #       ifdef ERROR_CLOUD_FILE_AUTHENTICATION_FAILED
         error_cloud_file_authentication_failed = ERROR_CLOUD_FILE_AUTHENTICATION_FAILED,
 #       else
 #       endif
+
         /// <summary>The cloud sync provider failed to perform the operation due to low system resources.</summary>
 #       ifdef ERROR_CLOUD_FILE_INSUFFICIENT_RESOURCES
         error_cloud_file_insufficient_resources = ERROR_CLOUD_FILE_INSUFFICIENT_RESOURCES,
 #       else
 #       endif
+
         /// <summary>The cloud sync provider failed to perform the operation due to network being unavailable.</summary>
 #       ifdef ERROR_CLOUD_FILE_NETWORK_UNAVAILABLE
         error_cloud_file_network_unavailable = ERROR_CLOUD_FILE_NETWORK_UNAVAILABLE,
 #       else
 #       endif
+
         /// <summary>The cloud operation was unsuccessful.</summary>
 #       ifdef ERROR_CLOUD_FILE_UNSUCCESSFUL
         error_cloud_file_unsuccessful = ERROR_CLOUD_FILE_UNSUCCESSFUL,
 #       else
 #       endif
+
         /// <summary>The operation is only supported on files under a cloud sync root.</summary>
 #       ifdef ERROR_CLOUD_FILE_NOT_UNDER_SYNC_ROOT
         error_cloud_file_not_under_sync_root = ERROR_CLOUD_FILE_NOT_UNDER_SYNC_ROOT,
 #       else
 #       endif
+
         /// <summary>The operation cannot be performed on cloud files in use.</summary>
 #       ifdef ERROR_CLOUD_FILE_IN_USE
         error_cloud_file_in_use = ERROR_CLOUD_FILE_IN_USE,
 #       else
 #       endif
+
         /// <summary>The operation cannot be performed on pinned cloud files.</summary>
 #       ifdef ERROR_CLOUD_FILE_PINNED
         error_cloud_file_pinned = ERROR_CLOUD_FILE_PINNED,
 #       else
 #       endif
+
         /// <summary>The cloud operation was aborted.</summary>
 #       ifdef ERROR_CLOUD_FILE_REQUEST_ABORTED
         error_cloud_file_request_aborted = ERROR_CLOUD_FILE_REQUEST_ABORTED,
 #       else
 #       endif
+
         /// <summary>The cloud file's property store is corrupt.</summary>
 #       ifdef ERROR_CLOUD_FILE_PROPERTY_CORRUPT
         error_cloud_file_property_corrupt = ERROR_CLOUD_FILE_PROPERTY_CORRUPT,
 #       else
 #       endif
+
         /// <summary>Access to the cloud file is denied.</summary>
 #       ifdef ERROR_CLOUD_FILE_ACCESS_DENIED
         error_cloud_file_access_denied = ERROR_CLOUD_FILE_ACCESS_DENIED,
 #       else
 #       endif
+
         /// <summary>The cloud operation cannot be performed on a file with incompatible hardlinks.</summary>
 #       ifdef ERROR_CLOUD_FILE_INCOMPATIBLE_HARDLINKS
         error_cloud_file_incompatible_hardlinks = ERROR_CLOUD_FILE_INCOMPATIBLE_HARDLINKS,
 #       else
 #       endif
+
         /// <summary>The operation failed due to a conflicting cloud file property lock.</summary>
 #       ifdef ERROR_CLOUD_FILE_PROPERTY_LOCK_CONFLICT
         error_cloud_file_property_lock_conflict = ERROR_CLOUD_FILE_PROPERTY_LOCK_CONFLICT,
 #       else
 #       endif
+
         /// <summary>The cloud operation was canceled by user.</summary>
 #       ifdef ERROR_CLOUD_FILE_REQUEST_CANCELED
         error_cloud_file_request_canceled = ERROR_CLOUD_FILE_REQUEST_CANCELED,
 #       else
 #       endif
+
         /// <summary>An externally encrypted syskey has been configured, but the system no longer supports this feature.  Please see https://go.microsoft.com/fwlink/?linkid=851152 for more information.</summary>
 #       ifdef ERROR_EXTERNAL_SYSKEY_NOT_SUPPORTED
         error_external_syskey_not_supported = ERROR_EXTERNAL_SYSKEY_NOT_SUPPORTED,
 #       else
 #       endif
+
         /// <summary>The thread is already in background processing mode.</summary>
 #       ifdef ERROR_THREAD_MODE_ALREADY_BACKGROUND
         error_thread_mode_already_background = ERROR_THREAD_MODE_ALREADY_BACKGROUND,
 #       else
 #       endif
+
         /// <summary>The thread is not in background processing mode.</summary>
 #       ifdef ERROR_THREAD_MODE_NOT_BACKGROUND
         error_thread_mode_not_background = ERROR_THREAD_MODE_NOT_BACKGROUND,
 #       else
 #       endif
+
         /// <summary>The process is already in background processing mode.</summary>
 #       ifdef ERROR_PROCESS_MODE_ALREADY_BACKGROUND
         error_process_mode_already_background = ERROR_PROCESS_MODE_ALREADY_BACKGROUND,
 #       else
 #       endif
+
         /// <summary>The process is not in background processing mode.</summary>
 #       ifdef ERROR_PROCESS_MODE_NOT_BACKGROUND
         error_process_mode_not_background = ERROR_PROCESS_MODE_NOT_BACKGROUND,
 #       else
 #       endif
+
         /// <summary>The cloud file provider exited unexpectedly.</summary>
 #       ifdef ERROR_CLOUD_FILE_PROVIDER_TERMINATED
         error_cloud_file_provider_terminated = ERROR_CLOUD_FILE_PROVIDER_TERMINATED,
 #       else
 #       endif
+
         /// <summary>The file is not a cloud sync root.</summary>
 #       ifdef ERROR_NOT_A_CLOUD_SYNC_ROOT
         error_not_a_cloud_sync_root = ERROR_NOT_A_CLOUD_SYNC_ROOT,
 #       else
 #       endif
+
         /// <summary>The read or write operation to an encrypted file could not be completed because the file can only be accessed when the device is unlocked.</summary>
 #       ifdef ERROR_FILE_PROTECTED_UNDER_DPL
         error_file_protected_under_dpl = ERROR_FILE_PROTECTED_UNDER_DPL,
 #       else
 #       endif
+
         /// <summary>The volume is not cluster aligned on the disk.</summary>
 #       ifdef ERROR_VOLUME_NOT_CLUSTER_ALIGNED
         error_volume_not_cluster_aligned = ERROR_VOLUME_NOT_CLUSTER_ALIGNED,
 #       else
 #       endif
+
         /// <summary>No physically aligned free space was found on the volume.</summary>
 #       ifdef ERROR_NO_PHYSICALLY_ALIGNED_FREE_SPACE_FOUND
         error_no_physically_aligned_free_space_found = ERROR_NO_PHYSICALLY_ALIGNED_FREE_SPACE_FOUND,
 #       else
 #       endif
+
         /// <summary>The APPX file can not be accessed because it is not encrypted as expected.</summary>
 #       ifdef ERROR_APPX_FILE_NOT_ENCRYPTED
         error_appx_file_not_encrypted = ERROR_APPX_FILE_NOT_ENCRYPTED,
 #       else
 #       endif
+
         /// <summary>A read or write of raw encrypted data cannot be performed because the file is not encrypted.</summary>
 #       ifdef ERROR_RWRAW_ENCRYPTED_FILE_NOT_ENCRYPTED
         error_rwraw_encrypted_file_not_encrypted = ERROR_RWRAW_ENCRYPTED_FILE_NOT_ENCRYPTED,
 #       else
 #       endif
+
         /// <summary>An invalid file offset in the encrypted data info block was passed for read or write operation of file's raw encrypted data.</summary>
 #       ifdef ERROR_RWRAW_ENCRYPTED_INVALID_EDATAINFO_FILEOFFSET
         error_rwraw_encrypted_invalid_edatainfo_fileoffset = ERROR_RWRAW_ENCRYPTED_INVALID_EDATAINFO_FILEOFFSET,
 #       else
 #       endif
+
         /// <summary>An invalid offset and length combination in the encrypted data info block was passed for read or write operation of file's raw encrypted data.</summary>
 #       ifdef ERROR_RWRAW_ENCRYPTED_INVALID_EDATAINFO_FILERANGE
         error_rwraw_encrypted_invalid_edatainfo_filerange = ERROR_RWRAW_ENCRYPTED_INVALID_EDATAINFO_FILERANGE,
 #       else
 #       endif
+
         /// <summary>An invalid parameter in the encrypted data info block was passed for read or write operation of file's raw encrypted data.</summary>
 #       ifdef ERROR_RWRAW_ENCRYPTED_INVALID_EDATAINFO_PARAMETER
         error_rwraw_encrypted_invalid_edatainfo_parameter = ERROR_RWRAW_ENCRYPTED_INVALID_EDATAINFO_PARAMETER,
 #       else
 #       endif
+
         /// <summary>The Windows Subsystem for Linux has not been enabled.</summary>
 #       ifdef ERROR_LINUX_SUBSYSTEM_NOT_PRESENT
         error_linux_subsystem_not_present = ERROR_LINUX_SUBSYSTEM_NOT_PRESENT,
 #       else
 #       endif
+
         /// <summary>The specified data could not be read from any of the copies.</summary>
 #       ifdef ERROR_FT_READ_FAILURE
         error_ft_read_failure = ERROR_FT_READ_FAILURE,
 #       else
 #       endif
+
         /// <summary>The specified storage reserve ID is invalid.</summary>
 #       ifdef ERROR_STORAGE_RESERVE_ID_INVALID
         error_storage_reserve_id_invalid = ERROR_STORAGE_RESERVE_ID_INVALID,
 #       else
 #       endif
+
         /// <summary>The specified storage reserve does not exist.</summary>
 #       ifdef ERROR_STORAGE_RESERVE_DOES_NOT_EXIST
         error_storage_reserve_does_not_exist = ERROR_STORAGE_RESERVE_DOES_NOT_EXIST,
 #       else
 #       endif
+
         /// <summary>The specified storage reserve already exists.</summary>
 #       ifdef ERROR_STORAGE_RESERVE_ALREADY_EXISTS
         error_storage_reserve_already_exists = ERROR_STORAGE_RESERVE_ALREADY_EXISTS,
 #       else
 #       endif
+
         /// <summary>The specified storage reserve is not empty.</summary>
 #       ifdef ERROR_STORAGE_RESERVE_NOT_EMPTY
         error_storage_reserve_not_empty = ERROR_STORAGE_RESERVE_NOT_EMPTY,
 #       else
 #       endif
+
         /// <summary>This operation requires a DAX volume.</summary>
 #       ifdef ERROR_NOT_A_DAX_VOLUME
         error_not_a_dax_volume = ERROR_NOT_A_DAX_VOLUME,
 #       else
 #       endif
+
         /// <summary>This stream is not DAX mappable.</summary>
 #       ifdef ERROR_NOT_DAX_MAPPABLE
         error_not_dax_mappable = ERROR_NOT_DAX_MAPPABLE,
 #       else
 #       endif
+
         /// <summary>Operation cannot be performed on a time critical thread.</summary>
 #       ifdef ERROR_TIME_SENSITIVE_THREAD
         error_time_sensitive_thread = ERROR_TIME_SENSITIVE_THREAD,
 #       else
 #       endif
+
         /// <summary>User data protection is not supported for the current or provided user.</summary>
 #       ifdef ERROR_DPL_NOT_SUPPORTED_FOR_USER
         error_dpl_not_supported_for_user = ERROR_DPL_NOT_SUPPORTED_FOR_USER,
 #       else
 #       endif
+
         /// <summary>This directory contains entries whose names differ only in case.</summary>
 #       ifdef ERROR_CASE_DIFFERING_NAMES_IN_DIR
         error_case_differing_names_in_dir = ERROR_CASE_DIFFERING_NAMES_IN_DIR,
 #       else
 #       endif
+
         /// <summary>The file cannot be safely opened because it is not supported by this version of Windows.</summary>
 #       ifdef ERROR_FILE_NOT_SUPPORTED
         error_file_not_supported = ERROR_FILE_NOT_SUPPORTED,
 #       else
 #       endif
+
         /// <summary>The cloud operation was not completed before the time-out period expired.</summary>
 #       ifdef ERROR_CLOUD_FILE_REQUEST_TIMEOUT
         error_cloud_file_request_timeout = ERROR_CLOUD_FILE_REQUEST_TIMEOUT,
 #       else
 #       endif
+
         /// <summary>A task queue is required for this operation but none is available.</summary>
 #       ifdef ERROR_NO_TASK_QUEUE
         error_no_task_queue = ERROR_NO_TASK_QUEUE,
 #       else
 #       endif
+
         /// <summary>Failed loading a valid version of srcsrv.dll.</summary>
 #       ifdef ERROR_SRC_SRV_DLL_LOAD_FAILED
         error_src_srv_dll_load_failed = ERROR_SRC_SRV_DLL_LOAD_FAILED,
 #       else
 #       endif
+
         /// <summary>This operation is not supported with BTT enabled.</summary>
 #       ifdef ERROR_NOT_SUPPORTED_WITH_BTT
         error_not_supported_with_btt = ERROR_NOT_SUPPORTED_WITH_BTT,
@@ -1757,40 +2090,46 @@ namespace modern_win32
 #       else
 #       endif
 
-#       ifdef ERROR_ENCRYPTING_METADATA_DISALLOWED
         /// <summary>This encryption operation cannot be performed on filesystem metadata.</summary>
+#       ifdef ERROR_ENCRYPTING_METADATA_DISALLOWED
         error_encrypting_metadata_disallowed = ERROR_ENCRYPTING_METADATA_DISALLOWED,
 #       else
+        error_encrypting_metadata_disallowed = 431L,
 #       endif
 
-#       ifdef ERROR_CANT_CLEAR_ENCRYPTION_FLAG
         /// <summary>Encryption cannot be cleared on this file/directory because it still has an encrypted attribute.</summary>
+#       ifdef ERROR_CANT_CLEAR_ENCRYPTION_FLAG
         error_cant_clear_encryption_flag = ERROR_CANT_CLEAR_ENCRYPTION_FLAG,
 #       else
+        error_cant_clear_encryption_flag = 432L,
 #       endif
 
-#       ifdef ERROR_NO_SUCH_DEVICE
         /// <summary>A device which does not exist was specified.</summary>
+#       ifdef ERROR_NO_SUCH_DEVICE
         error_no_such_device = ERROR_NO_SUCH_DEVICE,
 #       else
+        error_no_such_device = 433L,
 #       endif
 
-#       ifdef ERROR_CAPAUTHZ_NOT_DEVUNLOCKED
         /// <summary>Neither developer unlocked mode nor side loading mode is enabled on the device.</summary>
+#       ifdef ERROR_CAPAUTHZ_NOT_DEVUNLOCKED
         error_capauthz_not_devunlocked = ERROR_CAPAUTHZ_NOT_DEVUNLOCKED,
 #       else
+        error_capauthz_not_devunlocked = 450L,
 #       endif
 
-#       ifdef ERROR_CAPAUTHZ_CHANGE_TYPE
         /// <summary>Can not change application type during upgrade or re-provision.</summary>
+#       ifdef ERROR_CAPAUTHZ_CHANGE_TYPE
         error_capauthz_change_type = ERROR_CAPAUTHZ_CHANGE_TYPE,
 #       else
+        error_capauthz_change_type = 451L,
 #       endif
 
-#       ifdef ERROR_CAPAUTHZ_NOT_PROVISIONED
         /// <summary>The application has not been provisioned.</summary>
+#       ifdef ERROR_CAPAUTHZ_NOT_PROVISIONED
         error_capauthz_not_provisioned = ERROR_CAPAUTHZ_NOT_PROVISIONED,
 #       else
+        error_capauthz_not_provisioned = 452L,
 #       endif
 
 #       ifdef ERROR_CAPAUTHZ_NOT_AUTHORIZED
@@ -10550,162 +10889,189 @@ namespace modern_win32
         /// <summary>The client failed to respond to the server connect message.</summary>
         error_ctx_client_query_timeout = ERROR_CTX_CLIENT_QUERY_TIMEOUT,
 #       else
+        error_ctx_client_query_timeout = 7040L,
 #       endif
 
-#       ifdef ERROR_CTX_CONSOLE_DISCONNECT
         /// <summary>Disconnecting the console session is not supported.</summary>
+#       ifdef ERROR_CTX_CONSOLE_DISCONNECT
         error_ctx_console_disconnect = ERROR_CTX_CONSOLE_DISCONNECT,
 #       else
+        error_ctx_console_disconnect = 7041L,
 #       endif
 
-#       ifdef ERROR_CTX_CONSOLE_CONNECT
         /// <summary>Reconnecting a disconnected session to the console is not supported.</summary>
+#       ifdef ERROR_CTX_CONSOLE_CONNECT
         error_ctx_console_connect = ERROR_CTX_CONSOLE_CONNECT,
 #       else
+        error_ctx_console_connect = 7042L,
 #       endif
 
-#       ifdef ERROR_CTX_SHADOW_DENIED
         /// <summary>The request to control another session remotely was denied.</summary>
+#       ifdef ERROR_CTX_SHADOW_DENIED
         error_ctx_shadow_denied = ERROR_CTX_SHADOW_DENIED,
 #       else
+        error_ctx_shadow_denied = 7044L,
 #       endif
 
-#       ifdef ERROR_CTX_WINSTATION_ACCESS_DENIED
         /// <summary>The requested session access is denied.</summary>
+#       ifdef ERROR_CTX_WINSTATION_ACCESS_DENIED
         error_ctx_winstation_access_denied = ERROR_CTX_WINSTATION_ACCESS_DENIED,
 #       else
+        error_ctx_winstation_access_denied = 7045L,
 #       endif
 
-#       ifdef ERROR_CTX_INVALID_WD
         /// <summary>The specified terminal connection driver is invalid.</summary>
+#       ifdef ERROR_CTX_INVALID_WD
         error_ctx_invalid_wd = ERROR_CTX_INVALID_WD,
 #       else
+        error_ctx_invalid_wd = 7049L,
 #       endif
 
-#       ifdef ERROR_CTX_SHADOW_INVALID
         /// <summary>This may be because the session is disconnected or does not currently have a user logged on.</summary>
+#       ifdef ERROR_CTX_SHADOW_INVALID
         error_ctx_shadow_invalid = ERROR_CTX_SHADOW_INVALID,
 #       else
+        error_ctx_shadow_invalid = 7050L,
 #       endif
 
-#       ifdef ERROR_CTX_SHADOW_DISABLED
         /// <summary>The requested session is not configured to allow remote control.</summary>
+#       ifdef ERROR_CTX_SHADOW_DISABLED
         error_ctx_shadow_disabled = ERROR_CTX_SHADOW_DISABLED,
 #       else
+        error_ctx_shadow_disabled = 7051L,
 #       endif
 
-#       ifdef ERROR_CTX_CLIENT_LICENSE_IN_USE
         /// <summary>Your request to connect to this Terminal Server has been rejected. Your Terminal Server client license number is currently being used by another user. Please call your system administrator to obtain a unique license number.</summary>
+#       ifdef ERROR_CTX_CLIENT_LICENSE_IN_USE
         error_ctx_client_license_in_use = ERROR_CTX_CLIENT_LICENSE_IN_USE,
 #       else
+        error_ctx_client_license_in_use = 7052L,
 #       endif
 
-#       ifdef ERROR_CTX_CLIENT_LICENSE_NOT_SET
         /// <summary>Your request to connect to this Terminal Server has been rejected. Your Terminal Server client license number has not been entered for this copy of the Terminal Server client. Please contact your system administrator.</summary>
+#       ifdef ERROR_CTX_CLIENT_LICENSE_NOT_SET
         error_ctx_client_license_not_set = ERROR_CTX_CLIENT_LICENSE_NOT_SET,
 #       else
+        error_ctx_client_license_not_set = 7053L,
 #       endif
 
-#       ifdef ERROR_CTX_LICENSE_NOT_AVAILABLE
         /// <summary>The number of connections to this computer is limited and all connections are in use right now. Try connecting later or contact your system administrator.</summary>
+#       ifdef ERROR_CTX_LICENSE_NOT_AVAILABLE
         error_ctx_license_not_available = ERROR_CTX_LICENSE_NOT_AVAILABLE,
 #       else
+        error_ctx_license_not_available = 7054L,
 #       endif
 
-#       ifdef ERROR_CTX_LICENSE_CLIENT_INVALID
         /// <summary>The client you are using is not licensed to use this system. Your logon request is denied.</summary>
+#       ifdef ERROR_CTX_LICENSE_CLIENT_INVALID
         error_ctx_license_client_invalid = ERROR_CTX_LICENSE_CLIENT_INVALID,
 #       else
+        error_ctx_license_client_invalid = 7055L,
 #       endif
 
-#       ifdef ERROR_CTX_LICENSE_EXPIRED
         /// <summary>The system license has expired. Your logon request is denied.</summary>
+#       ifdef ERROR_CTX_LICENSE_EXPIRED
         error_ctx_license_expired = ERROR_CTX_LICENSE_EXPIRED,
 #       else
+        error_ctx_license_expired = 7056L,
 #       endif
 
-#       ifdef ERROR_CTX_SHADOW_NOT_RUNNING
         /// <summary>Remote control could not be terminated because the specified session is not currently being remotely controlled.</summary>
+#       ifdef ERROR_CTX_SHADOW_NOT_RUNNING
         error_ctx_shadow_not_running = ERROR_CTX_SHADOW_NOT_RUNNING,
 #       else
+        error_ctx_shadow_not_running = 7057L,
 #       endif
 
-#       ifdef ERROR_CTX_SHADOW_ENDED_BY_MODE_CHANGE
         /// <summary>The remote control of the console was terminated because the display mode was changed. Changing the display mode in a remote control session is not supported.</summary>
+#       ifdef ERROR_CTX_SHADOW_ENDED_BY_MODE_CHANGE
         error_ctx_shadow_ended_by_mode_change = ERROR_CTX_SHADOW_ENDED_BY_MODE_CHANGE,
 #       else
+        error_ctx_shadow_ended_by_mode_change = 7058L,
 #       endif
 
-#       ifdef ERROR_ACTIVATION_COUNT_EXCEEDED
         /// <summary>Activation has already been reset the maximum number of times for this installation. Your activation timer will not be cleared.</summary>
+#       ifdef ERROR_ACTIVATION_COUNT_EXCEEDED
         error_activation_count_exceeded = ERROR_ACTIVATION_COUNT_EXCEEDED,
 #       else
+        error_activation_count_exceeded = 7059L,
 #       endif
 
-#       ifdef ERROR_CTX_WINSTATIONS_DISABLED
         /// <summary>Remote logins are currently disabled.</summary>
+#       ifdef ERROR_CTX_WINSTATIONS_DISABLED
         error_ctx_winstations_disabled = ERROR_CTX_WINSTATIONS_DISABLED,
 #       else
+        error_ctx_winstations_disabled = 7060L,
 #       endif
 
-#       ifdef ERROR_CTX_ENCRYPTION_LEVEL_REQUIRED
         /// <summary>You do not have the proper encryption level to access this Session.</summary>
+#       ifdef ERROR_CTX_ENCRYPTION_LEVEL_REQUIRED
         error_ctx_encryption_level_required = ERROR_CTX_ENCRYPTION_LEVEL_REQUIRED,
 #       else
+        error_ctx_encryption_level_required = 7061L,
 #       endif
 
-#       ifdef ERROR_CTX_SESSION_IN_USE
         /// <summary>The user %s/%s is currently logged on to this computer. Only the current user or an administrator can log on to this computer.</summary>
+#       ifdef ERROR_CTX_SESSION_IN_USE
         error_ctx_session_in_use = ERROR_CTX_SESSION_IN_USE,
 #       else
+        error_ctx_session_in_use = 7062L,
 #       endif
 
-#       ifdef ERROR_CTX_NO_FORCE_LOGOFF
         /// <summary>The user %s/%s is already logged on to the console of this computer. You do not have permission to log in at this time. To resolve this issue, contact %s/%s and have them log off.</summary>
+#       ifdef ERROR_CTX_NO_FORCE_LOGOFF
         error_ctx_no_force_logoff = ERROR_CTX_NO_FORCE_LOGOFF,
 #       else
+        error_ctx_no_force_logoff = 7063L,
 #       endif
 
-#       ifdef ERROR_CTX_ACCOUNT_RESTRICTION
         /// <summary>Unable to log you on because of an account restriction.</summary>
+#       ifdef ERROR_CTX_ACCOUNT_RESTRICTION
         error_ctx_account_restriction = ERROR_CTX_ACCOUNT_RESTRICTION,
 #       else
+        error_ctx_account_restriction = 7064L,
 #       endif
 
-#       ifdef ERROR_RDP_PROTOCOL_ERROR
         /// <summary>The RDP protocol component %2 detected an error in the protocol stream and has disconnected the client.</summary>
+#       ifdef ERROR_RDP_PROTOCOL_ERROR
         error_rdp_protocol_error = ERROR_RDP_PROTOCOL_ERROR,
 #       else
+        error_rdp_protocol_error = 7065L,
 #       endif
 
-#       ifdef ERROR_CTX_CDM_CONNECT
         /// <summary>The Client Drive Mapping Service Has Connected on Terminal Connection.</summary>
+#       ifdef ERROR_CTX_CDM_CONNECT
         error_ctx_cdm_connect = ERROR_CTX_CDM_CONNECT,
 #       else
+        error_ctx_cdm_connect = 7066L,
 #       endif
 
-#       ifdef ERROR_CTX_CDM_DISCONNECT
         /// <summary>The Client Drive Mapping Service Has Disconnected on Terminal Connection.</summary>
+#       ifdef ERROR_CTX_CDM_DISCONNECT
         error_ctx_cdm_disconnect = ERROR_CTX_CDM_DISCONNECT,
 #       else
+        error_ctx_cdm_disconnect = 7067L,
 #       endif
 
-#       ifdef ERROR_CTX_SECURITY_LAYER_ERROR
         /// <summary>The Terminal Server security layer detected an error in the protocol stream and has disconnected the client.</summary>
+#       ifdef ERROR_CTX_SECURITY_LAYER_ERROR
         error_ctx_security_layer_error = ERROR_CTX_SECURITY_LAYER_ERROR,
 #       else
+        error_ctx_security_layer_error = 7068L,
 #       endif
 
-#       ifdef ERROR_TS_INCOMPATIBLE_SESSIONS
         /// <summary>The target session is incompatible with the current session.</summary>
+#       ifdef ERROR_TS_INCOMPATIBLE_SESSIONS
         error_ts_incompatible_sessions = ERROR_TS_INCOMPATIBLE_SESSIONS,
 #       else
+        error_ts_incompatible_sessions = 7069L,
 #       endif
 
-#       ifdef ERROR_TS_VIDEO_SUBSYSTEM_ERROR
         /// <summary>Windows can't connect to your session because a problem occurred in the Windows video subsystem. Try connecting again later, or contact the server administrator for assistance.</summary>
+#       ifdef ERROR_TS_VIDEO_SUBSYSTEM_ERROR
         error_ts_video_subsystem_error = ERROR_TS_VIDEO_SUBSYSTEM_ERROR,
 #       else
+        error_ts_video_subsystem_error = 7070L,
 #       endif
     };
 
