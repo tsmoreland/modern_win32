@@ -7869,460 +7869,459 @@ namespace modern_win32
 #       ifdef ERROR_WIP_ENCRYPTION_FAILED
         error_wip_encryption_failed = ERROR_WIP_ENCRYPTION_FAILED,
 #       endif
-        /// <summary>The list of servers for this workgroup is not currently available</summary>
 
 #       ifdef ERROR_NO_BROWSER_SERVERS_FOUND
+        /// <summary>The list of servers for this workgroup is not currently available</summary>
         error_no_browser_servers_found = ERROR_NO_BROWSER_SERVERS_FOUND,
 #       endif
 
-        /// <summary>The Task Scheduler service must be configured to run in the System account to function properly. Individual tasks may be configured to run in other accounts.</summary>
-
 #       ifdef SCHED_E_SERVICE_NOT_LOCALSYSTEM
+        /// <summary>The Task Scheduler service must be configured to run in the System account to function properly. Individual tasks may be configured to run in other accounts.</summary>
         sched_e_service_not_localsystem = SCHED_E_SERVICE_NOT_LOCALSYSTEM,
 #       endif
-        /// <summary>Log service encountered an invalid log sector.</summary>
 
 #       ifdef ERROR_LOG_SECTOR_INVALID
+        /// <summary>Log service encountered an invalid log sector.</summary>
         error_log_sector_invalid = ERROR_LOG_SECTOR_INVALID,
 #       endif
-        /// <summary>Log service encountered a log sector with invalid block parity.</summary>
 
 #       ifdef ERROR_LOG_SECTOR_PARITY_INVALID
+        /// <summary>Log service encountered a log sector with invalid block parity.</summary>
         error_log_sector_parity_invalid = ERROR_LOG_SECTOR_PARITY_INVALID,
 #       endif
-        /// <summary>Log service encountered a remapped log sector.</summary>
 
 #       ifdef ERROR_LOG_SECTOR_REMAPPED
+        /// <summary>Log service encountered a remapped log sector.</summary>
         error_log_sector_remapped = ERROR_LOG_SECTOR_REMAPPED,
 #       endif
-        /// <summary>Log service encountered a partial or incomplete log block.</summary>
 
 #       ifdef ERROR_LOG_BLOCK_INCOMPLETE
+        /// <summary>Log service encountered a partial or incomplete log block.</summary>
         error_log_block_incomplete = ERROR_LOG_BLOCK_INCOMPLETE,
 #       endif
-        /// <summary>Log service encountered an attempt access data outside the active log range.</summary>
 
 #       ifdef ERROR_LOG_INVALID_RANGE
+        /// <summary>Log service encountered an attempt access data outside the active log range.</summary>
         error_log_invalid_range = ERROR_LOG_INVALID_RANGE,
 #       endif
-        /// <summary>Log service user marshalling buffers are exhausted.</summary>
 
 #       ifdef ERROR_LOG_BLOCKS_EXHAUSTED
+        /// <summary>Log service user marshalling buffers are exhausted.</summary>
         error_log_blocks_exhausted = ERROR_LOG_BLOCKS_EXHAUSTED,
 #       endif
-        /// <summary>Log service encountered an attempt read from a marshalling area with an invalid read context.</summary>
 
 #       ifdef ERROR_LOG_READ_CONTEXT_INVALID
+        /// <summary>Log service encountered an attempt read from a marshalling area with an invalid read context.</summary>
         error_log_read_context_invalid = ERROR_LOG_READ_CONTEXT_INVALID,
 #       endif
-        /// <summary>Log service encountered an invalid log restart area.</summary>
 
 #       ifdef ERROR_LOG_RESTART_INVALID
+        /// <summary>Log service encountered an invalid log restart area.</summary>
         error_log_restart_invalid = ERROR_LOG_RESTART_INVALID,
 #       endif
-        /// <summary>Log service encountered an invalid log block version.</summary>
 
 #       ifdef ERROR_LOG_BLOCK_VERSION
+        /// <summary>Log service encountered an invalid log block version.</summary>
         error_log_block_version = ERROR_LOG_BLOCK_VERSION,
 #       endif
-        /// <summary>Log service encountered an invalid log block.</summary>
 
 #       ifdef ERROR_LOG_BLOCK_INVALID
+        /// <summary>Log service encountered an invalid log block.</summary>
         error_log_block_invalid = ERROR_LOG_BLOCK_INVALID,
 #       endif
-        /// <summary>Log service encountered an attempt to read the log with an invalid read mode.</summary>
 
 #       ifdef ERROR_LOG_READ_MODE_INVALID
+        /// <summary>Log service encountered an attempt to read the log with an invalid read mode.</summary>
         error_log_read_mode_invalid = ERROR_LOG_READ_MODE_INVALID,
 #       endif
-        /// <summary>Log service encountered a log stream with no restart area.</summary>
 
 #       ifdef ERROR_LOG_NO_RESTART
+        /// <summary>Log service encountered a log stream with no restart area.</summary>
         error_log_no_restart = ERROR_LOG_NO_RESTART,
 #       endif
-        /// <summary>Log service encountered a corrupted metadata file.</summary>
 
 #       ifdef ERROR_LOG_METADATA_CORRUPT
+        /// <summary>Log service encountered a corrupted metadata file.</summary>
         error_log_metadata_corrupt = ERROR_LOG_METADATA_CORRUPT,
 #       endif
-        /// <summary>Log service encountered a metadata file that could not be created by the log file system.</summary>
 
 #       ifdef ERROR_LOG_METADATA_INVALID
+        /// <summary>Log service encountered a metadata file that could not be created by the log file system.</summary>
         error_log_metadata_invalid = ERROR_LOG_METADATA_INVALID,
 #       endif
-        /// <summary>Log service encountered a metadata file with inconsistent data.</summary>
 
 #       ifdef ERROR_LOG_METADATA_INCONSISTENT
+        /// <summary>Log service encountered a metadata file with inconsistent data.</summary>
         error_log_metadata_inconsistent = ERROR_LOG_METADATA_INCONSISTENT,
 #       endif
-        /// <summary>Log service encountered an attempt to erroneous allocate or dispose reservation space.</summary>
 
 #       ifdef ERROR_LOG_RESERVATION_INVALID
+        /// <summary>Log service encountered an attempt to erroneous allocate or dispose reservation space.</summary>
         error_log_reservation_invalid = ERROR_LOG_RESERVATION_INVALID,
 #       endif
-        /// <summary>Log service cannot delete log file or file system container.</summary>
 
 #       ifdef ERROR_LOG_CANT_DELETE
+        /// <summary>Log service cannot delete log file or file system container.</summary>
         error_log_cant_delete = ERROR_LOG_CANT_DELETE,
 #       endif
-        /// <summary>Log service has reached the maximum allowable containers allocated to a log file.</summary>
 
 #       ifdef ERROR_LOG_CONTAINER_LIMIT_EXCEEDED
+        /// <summary>Log service has reached the maximum allowable containers allocated to a log file.</summary>
         error_log_container_limit_exceeded = ERROR_LOG_CONTAINER_LIMIT_EXCEEDED,
 #       endif
-        /// <summary>Log service has attempted to read or write backward past the start of the log.</summary>
 
 #       ifdef ERROR_LOG_START_OF_LOG
+        /// <summary>Log service has attempted to read or write backward past the start of the log.</summary>
         error_log_start_of_log = ERROR_LOG_START_OF_LOG,
 #       endif
-        /// <summary>Log policy could not be installed because a policy of the same type is already present.</summary>
 
 #       ifdef ERROR_LOG_POLICY_ALREADY_INSTALLED
+        /// <summary>Log policy could not be installed because a policy of the same type is already present.</summary>
         error_log_policy_already_installed = ERROR_LOG_POLICY_ALREADY_INSTALLED,
 #       endif
-        /// <summary>Log policy in question was not installed at the time of the request.</summary>
 
 #       ifdef ERROR_LOG_POLICY_NOT_INSTALLED
+        /// <summary>Log policy in question was not installed at the time of the request.</summary>
         error_log_policy_not_installed = ERROR_LOG_POLICY_NOT_INSTALLED,
 #       endif
-        /// <summary>The installed set of policies on the log is invalid.</summary>
 
 #       ifdef ERROR_LOG_POLICY_INVALID
+        /// <summary>The installed set of policies on the log is invalid.</summary>
         error_log_policy_invalid = ERROR_LOG_POLICY_INVALID,
 #       endif
-        /// <summary>A policy on the log in question prevented the operation from completing.</summary>
 
 #       ifdef ERROR_LOG_POLICY_CONFLICT
+        /// <summary>A policy on the log in question prevented the operation from completing.</summary>
         error_log_policy_conflict = ERROR_LOG_POLICY_CONFLICT,
 #       endif
-        /// <summary>Log space cannot be reclaimed because the log is pinned by the archive tail.</summary>
 
 #       ifdef ERROR_LOG_PINNED_ARCHIVE_TAIL
+        /// <summary>Log space cannot be reclaimed because the log is pinned by the archive tail.</summary>
         error_log_pinned_archive_tail = ERROR_LOG_PINNED_ARCHIVE_TAIL,
 #       endif
-        /// <summary>Log record is not a record in the log file.</summary>
 
 #       ifdef ERROR_LOG_RECORD_NONEXISTENT
+        /// <summary>Log record is not a record in the log file.</summary>
         error_log_record_nonexistent = ERROR_LOG_RECORD_NONEXISTENT,
 #       endif
-        /// <summary>Number of reserved log records or the adjustment of the number of reserved log records is invalid.</summary>
 
 #       ifdef ERROR_LOG_RECORDS_RESERVED_INVALID
+        /// <summary>Number of reserved log records or the adjustment of the number of reserved log records is invalid.</summary>
         error_log_records_reserved_invalid = ERROR_LOG_RECORDS_RESERVED_INVALID,
 #       endif
-        /// <summary>Reserved log space or the adjustment of the log space is invalid.</summary>
 
 #       ifdef ERROR_LOG_SPACE_RESERVED_INVALID
+        /// <summary>Reserved log space or the adjustment of the log space is invalid.</summary>
         error_log_space_reserved_invalid = ERROR_LOG_SPACE_RESERVED_INVALID,
 #       endif
-        /// <summary>An new or existing archive tail or base of the active log is invalid.</summary>
 
 #       ifdef ERROR_LOG_TAIL_INVALID
+        /// <summary>An new or existing archive tail or base of the active log is invalid.</summary>
         error_log_tail_invalid = ERROR_LOG_TAIL_INVALID,
 #       endif
-        /// <summary>Log space is exhausted.</summary>
 
 #       ifdef ERROR_LOG_FULL
+        /// <summary>Log space is exhausted.</summary>
         error_log_full = ERROR_LOG_FULL,
 #       endif
-        /// <summary>The log could not be set to the requested size.</summary>
 
 #       ifdef ERROR_COULD_NOT_RESIZE_LOG
+        /// <summary>The log could not be set to the requested size.</summary>
         error_could_not_resize_log = ERROR_COULD_NOT_RESIZE_LOG,
 #       endif
-        /// <summary>Log is multiplexed, no direct writes to the physical log is allowed.</summary>
 
 #       ifdef ERROR_LOG_MULTIPLEXED
+        /// <summary>Log is multiplexed, no direct writes to the physical log is allowed.</summary>
         error_log_multiplexed = ERROR_LOG_MULTIPLEXED,
 #       endif
-        /// <summary>The operation failed because the log is a dedicated log.</summary>
 
 #       ifdef ERROR_LOG_DEDICATED
+        /// <summary>The operation failed because the log is a dedicated log.</summary>
         error_log_dedicated = ERROR_LOG_DEDICATED,
 #       endif
-        /// <summary>The operation requires an archive context.</summary>
 
 #       ifdef ERROR_LOG_ARCHIVE_NOT_IN_PROGRESS
+        /// <summary>The operation requires an archive context.</summary>
         error_log_archive_not_in_progress = ERROR_LOG_ARCHIVE_NOT_IN_PROGRESS,
 #       endif
-        /// <summary>Log archival is in progress.</summary>
 
 #       ifdef ERROR_LOG_ARCHIVE_IN_PROGRESS
+        /// <summary>Log archival is in progress.</summary>
         error_log_archive_in_progress = ERROR_LOG_ARCHIVE_IN_PROGRESS,
 #       endif
-        /// <summary>The operation requires a non-ephemeral log, but the log is ephemeral.</summary>
 
 #       ifdef ERROR_LOG_EPHEMERAL
+        /// <summary>The operation requires a non-ephemeral log, but the log is ephemeral.</summary>
         error_log_ephemeral = ERROR_LOG_EPHEMERAL,
 #       endif
-        /// <summary>The log must have at least two containers before it can be read from or written to.</summary>
 
 #       ifdef ERROR_LOG_NOT_ENOUGH_CONTAINERS
+        /// <summary>The log must have at least two containers before it can be read from or written to.</summary>
         error_log_not_enough_containers = ERROR_LOG_NOT_ENOUGH_CONTAINERS,
 #       endif
-        /// <summary>A log client has already registered on the stream.</summary>
 
 #       ifdef ERROR_LOG_CLIENT_ALREADY_REGISTERED
+        /// <summary>A log client has already registered on the stream.</summary>
         error_log_client_already_registered = ERROR_LOG_CLIENT_ALREADY_REGISTERED,
 #       endif
-        /// <summary>A log client has not been registered on the stream.</summary>
 
 #       ifdef ERROR_LOG_CLIENT_NOT_REGISTERED
+        /// <summary>A log client has not been registered on the stream.</summary>
         error_log_client_not_registered = ERROR_LOG_CLIENT_NOT_REGISTERED,
 #       endif
-        /// <summary>A request has already been made to handle the log full condition.</summary>
 
 #       ifdef ERROR_LOG_FULL_HANDLER_IN_PROGRESS
+        /// <summary>A request has already been made to handle the log full condition.</summary>
         error_log_full_handler_in_progress = ERROR_LOG_FULL_HANDLER_IN_PROGRESS,
 #       endif
-        /// <summary>Log service encountered an error when attempting to read from a log container.</summary>
 
 #       ifdef ERROR_LOG_CONTAINER_READ_FAILED
+        /// <summary>Log service encountered an error when attempting to read from a log container.</summary>
         error_log_container_read_failed = ERROR_LOG_CONTAINER_READ_FAILED,
 #       endif
-        /// <summary>Log service encountered an error when attempting to write to a log container.</summary>
 
 #       ifdef ERROR_LOG_CONTAINER_WRITE_FAILED
+        /// <summary>Log service encountered an error when attempting to write to a log container.</summary>
         error_log_container_write_failed = ERROR_LOG_CONTAINER_WRITE_FAILED,
 #       endif
-        /// <summary>Log service encountered an error when attempting open a log container.</summary>
 
 #       ifdef ERROR_LOG_CONTAINER_OPEN_FAILED
+        /// <summary>Log service encountered an error when attempting open a log container.</summary>
         error_log_container_open_failed = ERROR_LOG_CONTAINER_OPEN_FAILED,
 #       endif
-        /// <summary>Log service encountered an invalid container state when attempting a requested action.</summary>
 
 #       ifdef ERROR_LOG_CONTAINER_STATE_INVALID
+        /// <summary>Log service encountered an invalid container state when attempting a requested action.</summary>
         error_log_container_state_invalid = ERROR_LOG_CONTAINER_STATE_INVALID,
 #       endif
-        /// <summary>Log service is not in the correct state to perform a requested action.</summary>
 
 #       ifdef ERROR_LOG_STATE_INVALID
+        /// <summary>Log service is not in the correct state to perform a requested action.</summary>
         error_log_state_invalid = ERROR_LOG_STATE_INVALID,
 #       endif
-        /// <summary>Log space cannot be reclaimed because the log is pinned.</summary>
 
 #       ifdef ERROR_LOG_PINNED
+        /// <summary>Log space cannot be reclaimed because the log is pinned.</summary>
         error_log_pinned = ERROR_LOG_PINNED,
 #       endif
-        /// <summary>Log metadata flush failed.</summary>
 
 #       ifdef ERROR_LOG_METADATA_FLUSH_FAILED
+        /// <summary>Log metadata flush failed.</summary>
         error_log_metadata_flush_failed = ERROR_LOG_METADATA_FLUSH_FAILED,
 #       endif
-        /// <summary>Security on the log and its containers is inconsistent.</summary>
 
 #       ifdef ERROR_LOG_INCONSISTENT_SECURITY
+        /// <summary>Security on the log and its containers is inconsistent.</summary>
         error_log_inconsistent_security = ERROR_LOG_INCONSISTENT_SECURITY,
 #       endif
-        /// <summary>Records were appended to the log or reservation changes were made, but the log could not be flushed.</summary>
 
 #       ifdef ERROR_LOG_APPENDED_FLUSH_FAILED
+        /// <summary>Records were appended to the log or reservation changes were made, but the log could not be flushed.</summary>
         error_log_appended_flush_failed = ERROR_LOG_APPENDED_FLUSH_FAILED,
 #       endif
-        /// <summary>The log is pinned due to reservation consuming most of the log space. Free some reserved records to make space available.</summary>
 
 #       ifdef ERROR_LOG_PINNED_RESERVATION
+        /// <summary>The log is pinned due to reservation consuming most of the log space. Free some reserved records to make space available.</summary>
         error_log_pinned_reservation = ERROR_LOG_PINNED_RESERVATION,
 #       endif
-        /// <summary>The transaction handle associated with this operation is not valid.</summary>
 
 #       ifdef ERROR_INVALID_TRANSACTION
+        /// <summary>The transaction handle associated with this operation is not valid.</summary>
         error_invalid_transaction = ERROR_INVALID_TRANSACTION,
 #       endif
-        /// <summary>The requested operation was made in the context of a transaction that is no longer active.</summary>
 
 #       ifdef ERROR_TRANSACTION_NOT_ACTIVE
+        /// <summary>The requested operation was made in the context of a transaction that is no longer active.</summary>
         error_transaction_not_active = ERROR_TRANSACTION_NOT_ACTIVE,
 #       endif
-        /// <summary>The requested operation is not valid on the Transaction object in its current state.</summary>
 
 #       ifdef ERROR_TRANSACTION_REQUEST_NOT_VALID
+        /// <summary>The requested operation is not valid on the Transaction object in its current state.</summary>
         error_transaction_request_not_valid = ERROR_TRANSACTION_REQUEST_NOT_VALID,
 #       endif
-        /// <summary>The caller has called a response API, but the response is not expected because the TM did not issue the corresponding request to the caller.</summary>
 
 #       ifdef ERROR_TRANSACTION_NOT_REQUESTED
+        /// <summary>The caller has called a response API, but the response is not expected because the TM did not issue the corresponding request to the caller.</summary>
         error_transaction_not_requested = ERROR_TRANSACTION_NOT_REQUESTED,
 #       endif
-        /// <summary>It is too late to perform the requested operation, since the Transaction has already been aborted.</summary>
 
 #       ifdef ERROR_TRANSACTION_ALREADY_ABORTED
+        /// <summary>It is too late to perform the requested operation, since the Transaction has already been aborted.</summary>
         error_transaction_already_aborted = ERROR_TRANSACTION_ALREADY_ABORTED,
 #       endif
-        /// <summary>It is too late to perform the requested operation, since the Transaction has already been committed.</summary>
 
 #       ifdef ERROR_TRANSACTION_ALREADY_COMMITTED
+        /// <summary>It is too late to perform the requested operation, since the Transaction has already been committed.</summary>
         error_transaction_already_committed = ERROR_TRANSACTION_ALREADY_COMMITTED,
 #       endif
-        /// <summary>The Transaction Manager was unable to be successfully initialized. Transacted operations are not supported.</summary>
 
 #       ifdef ERROR_TM_INITIALIZATION_FAILED
+        /// <summary>The Transaction Manager was unable to be successfully initialized. Transacted operations are not supported.</summary>
         error_tm_initialization_failed = ERROR_TM_INITIALIZATION_FAILED,
 #       endif
-        /// <summary>The specified ResourceManager made no changes or updates to the resource under this transaction.</summary>
 
 #       ifdef ERROR_RESOURCEMANAGER_READ_ONLY
+        /// <summary>The specified ResourceManager made no changes or updates to the resource under this transaction.</summary>
         error_resourcemanager_read_only = ERROR_RESOURCEMANAGER_READ_ONLY,
 #       endif
-        /// <summary>The resource manager has attempted to prepare a transaction that it has not successfully joined.</summary>
 
 #       ifdef ERROR_TRANSACTION_NOT_JOINED
+        /// <summary>The resource manager has attempted to prepare a transaction that it has not successfully joined.</summary>
         error_transaction_not_joined = ERROR_TRANSACTION_NOT_JOINED,
 #       endif
-        /// <summary>The Transaction object already has a superior enlistment, and the caller attempted an operation that would have created a new superior. Only a single superior enlistment is allow.</summary>
 
 #       ifdef ERROR_TRANSACTION_SUPERIOR_EXISTS
+        /// <summary>The Transaction object already has a superior enlistment, and the caller attempted an operation that would have created a new superior. Only a single superior enlistment is allow.</summary>
         error_transaction_superior_exists = ERROR_TRANSACTION_SUPERIOR_EXISTS,
 #       endif
-        /// <summary>The RM tried to register a protocol that already exists.</summary>
 
 #       ifdef ERROR_CRM_PROTOCOL_ALREADY_EXISTS
+        /// <summary>The RM tried to register a protocol that already exists.</summary>
         error_crm_protocol_already_exists = ERROR_CRM_PROTOCOL_ALREADY_EXISTS,
 #       endif
-        /// <summary>The attempt to propagate the Transaction failed.</summary>
 
 #       ifdef ERROR_TRANSACTION_PROPAGATION_FAILED
+        /// <summary>The attempt to propagate the Transaction failed.</summary>
         error_transaction_propagation_failed = ERROR_TRANSACTION_PROPAGATION_FAILED,
 #       endif
-        /// <summary>The requested propagation protocol was not registered as a CRM.</summary>
 
 #       ifdef ERROR_CRM_PROTOCOL_NOT_FOUND
+        /// <summary>The requested propagation protocol was not registered as a CRM.</summary>
         error_crm_protocol_not_found = ERROR_CRM_PROTOCOL_NOT_FOUND,
 #       endif
-        /// <summary>The buffer passed in to PushTransaction or PullTransaction is not in a valid format.</summary>
 
 #       ifdef ERROR_TRANSACTION_INVALID_MARSHALL_BUFFER
+        /// <summary>The buffer passed in to PushTransaction or PullTransaction is not in a valid format.</summary>
         error_transaction_invalid_marshall_buffer = ERROR_TRANSACTION_INVALID_MARSHALL_BUFFER,
 #       endif
-        /// <summary>The current transaction context associated with the thread is not a valid handle to a transaction object.</summary>
 
 #       ifdef ERROR_CURRENT_TRANSACTION_NOT_VALID
+        /// <summary>The current transaction context associated with the thread is not a valid handle to a transaction object.</summary>
         error_current_transaction_not_valid = ERROR_CURRENT_TRANSACTION_NOT_VALID,
 #       endif
-        /// <summary>The specified Transaction object could not be opened, because it was not found.</summary>
 
 #       ifdef ERROR_TRANSACTION_NOT_FOUND
+        /// <summary>The specified Transaction object could not be opened, because it was not found.</summary>
         error_transaction_not_found = ERROR_TRANSACTION_NOT_FOUND,
 #       endif
-        /// <summary>The specified ResourceManager object could not be opened, because it was not found.</summary>
 
 #       ifdef ERROR_RESOURCEMANAGER_NOT_FOUND
+        /// <summary>The specified ResourceManager object could not be opened, because it was not found.</summary>
         error_resourcemanager_not_found = ERROR_RESOURCEMANAGER_NOT_FOUND,
 #       endif
-        /// <summary>The specified Enlistment object could not be opened, because it was not found.</summary>
 
 #       ifdef ERROR_ENLISTMENT_NOT_FOUND
+        /// <summary>The specified Enlistment object could not be opened, because it was not found.</summary>
         error_enlistment_not_found = ERROR_ENLISTMENT_NOT_FOUND,
 #       endif
-        /// <summary>The specified TransactionManager object could not be opened, because it was not found.</summary>
 
 #       ifdef ERROR_TRANSACTIONMANAGER_NOT_FOUND
+        /// <summary>The specified TransactionManager object could not be opened, because it was not found.</summary>
         error_transactionmanager_not_found = ERROR_TRANSACTIONMANAGER_NOT_FOUND,
 #       endif
-        /// <summary>The object specified could not be created or opened, because its associated TransactionManager is not online.  The TransactionManager must be brought fully Online by calling RecoverTransactionManager to recover to the end of its LogFile before objects in its Transaction or ResourceManager namespaces can be opened.  In addition, errors in writing records to its LogFile can cause a TransactionManager to go offline.</summary>
 
 #       ifdef ERROR_TRANSACTIONMANAGER_NOT_ONLINE
+        /// <summary>The object specified could not be created or opened, because its associated TransactionManager is not online.  The TransactionManager must be brought fully Online by calling RecoverTransactionManager to recover to the end of its LogFile before objects in its Transaction or ResourceManager namespaces can be opened.  In addition, errors in writing records to its LogFile can cause a TransactionManager to go offline.</summary>
         error_transactionmanager_not_online = ERROR_TRANSACTIONMANAGER_NOT_ONLINE,
 #       endif
-        /// <summary>The specified TransactionManager was unable to create the objects contained in its logfile in the Ob namespace. Therefore, the TransactionManager was unable to recover.</summary>
 
 #       ifdef ERROR_TRANSACTIONMANAGER_RECOVERY_NAME_COLLISION
+        /// <summary>The specified TransactionManager was unable to create the objects contained in its logfile in the Ob namespace. Therefore, the TransactionManager was unable to recover.</summary>
         error_transactionmanager_recovery_name_collision = ERROR_TRANSACTIONMANAGER_RECOVERY_NAME_COLLISION,
 #       endif
-        /// <summary>The call to create a superior Enlistment on this Transaction object could not be completed, because the Transaction object specified for the enlistment is a subordinate branch of the Transaction. Only the root of the Transaction can be enlisted on as a superior.</summary>
 
 #       ifdef ERROR_TRANSACTION_NOT_ROOT
+        /// <summary>The call to create a superior Enlistment on this Transaction object could not be completed, because the Transaction object specified for the enlistment is a subordinate branch of the Transaction. Only the root of the Transaction can be enlisted on as a superior.</summary>
         error_transaction_not_root = ERROR_TRANSACTION_NOT_ROOT,
 #       endif
-        /// <summary>Because the associated transaction manager or resource manager has been closed, the handle is no longer valid.</summary>
 
 #       ifdef ERROR_TRANSACTION_OBJECT_EXPIRED
+        /// <summary>Because the associated transaction manager or resource manager has been closed, the handle is no longer valid.</summary>
         error_transaction_object_expired = ERROR_TRANSACTION_OBJECT_EXPIRED,
 #       endif
-        /// <summary>The specified operation could not be performed on this Superior enlistment, because the enlistment was not created with the corresponding completion response in the NotificationMask.</summary>
 
 #       ifdef ERROR_TRANSACTION_RESPONSE_NOT_ENLISTED
+        /// <summary>The specified operation could not be performed on this Superior enlistment, because the enlistment was not created with the corresponding completion response in the NotificationMask.</summary>
         error_transaction_response_not_enlisted = ERROR_TRANSACTION_RESPONSE_NOT_ENLISTED,
 #       endif
-        /// <summary>The specified operation could not be performed, because the record that would be logged was too long. This can occur because of two conditions: either there are too many Enlistments on this Transaction, or the combined RecoveryInformation being logged on behalf of those Enlistments is too long.</summary>
 
 #       ifdef ERROR_TRANSACTION_RECORD_TOO_LONG
+        /// <summary>The specified operation could not be performed, because the record that would be logged was too long. This can occur because of two conditions: either there are too many Enlistments on this Transaction, or the combined RecoveryInformation being logged on behalf of those Enlistments is too long.</summary>
         error_transaction_record_too_long = ERROR_TRANSACTION_RECORD_TOO_LONG,
 #       endif
-        /// <summary>Implicit transaction are not supported.</summary>
 
 #       ifdef ERROR_IMPLICIT_TRANSACTION_NOT_SUPPORTED
+        /// <summary>Implicit transaction are not supported.</summary>
         error_implicit_transaction_not_supported = ERROR_IMPLICIT_TRANSACTION_NOT_SUPPORTED,
 #       endif
-        /// <summary>The kernel transaction manager had to abort or forget the transaction because it blocked forward progress.</summary>
 
 #       ifdef ERROR_TRANSACTION_INTEGRITY_VIOLATED
+        /// <summary>The kernel transaction manager had to abort or forget the transaction because it blocked forward progress.</summary>
         error_transaction_integrity_violated = ERROR_TRANSACTION_INTEGRITY_VIOLATED,
 #       endif
-        /// <summary>The TransactionManager identity that was supplied did not match the one recorded in the TransactionManager's log file.</summary>
 
 #       ifdef ERROR_TRANSACTIONMANAGER_IDENTITY_MISMATCH
+        /// <summary>The TransactionManager identity that was supplied did not match the one recorded in the TransactionManager's log file.</summary>
         error_transactionmanager_identity_mismatch = ERROR_TRANSACTIONMANAGER_IDENTITY_MISMATCH,
 #       endif
-        /// <summary>This snapshot operation cannot continue because a transactional resource manager cannot be frozen in its current state.  Please try again.</summary>
 
 #       ifdef ERROR_RM_CANNOT_BE_FROZEN_FOR_SNAPSHOT
+        /// <summary>This snapshot operation cannot continue because a transactional resource manager cannot be frozen in its current state.  Please try again.</summary>
         error_rm_cannot_be_frozen_for_snapshot = ERROR_RM_CANNOT_BE_FROZEN_FOR_SNAPSHOT,
 #       endif
-        /// <summary>The transaction cannot be enlisted on with the specified EnlistmentMask, because the transaction has already completed the PrePrepare phase.  In order to ensure correctness, the ResourceManager must switch to a write-through mode and cease caching data within this transaction.  Enlisting for only subsequent transaction phases may still succeed.</summary>
 
 #       ifdef ERROR_TRANSACTION_MUST_WRITETHROUGH
+        /// <summary>The transaction cannot be enlisted on with the specified EnlistmentMask, because the transaction has already completed the PrePrepare phase.  In order to ensure correctness, the ResourceManager must switch to a write-through mode and cease caching data within this transaction.  Enlisting for only subsequent transaction phases may still succeed.</summary>
         error_transaction_must_writethrough = ERROR_TRANSACTION_MUST_WRITETHROUGH,
 #       endif
-        /// <summary>The transaction does not have a superior enlistment.</summary>
 
 #       ifdef ERROR_TRANSACTION_NO_SUPERIOR
+        /// <summary>The transaction does not have a superior enlistment.</summary>
         error_transaction_no_superior = ERROR_TRANSACTION_NO_SUPERIOR,
 #       endif
-        /// <summary>The attempt to commit the Transaction completed, but it is possible that some portion of the transaction tree did not commit successfully due to heuristics.  Therefore it is possible that some data modified in the transaction may not have committed, resulting in transactional inconsistency.  If possible, check the consistency of the associated data.</summary>
 
 #       ifdef ERROR_HEURISTIC_DAMAGE_POSSIBLE
+        /// <summary>The attempt to commit the Transaction completed, but it is possible that some portion of the transaction tree did not commit successfully due to heuristics.  Therefore it is possible that some data modified in the transaction may not have committed, resulting in transactional inconsistency.  If possible, check the consistency of the associated data.</summary>
         error_heuristic_damage_possible = ERROR_HEURISTIC_DAMAGE_POSSIBLE,
 #       endif
-        /// <summary>The function attempted to use a name that is reserved for use by another transaction.</summary>
 
 #       ifdef ERROR_TRANSACTIONAL_CONFLICT
+        /// <summary>The function attempted to use a name that is reserved for use by another transaction.</summary>
         error_transactional_conflict = ERROR_TRANSACTIONAL_CONFLICT,
 #       endif
-        /// <summary>Transaction support within the specified resource manager is not started or was shut down due to an error.</summary>
 
 #       ifdef ERROR_RM_NOT_ACTIVE
+        /// <summary>Transaction support within the specified resource manager is not started or was shut down due to an error.</summary>
         error_rm_not_active = ERROR_RM_NOT_ACTIVE,
 #       endif
-        /// <summary>The metadata of the RM has been corrupted. The RM will not function.</summary>
 
 #       ifdef ERROR_RM_METADATA_CORRUPT
+        /// <summary>The metadata of the RM has been corrupted. The RM will not function.</summary>
         error_rm_metadata_corrupt = ERROR_RM_METADATA_CORRUPT,
 #       endif
-        /// <summary>The specified directory does not contain a resource manager.</summary>
 
 #       ifdef ERROR_DIRECTORY_NOT_RM
+        /// <summary>The specified directory does not contain a resource manager.</summary>
         error_directory_not_rm = ERROR_DIRECTORY_NOT_RM,
 #       endif
-        /// <summary>The remote server or share does not support transacted file operations.</summary>
 
 #       ifdef ERROR_TRANSACTIONS_UNSUPPORTED_REMOTE
+        /// <summary>The remote server or share does not support transacted file operations.</summary>
         error_transactions_unsupported_remote = ERROR_TRANSACTIONS_UNSUPPORTED_REMOTE,
 #       endif
-        /// <summary>The requested log size is invalid.</summary>
 
 #       ifdef ERROR_LOG_RESIZE_INVALID_SIZE
+        /// <summary>The requested log size is invalid.</summary>
         error_log_resize_invalid_size = ERROR_LOG_RESIZE_INVALID_SIZE,
 #       endif
-        /// <summary>The object (file, stream, link) corresponding to the handle has been deleted by a Transaction Savepoint Rollback.</summary>
 
 #       ifdef ERROR_OBJECT_NO_LONGER_EXISTS
+        /// <summary>The object (file, stream, link) corresponding to the handle has been deleted by a Transaction Savepoint Rollback.</summary>
         error_object_no_longer_exists = ERROR_OBJECT_NO_LONGER_EXISTS,
 #       endif
-        /// <summary>The specified file miniversion was not found for this transacted file open.</summary>
 
 #       ifdef ERROR_STREAM_MINIVERSION_NOT_FOUND
+        /// <summary>The specified file miniversion was not found for this transacted file open.</summary>
         error_stream_miniversion_not_found = ERROR_STREAM_MINIVERSION_NOT_FOUND,
 #       endif
 
