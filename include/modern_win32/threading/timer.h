@@ -159,6 +159,18 @@ namespace modern_win32::threading
             return !stopped_ && callback_thread_.has_value() && callback_thread_.value().is_running();
         }
 
+        /// <summary>
+        /// returns the exit code of worker thread if not running, otherwise 0
+        /// </summary>
+        /// <returns>
+        /// exit code of worker thread if not running, otherwise 0
+        /// </returns>
+        [[nodiscard]]
+        constexpr auto exit_code() const noexcept -> int
+        {
+            return static_cast<int>(last_exit_code_);
+        }
+
         [[nodiscard]]
         auto  get_timer_thread_id() const -> std::optional<thread::native_thread_id>
         {
