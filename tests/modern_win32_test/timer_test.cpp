@@ -17,15 +17,50 @@
 namespace modern_win32::test
 {
 
-    static constexpr int get_default_create_result()
+    constexpr auto get_default_create_result() -> fake_timer_traits::native_handle_type
     {
-        return 3;
+        return static_cast<fake_timer_traits::native_handle_type>(3);
+    }
+    constexpr auto get_default_set_waitable_timer_result(fake_timer_traits::native_handle_type , LARGE_INTEGER&, LONG, PTIMERAPCROUTINE, void*, bool const)
+        -> bool
+    {
+        return true;
+    }
+    constexpr auto get_default_cancel_waitable_timer_result(fake_timer_traits::native_handle_type) -> bool
+    {
+        return true;
     }
 
+
     std::function<int()> fake_timer_traits::get_create_result_ = get_default_create_result;  // NOLINT(clang-diagnostic-exit-time-destructors)
+    fake_timer_traits::set_waitable_timer_type fake_timer_traits::get_set_waitable_timer_result_ = get_default_set_waitable_timer_result; // NOLINT(clang-diagnostic-exit-time-destructors)
+    fake_timer_traits::cancel_waitable_timer_type fake_timer_traits::get_cancel_waitable_timer_result_ = get_default_cancel_waitable_timer_result; // NOLINT(clang-diagnostic-exit-time-destructors)
+
+    int fake_timer_traits::create_call_count_ = 0;
+    int fake_timer_traits::cancel_waitable_timer_call_count_ = 0;
+    int fake_timer_traits::set_waitable_timer_call_count_ = 0;
+
+    auto fake_timer_traits::set_waitable_timer(native_handle_type handle, LARGE_INTEGER& due_time,
+        LONG period, _In_opt_ PTIMERAPCROUTINE callback, void* state, bool const restore)
+        -> bool
+    {
+        set_waitable_timer_call_count_++;
+        return get_set_waitable_timer_result_(handle, due_time, period, callback, state, restore);
+    }
+
+    auto fake_timer_traits::cancel_waitable_timer(native_handle_type handle) -> bool
+    {
+        cancel_waitable_timer_call_count_++;
+        return get_cancel_waitable_timer_result_(handle);
+    }
 
     void fake_timer_traits::reset()
     {
         get_create_result_ = get_default_create_result;  // NOLINT(clang-diagnostic-exit-time-destructors)
+        get_set_waitable_timer_result_ = get_default_set_waitable_timer_result; // NOLINT(clang-diagnostic-exit-time-destructors)
+        get_cancel_waitable_timer_result_ = get_default_cancel_waitable_timer_result; // NOLINT(clang-diagnostic-exit-time-destructors)
+        create_call_count_ = 0;
+        cancel_waitable_timer_call_count_ = 0;
+        set_waitable_timer_call_count_ = 0;
     }
 }

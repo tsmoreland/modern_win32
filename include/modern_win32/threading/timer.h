@@ -62,6 +62,7 @@ namespace modern_win32::threading
         std::optional<thread> callback_thread_{};
         std::optional<std::pair<std::chrono::milliseconds, std::chrono::milliseconds>> timer_settings_{};
         std::atomic<bool> stopped_{};
+        std::atomic<int> last_exit_code_{};
         mutable std::recursive_timed_mutex lock_{};
         manual_reset_event stop_event_{ false };
     public:
@@ -146,6 +147,7 @@ namespace modern_win32::threading
 
             if (thread::current_thread_id() != callback_thread_.value().id()) {
                 callback_thread_.value().join();
+                last_exit_code_ = callback_thread_.value().exit_code().value_or(0);
                 callback_thread_ = std::nullopt;
             }
             reset_stopped();

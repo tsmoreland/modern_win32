@@ -14,9 +14,11 @@
 #ifndef MODERN_WIN32_TEST_TIMER_TEST_H_
 #define MODERN_WIN32_TEST_TIMER_TEST_H_ // NOLINT(clang-diagnostic-unused-macros)
 
-#pragma warning(push,2)
+#pragma warning(disable : 26812)
+#pragma warning(disable : 26495)
 #include <gtest/gtest.h>
-#pragma warning(pop)
+#pragma warning(default : 26812)
+#pragma warning(default : 26495)
 
 #include <Windows.h>
 #include <chrono>
@@ -95,13 +97,20 @@ namespace modern_win32::test
 
     };
 
-
     class fake_timer_traits
     {
         // destruction of these may not be realiable as they're static but it's for unit testing purposes only so we'll ignore for now
         using get_create_result_type = std::function<int()>;
+        using set_waitable_timer_type = std::function<bool(int, LARGE_INTEGER&, LONG, PTIMERAPCROUTINE, void*, bool const)>;
+        using cancel_waitable_timer_type = std::function<bool(int)>;
 
         static get_create_result_type get_create_result_;
+        static set_waitable_timer_type get_set_waitable_timer_result_;
+        static cancel_waitable_timer_type get_cancel_waitable_timer_result_;
+
+        static int create_call_count_;
+        static int cancel_waitable_timer_call_count_;
+        static int set_waitable_timer_call_count_;
 
     public:
         using modern_handle_type = fake_handle;
@@ -110,30 +119,42 @@ namespace modern_win32::test
         [[nodiscard]]
         static inline auto create(bool) -> native_handle_type
         {
+            create_call_count_++;
             return get_create_result_();
         }
 
         [[nodiscard]]
-        static inline auto set_waitable_timer(
+        static auto set_waitable_timer(
             native_handle_type,
             LARGE_INTEGER&,
             LONG,
             _In_opt_ PTIMERAPCROUTINE,
             void*,
-            bool const) -> bool
-        {
-            return true;
-        }
+            bool const) -> bool;
 
         [[nodiscard]]
-        static inline bool cancel_waitable_timer(native_handle_type)
-        {
-            return true;
-        }
+        static auto cancel_waitable_timer(native_handle_type) -> bool;
 
+        [[nodiscard]]
         static constexpr get_create_result_type& get_create_result()
         {
             return get_create_result_;
+        }
+
+        [[nodiscard]]
+        static constexpr int const& create_call_count() noexcept
+        {
+            return create_call_count_;
+        }
+        [[nodiscard]]
+        static constexpr int const& cancel_waitable_timer_call_count() noexcept
+        {
+            return cancel_waitable_timer_call_count_;
+        }
+        [[nodiscard]]
+        static constexpr int const& set_waitable_timer_call_count() noexcept
+        {
+            return set_waitable_timer_call_count_;
         }
 
         static void reset();

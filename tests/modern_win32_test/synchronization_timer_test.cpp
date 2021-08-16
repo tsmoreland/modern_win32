@@ -53,8 +53,8 @@ TEST(synchronization_timer_test, start__begins_timer__when_arguments_are_greater
 {
     manual_reset_event callback_event{ false };
     bool called{ false };
-    int const expected_state = 3;
-    auto callback = [&called, &callback_event, expected_state](int& state) {
+    constexpr int const expected_state = 3;
+    auto callback = [&called, &callback_event, expected_state](int const& state) {
         if (state == expected_state) {
             called = true;
             std::ignore = callback_event.set();

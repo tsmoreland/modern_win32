@@ -97,6 +97,18 @@ TEST(delayed_callback_test, start__creates_new_thread__when_is_running_true)
     ASSERT_NE(actual.value_or(1), expected.value_or(1));
 }
 
+TEST(delayed_callback_test, stop__calls_cancel_waitable_timer__always)
+{
+    auto callback = [](int&) { /* ... */ };
+    using delayed_callback_t = delayed_callback<int, decltype(callback), fake_timer_traits>;
+
+    fake_timer_traits::reset();
+    delayed_callback_t timer(callback, 3);
+
+    timer.stop();
+
+    ASSERT_EQ(fake_timer_traits::cancel_waitable_timer_call_count(), 1);
+}
 
 TEST(delayed_callback_test, is_running__returns_false__before_start_is_called)
 {
@@ -165,8 +177,6 @@ TEST(delayed_callback_test, operator_not_equals__returns_false__when_timer_handl
 
     ASSERT_FALSE(first != second);
 }
-
-// TODO: move away from templates to more default functors for this fake traits approach
 
 TEST(delayed_callback_test, operator_not_equals__returns_true__when_timer_handles_not_equal)
 {

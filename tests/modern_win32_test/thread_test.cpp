@@ -11,10 +11,11 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#pragma warning(push)
-#pragma warning(disable : 26495 26812)
+#pragma warning(disable : 26812)
+#pragma warning(disable : 26495)
 #include <gtest/gtest.h>
-#pragma warning(pop)
+#pragma warning(default : 26812)
+#pragma warning(default : 26495)
 #include <chrono>
 #include <modern_win32/threading/thread.h>
 #include <modern_win32/threading/event.h>
@@ -43,8 +44,9 @@ TEST(thread, start_launches_thread)
         {
             auto const* param = static_cast<std::tuple<context*, manual_reset_event*>*>(state);
             EXPECT_NE(param, nullptr);
-            if (param == nullptr)
+            if (param == nullptr) {
                 return 1;
+            }
             auto [context_ptr, thread_exit_ptr] = *param;
             EXPECT_NE(context_ptr, nullptr);
             EXPECT_NE(thread_exit_ptr, nullptr);
