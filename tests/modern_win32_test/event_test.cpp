@@ -11,7 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#pragma warning(push, 2)
+#pragma warning(push)
+#pragma warning(disable : 26495 26812)
 #include <gtest/gtest.h>
 #pragma warning(pop)
 #include <modern_win32/threading/event.h>
@@ -50,3 +51,4 @@ TEST(manual_reset_event, is_reset_after_wait)
     // Assert
     ASSERT_TRUE(signalled && !context.get_timed_out());
 }
+

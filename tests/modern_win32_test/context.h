@@ -11,8 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef __MODERN_WIN32_TEST_CONTEXT_H__
-#define __MODERN_WIN32_TEST_CONTEXT_H__
+#ifndef MODERN_WIN32_TEST_CONTEXT_H_
+#define MODERN_WIN32_TEST_CONTEXT_H_
 
 #include <chrono>
 #include <future>
@@ -70,7 +70,7 @@ namespace modern_win32::test
             signaled = event.wait_one(); 
             EXPECT_TRUE(signaled);
 
-            return event.wait_one(std::chrono::milliseconds(50));
+            return event.wait_one(std::optional(std::chrono::milliseconds(50)));
         }
 
         [[nodiscard]]

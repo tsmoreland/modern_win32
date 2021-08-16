@@ -11,7 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#pragma warning(push, 1)
+#pragma warning(push)
+#pragma warning(disable : 26495 26812)
 #include <gtest/gtest.h>
 #pragma warning(pop)
 #include <chrono>
@@ -65,39 +66,39 @@ private:
     
 };
 
-TEST(process_should, throw_file_error_when_file_not_found)
+TEST(process, constructor_should_throw_file_error_when_file_not_found)
 {
     ASSERT_THROW({ auto const process = start_process("file_not_found", ""); }, std::filesystem::filesystem_error);
 }
 
-TEST(process_should, return_process_with_id_when_file_exists)
+TEST(process, get_process_id_should_return_process_with_id_when_file_exists)
 {
     auto const process = start_process(TaskListExe, "");
     auto const id = process.get_process_id();
     ASSERT_TRUE(id.has_value());
 }
 
-TEST(process_should, stop_waiting_after_exit)
+TEST(process, wait_for_exit_should_timeout_after_timeout_value)
 {
     auto const process = start_process(CommandExe, "/c exit 5");
     ASSERT_TRUE(process.wait_for_exit(milliseconds(2500)));
 }
 
-TEST(process_should, report_is_running_when_active)
+TEST(process, is_running_should_return_true_when_active)
 {
     auto const process = start_process(CommandExe, "1");
     ASSERT_TRUE(process.is_running());
     ASSERT_TRUE(!process.has_exited());
 }
 
-TEST(process_should, report_correct_exit_code)
+TEST(process, wait_for_exit_should_report_correct_exit_code)
 {
     auto const process = start_process(CommandExe, "/c exit 3");
     EXPECT_TRUE(process.wait_for_exit(milliseconds(2500)));
     ASSERT_EQ(process::exit_code_type{ 3 }, process.get_exit_code());
 }
 
-TEST(process_should, report_has_exited_after_exit)
+TEST(process, has_exit_should_report_true_after_exit)
 {
     auto const process = start_process(CommandExe, "/c Ping -n 2 127.0.0.1");
     EXPECT_TRUE(process.wait_for_exit(milliseconds(5000)));
@@ -105,7 +106,7 @@ TEST(process_should, report_has_exited_after_exit)
     ASSERT_TRUE(!process.is_running());
 }
 
-TEST(process_should, timeout_when_waiting_too_long)
+TEST(process, wait_for_exit_should_timeout_when_waiting_too_long)
 {
     auto const process = start_process(CommandExe, "/c Ping 127.0.0.1");
     auto const timeout = process.wait_for_exit(milliseconds(250));
@@ -114,7 +115,7 @@ TEST(process_should, timeout_when_waiting_too_long)
     ASSERT_FALSE(timeout);
 }
 
-TEST(process_should, open_process_with_valid_id)
+TEST(process, open_process_should_open_process_with_valid_id)
 {
     auto const process = start_process(CommandExe, "/c Sleep 1");
     auto const id = process.get_process_id().value_or(0UL);

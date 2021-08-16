@@ -230,7 +230,7 @@ namespace modern_win32
         environment_variable_container environment_;
     };
 
-    using ansi_process_startup_info = process_startup_info<char>;
+    using narrow_process_startup_info = process_startup_info<char>;
     using wide_process_startup_info = process_startup_info<wchar_t>;
         
     template <typename TCHAR>
@@ -311,7 +311,7 @@ namespace modern_win32
 
     };
 
-    using ansi_process_startup_info_builder = process_startup_info_builder<char>;
+    using narrow_process_startup_info_builder = process_startup_info_builder<char>;
     using wide_process_startup_info_builder = process_startup_info_builder<wchar_t>;
 
 }

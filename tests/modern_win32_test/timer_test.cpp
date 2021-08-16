@@ -11,49 +11,56 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#pragma warning(push,2)
-#include <gtest/gtest.h>
-#pragma warning(pop)
+#include "timer_test.h"
 
-#include <chrono>
-#include <modern_win32/threading/timer.h>
-#include <modern_win32/threading/event.h>
-#include "context.h"
 
-using std::chrono::milliseconds;
-using modern_win32::threading::manual_reset_event;
-using modern_win32::threading::delayed_callback;
-using modern_win32::threading::synchronization_timer;
-
-#pragma warning(disable : 4455)
-using std::literals::chrono_literals::operator ""ms;
-using std::literals::chrono_literals::operator ""s;
-
-TEST(delayed_callback, constructor__does_not_throw__when_state_is_trivial)
+namespace modern_win32::test
 {
-    ASSERT_NO_THROW({
-        delayed_callback<int> delay([](int) { /* ... */ }, 3);
-    });
-}
+
+    constexpr auto get_default_create_result() -> fake_timer_traits::native_handle_type
+    {
+        return static_cast<fake_timer_traits::native_handle_type>(3);
+    }
+    constexpr auto get_default_set_waitable_timer_result(fake_timer_traits::native_handle_type , LARGE_INTEGER&, LONG, PTIMERAPCROUTINE, void*, bool const)
+        -> bool
+    {
+        return true;
+    }
+    constexpr auto get_default_cancel_waitable_timer_result(fake_timer_traits::native_handle_type) -> bool
+    {
+        return true;
+    }
 
 
-TEST(delay_callback, start__begins_timer__when_arguments_are_greater_than_or_equal_to_zero)
-{
-    manual_reset_event callback_event{ false };
-    bool called{ false };
-    int const expected_state = 3;
-    auto callback = [&called, &callback_event, expected_state](int state) {
-        if (state == expected_state) {
-            called = true;
-            std::ignore = callback_event.set();
-        }
-    };
+    std::function<int()> fake_timer_traits::get_create_result_ = get_default_create_result;  // NOLINT(clang-diagnostic-exit-time-destructors)
+    fake_timer_traits::set_waitable_timer_type fake_timer_traits::get_set_waitable_timer_result_ = get_default_set_waitable_timer_result; // NOLINT(clang-diagnostic-exit-time-destructors)
+    fake_timer_traits::cancel_waitable_timer_type fake_timer_traits::get_cancel_waitable_timer_result_ = get_default_cancel_waitable_timer_result; // NOLINT(clang-diagnostic-exit-time-destructors)
 
-    delayed_callback<int, decltype(callback)> timer(callback, expected_state);
+    int fake_timer_traits::create_call_count_ = 0;
+    int fake_timer_traits::cancel_waitable_timer_call_count_ = 0;
+    int fake_timer_traits::set_waitable_timer_call_count_ = 0;
 
-    timer.start(10ms, 100ms);
+    auto fake_timer_traits::set_waitable_timer(native_handle_type handle, LARGE_INTEGER& due_time,
+        LONG period, _In_opt_ PTIMERAPCROUTINE callback, void* state, bool const restore)
+        -> bool
+    {
+        set_waitable_timer_call_count_++;
+        return get_set_waitable_timer_result_(handle, due_time, period, callback, state, restore);
+    }
 
-    std::ignore = callback_event.wait_one(1s);
+    auto fake_timer_traits::cancel_waitable_timer(native_handle_type handle) -> bool
+    {
+        cancel_waitable_timer_call_count_++;
+        return get_cancel_waitable_timer_result_(handle);
+    }
 
-    ASSERT_TRUE(called);
+    void fake_timer_traits::reset()
+    {
+        get_create_result_ = get_default_create_result;  // NOLINT(clang-diagnostic-exit-time-destructors)
+        get_set_waitable_timer_result_ = get_default_set_waitable_timer_result; // NOLINT(clang-diagnostic-exit-time-destructors)
+        get_cancel_waitable_timer_result_ = get_default_cancel_waitable_timer_result; // NOLINT(clang-diagnostic-exit-time-destructors)
+        create_call_count_ = 0;
+        cancel_waitable_timer_call_count_ = 0;
+        set_waitable_timer_call_count_ = 0;
+    }
 }

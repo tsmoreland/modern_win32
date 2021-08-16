@@ -13,7 +13,7 @@
 
 #include <modern_win32/threading/thread.h>
 #include <modern_win32/module_handle.h>
-#include <modern_win32/string_conversion.h>
+#include <modern_win32/string.h>
 #include <modern_win32/wait_for.h>
 
 namespace modern_win32::threading
@@ -63,6 +63,34 @@ namespace modern_win32::threading
         return get_thread_name(handle_.native_handle());
     }
 
+    auto thread::exit_code() const-> std::optional<int>
+    {
+        if (!static_cast<bool>(handle_))
+            return std::nullopt;
+
+        DWORD exit_code_value{};
+        if (GetExitCodeThread(handle_.native_handle(), &exit_code_value) != TRUE) {
+            throw windows_exception();
+        }
+
+        return exit_code_value != STILL_ACTIVE
+            ? std::optional(static_cast<int>(exit_code_value))
+            : std::nullopt;
+    }
+
+    std::optional<thread::native_thread_id> thread::id() const 
+    {
+        using empty_thread_id = std::optional<thread::native_thread_id>;
+        auto const id = thread_id_;
+        return is_running()
+            ? std::optional{ id }
+            : empty_thread_id{};
+    }
+
+    thread::native_thread_id thread::current_thread_id() noexcept
+    {
+        return GetCurrentThreadId();
+    }
 
     thread start_thread(thread::thread_proc const worker, thread::thread_parameter parameter)
     {
@@ -82,55 +110,52 @@ namespace modern_win32::threading
 
     bool thread::start(thread_proc worker, thread_parameter parameter) 
     {
-        if (is_running() || thread_start_ != nullptr)
+        if (is_running() || thread_start_ != nullptr) {
             return false;
+        }
         return handle_.reset(CreateThread(nullptr, 0, worker, parameter, 0, &thread_id_));  // NOLINT(clang-diagnostic-microsoft-cast)
     }
 
     bool thread::start(thread_start* worker) 
     {
-        if (is_running() || thread_start_ != nullptr)
+        if (is_running() || thread_start_ != nullptr) {
             return false;
-
+        }
         return handle_.reset(CreateThread(nullptr, 0, thread_start::thread_proc, static_cast<thread_parameter>(worker), 0, &thread_id_));  // NOLINT(clang-diagnostic-microsoft-cast)
     }
 
     bool thread::start()
     {
-        if (is_running() || thread_start_ == nullptr)
+        if (is_running() || thread_start_ == nullptr) {
             return false;
+        }
         return handle_.reset(CreateThread(nullptr, 0, thread_start::thread_proc, thread_start_.get(), 0, &thread_id_));  // NOLINT(clang-diagnostic-microsoft-cast)
     }
 
     void thread::join() const
     {
-        if (is_running())
+        if (is_running() && thread_id_ != GetCurrentThreadId()) { 
             static_cast<void>(wait_one(handle_));
+        }
     }
 
     bool thread::join(std::chrono::milliseconds const& timeout) const
     {
-        if (!is_running())
+        if (!is_running() && thread_id_ != GetCurrentThreadId())
             return false;
         return is_complete(wait_one(handle_, timeout));
     }
 
     bool thread::is_running() const
     {
-        if (!static_cast<bool>(handle_))
-            return false;
-
-        DWORD exit_code;
-        if (GetExitCodeThread(handle_.native_handle(), &exit_code) != TRUE)
-            throw windows_exception();
-        return exit_code == STILL_ACTIVE;
+        return exit_code().value_or(STILL_ACTIVE) == STILL_ACTIVE;
     }
 
     thread& thread::operator=(thread&& other) noexcept 
     {
-        if (this == &other)
+        if (this == &other) {
             return *this;
-
+        }
         std::swap(*this, other);
 
         static_cast<void>(other.handle_.reset());

@@ -20,7 +20,7 @@
 #include <optional>
 #include <modern_win32/wait_for_result.h>
 #include <modern_win32/modern_win32_export.h>
-#include <modern_win32/windows_exception.h>
+#include <modern_win32/shared/chrono_extensions.h>
 
 namespace modern_win32
 {
@@ -52,24 +52,38 @@ namespace modern_win32
         }
     }
 
-    constexpr auto get_infinity_in_ms() -> std::chrono::duration<long long>
+    /// <summary>
+    /// convert timeout to time in milliseconds as NUMERIC type if less than
+    /// maximum value of NUMERIC; otherwise, maximum value 
+    /// </summary>
+    /// <typeparam name="NUMERIC">NUMERIC type to convert to</typeparam>
+    /// <typeparam name="REP">
+    /// an arithmetic type representing the number of ticks
+    /// </typeparam>
+    /// <typeparam name="PERIOD">
+    /// Period (until C++17)typename Period::type (since C++17), a std::ratio
+    /// representing the tick period (i.e. the number of seconds per tick)
+    /// </typeparam>
+    /// <param name="timeout">value to convert</param>
+    /// <returns>
+    /// time in milliseconds as NUMERIC type if less than maximum value of NUMERIC;
+    /// otherwise, maximum value 
+    /// </returns>
+    template <typename NUMERIC, class REP, class PERIOD>
+    [[nodiscard]]
+    constexpr auto to_numeric_milliseconds(std::chrono::duration<REP, PERIOD> const& timeout) -> NUMERIC
     {
-        // same as std::chrono::millisecond::rep, done to show it can be done this way
-        using millisecond_rep = decltype(std::declval<std::chrono::milliseconds>().count());
-        return std::chrono::duration<millisecond_rep>(INFINITE);
-    }
-
-    template <typename NUMERIC>
-    constexpr auto as(std::chrono::milliseconds const& timeout) -> NUMERIC
-    {
-        static_assert(std::is_arithmetic<NUMERIC>::value);
+        static_assert(std::is_arithmetic_v<NUMERIC>);
+        // extra set of () around std::numeric_limits<>::max to circumvent windows max macro
+        static_assert((std::numeric_limits<NUMERIC>::max)() <= (std::numeric_limits<std::chrono::milliseconds::rep>::max)());
 
         using std::chrono::milliseconds;
-        using millisecond_rep = decltype(std::declval<milliseconds>().count());
-        // extra set of () around std::numeric_limits<>::max to circumvent windows max macro
-        return timeout > milliseconds(static_cast<millisecond_rep>((std::numeric_limits<NUMERIC>::max)()))
+        using modern_win32::shared::to_milliseconds;
+
+        auto const timeout_in_milliseconds = to_milliseconds(timeout);
+        return timeout_in_milliseconds.count() >= static_cast<std::chrono::milliseconds::rep>((std::numeric_limits<NUMERIC>::max)())
             ? (std::numeric_limits<NUMERIC>::max)()
-            : static_cast<NUMERIC>(timeout.count());
+            : static_cast<NUMERIC>(timeout_in_milliseconds.count());
     }
 
     template <typename T, typename... ARGS>
@@ -80,35 +94,190 @@ namespace modern_win32
     }
     constexpr void add_to_array(HANDLE *){}
 
-    template <typename HANDLE>
+    /// <summary>
+    /// wait for the provided handle to be signaled or optional interval to be reached
+    /// </summary>
+    /// <typeparam name="HANDLE"></typeparam>
+    /// <typeparam name="REP">
+    /// an arithmetic type representing the number of ticks
+    /// </typeparam>
+    /// <typeparam name="PERIOD">
+    /// Period (until C++17)typename Period::type (since C++17), a std::ratio
+    /// representing the tick period (i.e. the number of seconds per tick)
+    /// </typeparam>
+    /// <param name="handle"></param>
+    /// <param name="timeout">
+    /// optional internal to wait for, if std::nullopt wait
+    /// will only return when the handle is signaled
+    /// </param>
+    /// <param name="alertable">
+    /// If this parameter is true and the thread is in the waiting state, the
+    /// function returns when the system queues an I/O completion routine or
+    /// APC, and the thread runs the routine or function. Otherwise, the
+    /// function does not return, and the completion routine or APC function
+    /// is not executed.
+    /// </param>
+    /// <returns>wait_for_result containing detials on how the wait was stopped</returns>
+    template <typename HANDLE, class REP = long long, class PERIOD = std::milli>
     [[nodiscard]]
-    auto wait_one(HANDLE const& handle, std::chrono::milliseconds const& timeout = get_infinity_in_ms(), bool const alertable = false) noexcept -> wait_for_result
+    auto wait_one(HANDLE const& handle, std::optional<std::chrono::duration<REP, PERIOD>> const& timeout = std::nullopt, bool const alertable = false) noexcept -> wait_for_result
     {
-        return to_wait_for_result(WaitForSingleObjectEx(handle.native_handle(), as<DWORD>(timeout), alertable ? TRUE : FALSE));
+        using modern_win32::shared::to_milliseconds;
+
+        auto const timeout_value = timeout.has_value()
+            ? to_numeric_milliseconds<DWORD>(timeout.value())
+            : INFINITE;
+
+        return to_wait_for_result(WaitForSingleObjectEx(
+            handle.native_handle(),
+            timeout_value,
+            alertable ? TRUE : FALSE));
     }
 
-    template <typename... HANDLES>
+    /// <summary>
+    /// wait for the provided handle to be signaled or optional interval to be reached
+    /// </summary>
+    /// <typeparam name="HANDLE"></typeparam>
+    /// <typeparam name="REP">
+    /// an arithmetic type representing the number of ticks
+    /// </typeparam>
+    /// <typeparam name="PERIOD">
+    /// Period (until C++17)typename Period::type (since C++17), a std::ratio
+    /// representing the tick period (i.e. the number of seconds per tick)
+    /// </typeparam>
+    /// <param name="handle"></param>
+    /// <param name="timeout">
+    /// optional internal to wait for, if std::nullopt wait
+    /// will only return when the handle is signaled
+    /// </param>
+    /// <param name="alertable">
+    /// If this parameter is true and the thread is in the waiting state, the
+    /// function returns when the system queues an I/O completion routine or
+    /// APC, and the thread runs the routine or function. Otherwise, the
+    /// function does not return, and the completion routine or APC function
+    /// is not executed.
+    /// </param>
+    /// <returns>wait_for_result containing detials on how the wait was stopped</returns>
+    template <typename HANDLE, class REP = long long, class PERIOD = std::milli>
     [[nodiscard]]
-    auto wait_all(HANDLES const & ... args, std::chrono::milliseconds const& timeout = get_infinity_in_ms(), bool const alertable = false) noexcept -> wait_for_result
+    auto wait_one(HANDLE const& handle, std::chrono::duration<REP, PERIOD> const& timeout, bool const alertable = false) noexcept -> wait_for_result
     {
+        return wait_one(handle, std::optional(timeout), alertable);
+    }
+
+    /// <summary>
+    /// wait for all of the provided handles to be signaled or optional interval to be reached
+    /// </summary>
+    /// <typeparam name="...HANDLES"></typeparam>
+    /// <typeparam name="REP">
+    /// an arithmetic type representing the number of ticks
+    /// </typeparam>
+    /// <typeparam name="PERIOD">
+    /// Period (until C++17)typename Period::type (since C++17), a std::ratio
+    /// representing the tick period (i.e. the number of seconds per tick)
+    /// </typeparam>
+    /// <param name="args"></param>
+    /// <param name="timeout">
+    /// optional internal to wait for, if std::nullopt wait
+    /// will only return when all handles are signaled
+    /// </param>
+    /// <param name="alertable">
+    /// If this parameter is true and the thread is in the waiting state, the
+    /// function returns when the system queues an I/O completion routine or
+    /// APC, and the thread runs the routine or function. Otherwise, the
+    /// function does not return, and the completion routine or APC function
+    /// is not executed.
+    /// </param>
+    /// <returns>wait_for_result containing detials on how the wait was stopped</returns>
+    template <typename... HANDLES, class REP = long long, class PERIOD = std::milli>
+    [[nodiscard]]
+    auto wait_all(HANDLES const & ... args, std::optional<std::chrono::duration<REP, PERIOD>> const& timeout, bool const alertable = false) noexcept -> wait_for_result
+    {
+        auto const timeout_value = timeout.has_value()
+            ? to_numeric_milliseconds<DWORD>(timeout.value())
+            : INFINITE;
         static_assert(sizeof...(HANDLES) < static_cast<size_t>(MAXIMUM_WAIT_OBJECTS));
         HANDLE handles[sizeof...(HANDLES)];
         add_to_array(handles, args...);
-        return to_wait_for_result(WaitForMultipleObjectsEx(sizeof...(HANDLES), handles, true, as<DWORD>(timeout), alertable ? TRUE : FALSE));
+        return to_wait_for_result(WaitForMultipleObjectsEx(
+            sizeof...(HANDLES),
+            handles, true,
+            timeout_value,
+            alertable ? TRUE : FALSE));
     }
 
-    template <typename... HANDLES>
+    /// <summary>
+    /// wait for all of the provided handles to be signaled or optional interval to be reached
+    /// </summary>
+    /// <typeparam name="...HANDLES"></typeparam>
+    /// <typeparam name="REP">
+    /// an arithmetic type representing the number of ticks
+    /// </typeparam>
+    /// <typeparam name="PERIOD">
+    /// Period (until C++17)typename Period::type (since C++17), a std::ratio
+    /// representing the tick period (i.e. the number of seconds per tick)
+    /// </typeparam>
+    /// <param name="args"></param>
+    /// <param name="timeout">
+    /// optional internal to wait for, if std::nullopt wait
+    /// will only return when all handles are signaled
+    /// </param>
+    /// <param name="alertable">
+    /// If this parameter is true and the thread is in the waiting state, the
+    /// function returns when the system queues an I/O completion routine or
+    /// APC, and the thread runs the routine or function. Otherwise, the
+    /// function does not return, and the completion routine or APC function
+    /// is not executed.
+    /// </param>
+    /// <returns>wait_for_result containing detials on how the wait was stopped</returns>
+    template <typename... HANDLES, class REP = long long, class PERIOD = std::milli>
     [[nodiscard]]
-    auto wait_any(HANDLES const & ... args, std::chrono::milliseconds const& timeout = get_infinity_in_ms(), bool const alertable = false) noexcept -> std::tuple<wait_for_result, std::optional<HANDLE>>
+    auto wait_all(HANDLES const & ... args, std::chrono::duration<REP, PERIOD> const& timeout, bool const alertable = false) noexcept -> wait_for_result
     {
+        return wait_all(args, std::optional(timeout), alertable);
+    }
+
+    /// <summary>
+    /// wait for any of the provided handles to be signaled or optional interval to be reached
+    /// </summary>
+    /// <typeparam name="...HANDLES"></typeparam>
+    /// <typeparam name="REP">
+    /// an arithmetic type representing the number of ticks
+    /// </typeparam>
+    /// <typeparam name="PERIOD">
+    /// Period (until C++17)typename Period::type (since C++17), a std::ratio
+    /// representing the tick period (i.e. the number of seconds per tick)
+    /// </typeparam>
+    /// <param name="args">compile time array of HANDLE objects to be waited on</param>
+    /// <param name="timeout">
+    /// optional internal to wait for, if std::nullopt wait
+    /// will only return when any handle is signaled
+    /// </param>
+    /// <param name="alertable">
+    /// If this parameter is true and the thread is in the waiting state, the
+    /// function returns when the system queues an I/O completion routine or
+    /// APC, and the thread runs the routine or function. Otherwise, the
+    /// function does not return, and the completion routine or APC function
+    /// is not executed.
+    /// </param>
+    /// <returns>wait_for_result containing detials on how the wait was stopped</returns>
+    template <typename... HANDLES, class REP = long long, class PERIOD = std::milli>
+    [[nodiscard]]
+    auto wait_any(HANDLES const & ... args, std::optional<std::chrono::duration<REP, PERIOD>> const& timeout = std::nullopt, bool const alertable = false) noexcept -> std::tuple<wait_for_result, std::optional<HANDLE>>
+    {
+        using modern_win32::shared::to_milliseconds;
+
+        auto const timeout_value = timeout.has_value()
+            ? to_numeric_milliseconds<DWORD>(to_milliseconds(timeout.value()))
+            : INFINITE;
+
         static_assert(sizeof...(HANDLES) < static_cast<size_t>(MAXIMUM_WAIT_OBJECTS));
         HANDLE handles[sizeof...(HANDLES)];
         add_to_array(handles, args...);
 
-        auto const native_result = WaitForMultipleObjectsEx(sizeof...(HANDLES), handles, false, as<DWORD>(timeout), alertable ? TRUE : FALSE);
-        auto const result = to_wait_for_result(native_result);
+        auto const native_result = WaitForMultipleObjectsEx(sizeof...(HANDLES), handles, false, timeout_value, alertable ? TRUE : FALSE);
 
-        switch (result) {
+        switch (auto const result = to_wait_for_result(native_result)) {
         case wait_for_result::object:
             if (auto const index = native_result - WAIT_OBJECT_0;
                 index >= 0 && index < sizeof...(HANDLES)) {
@@ -124,6 +293,37 @@ namespace modern_win32
         default:
             return std::make_tuple(result, std::nullopt);
         }
+    }
+
+    /// <summary>
+    /// wait for any of the provided handles to be signaled or optional interval to be reached
+    /// </summary>
+    /// <typeparam name="...HANDLES"></typeparam>
+    /// <typeparam name="REP">
+    /// an arithmetic type representing the number of ticks
+    /// </typeparam>
+    /// <typeparam name="PERIOD">
+    /// Period (until C++17)typename Period::type (since C++17), a std::ratio
+    /// representing the tick period (i.e. the number of seconds per tick)
+    /// </typeparam>
+    /// <param name="args">compile time array of HANDLE objects to be waited on</param>
+    /// <param name="timeout">
+    /// optional internal to wait for, if std::nullopt wait
+    /// will only return when any handle is signaled
+    /// </param>
+    /// <param name="alertable">
+    /// If this parameter is true and the thread is in the waiting state, the
+    /// function returns when the system queues an I/O completion routine or
+    /// APC, and the thread runs the routine or function. Otherwise, the
+    /// function does not return, and the completion routine or APC function
+    /// is not executed.
+    /// </param>
+    /// <returns>wait_for_result containing detials on how the wait was stopped</returns>
+    template <typename... HANDLES, class REP = long long, class PERIOD = std::milli>
+    [[nodiscard]]
+    auto wait_any(HANDLES const & ... args, std::chrono::duration<REP, PERIOD> const& timeout = std::nullopt, bool const alertable = false) noexcept -> std::tuple<wait_for_result, std::optional<HANDLE>>
+    {
+        return wait_any(args, std::optional(timeout), alertable);
     }
 
     /// <summary>

@@ -8,6 +8,7 @@ set(source_files
     "threading/timer.cpp"
 	"threading/thread.cpp"
     "bcrypt_random.cpp"
+    "environment.cpp"
 	"guid.cpp"
     "process.cpp" 
     "process_module.cpp" 
@@ -16,12 +17,13 @@ set(source_files
 
 source_group("source files" FILES ${source_files})
 
-set (public_header_files
+set (PUBLIC_HEADER_FILES
     "../../include/modern_win32/access_denied_exception.h"
     "../../include/modern_win32/com_exception.h"
     "../../include/modern_win32/threading/event.h"
     "../../include/modern_win32/invalid_handle.h"
     "../../include/modern_win32/bcrypt_random.h"
+    "../../include/modern_win32/environment.h"
     "../../include/modern_win32/guid.h"
     "../../include/modern_win32/modern_win32_export.h"
     "../../include/modern_win32/module_handle.h"
@@ -35,6 +37,11 @@ set (public_header_files
     "../../include/modern_win32/rsa_crytp_provider.h"
     "../../include/modern_win32/threading/semaphore.h"
     "../../include/modern_win32/shared_utilities.h"
+    "../../include/modern_win32/string.h"
+    "../../include/modern_win32/shared/case_insensitive_string.h"
+    "../../include/modern_win32/shared/chrono_extensions.h"
+    "../../include/modern_win32/shared/timed_lock_guard.h"
+    "../../include/modern_win32/shared/timeout_exception.h"
     "../../include/modern_win32/threading/slim_lock.h"
     "../../include/modern_win32/threading/thread.h"
     "../../include/modern_win32/threading/thread_start.h"
@@ -46,11 +53,19 @@ set (public_header_files
     "../../include/modern_win32/windows_handle.h"
     "../../include/modern_win32/windows_memory.h")
 
-source_group("public header files" FILES ${public_header_files})
+source_group("public header files" FILES ${PUBLIC_HEADER_FILES})
 
 # Target
 
 add_library(${PROJECT_NAME} SHARED ${source_files})
+
+target_include_directories(${PROJECT_NAME}
+    PUBLIC        
+        $<INSTALL_INTERFACE:../../include>    
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../include>
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+)
 
 if(MSVC)
     target_compile_options(${PROJECT_NAME} PUBLIC "/Zc:__cplusplus")
@@ -193,3 +208,17 @@ if(MSVC)
         )
     endif()
 endif()
+
+# Install Options
+
+
+install(TARGETS ${PROJECT_NAME}
+    EXPORT ${PROJECT_NAME}-targets
+    LIBRARY DESTINATION publish/lib
+    ARCHIVE DESTINATION publish/lib
+)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES EXPORT_NAME ${PROJECT_NAME})
+
+install(DIRECTORY ../../include/ DESTINATION publish/include)
+

@@ -11,31 +11,29 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#pragma warning(disable : 26812)
-#pragma warning(disable : 26495)
-#include <gtest/gtest.h>
-#pragma warning(default : 26812)
-#pragma warning(default : 26495)
+#ifndef MODERN_WIN32_TEST_SIMPLE_OBJECT_H_
+#define MODERN_WIN32_TEST_SIMPLE_OBJECT_H_  // NOLINT(clang-diagnostic-unused-macros)
 
-#include "modern_win32/bcrypt_random.h"
-
-using modern_win32::bcrypt_get_random_bytes;
-
-TEST(bcrypt_random, bcrypt_get_random_bytes_returns_different_returns_true_on_success)
+namespace modern_win32::test
 {
-    int first{};
-    auto const result = bcrypt_get_random_bytes(reinterpret_cast<byte*>(&first), sizeof(first));
+    class simple_object final
+    {
+        int x_{};
+    public:
+        constexpr explicit simple_object() = default;
 
-    ASSERT_TRUE(result);
+        [[nodiscard]]
+        constexpr int const& x() const noexcept
+        {
+            return x_;
+        }
+        [[nodiscard]]
+        constexpr int& x() noexcept
+        {
+            return x_;
+        }
+    };
+    
 }
 
-TEST(bcrypt_random, get_bytes_returns_different_value_after_subsequent_calls)
-{
-
-    int first{};
-    int second{};
-    static_cast<void>(bcrypt_get_random_bytes(reinterpret_cast<byte*>(&first), sizeof(first)));
-    static_cast<void>(bcrypt_get_random_bytes(reinterpret_cast<byte*>(&second), sizeof(second)));
-
-    ASSERT_NE(first, second);
-}
+#endif

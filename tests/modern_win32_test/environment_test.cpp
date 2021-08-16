@@ -1,5 +1,5 @@
 //
-// Copyright Â© 2021 Terry Moreland
+// Copyright © 2020 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -11,31 +11,21 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#pragma warning(disable : 26812)
-#pragma warning(disable : 26495)
+#pragma warning(push)
+#pragma warning(disable : 26495 26812)
 #include <gtest/gtest.h>
-#pragma warning(default : 26812)
-#pragma warning(default : 26495)
+#pragma warning(pop)
 
-#include "modern_win32/bcrypt_random.h"
+#include <modern_win32/environment.h>
 
-using modern_win32::bcrypt_get_random_bytes;
+using modern_win32::environment_map;
 
-TEST(bcrypt_random, bcrypt_get_random_bytes_returns_different_returns_true_on_success)
+TEST(environment, get_all_environment_returns_true_on_success)
 {
-    int first{};
-    auto const result = bcrypt_get_random_bytes(reinterpret_cast<byte*>(&first), sizeof(first));
+    using modern_win32::try_get_all_environment_variables;
 
-    ASSERT_TRUE(result);
-}
-
-TEST(bcrypt_random, get_bytes_returns_different_value_after_subsequent_calls)
-{
-
-    int first{};
-    int second{};
-    static_cast<void>(bcrypt_get_random_bytes(reinterpret_cast<byte*>(&first), sizeof(first)));
-    static_cast<void>(bcrypt_get_random_bytes(reinterpret_cast<byte*>(&second), sizeof(second)));
-
-    ASSERT_NE(first, second);
+    environment_map<char> env;
+    bool const success = try_get_all_environment_variables(env);
+    
+    ASSERT_TRUE(success);
 }

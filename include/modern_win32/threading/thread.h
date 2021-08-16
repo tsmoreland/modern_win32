@@ -101,6 +101,29 @@ namespace modern_win32::threading
         std::optional<std::wstring> get_name() const;
 
         /// <summary>
+        /// Retrieves the termination status of the specified thread.
+        /// </summary>
+        /// <returns>
+        /// std::optional{int} if thread was running; otherwise std::nullopt
+        /// </returns>
+        [[nodiscard]]
+        std::optional<int> exit_code() const;
+
+        /// <summary>
+        /// returns the current thread id if running; otherwise empty optional
+        /// </summary>
+        /// <returns>the current thread id if running; otherwise empty optional</returns>
+        [[nodiscard]]
+        std::optional<native_thread_id> id() const;
+
+        /// <summary>
+        /// Returns the thread id of the current thread
+        /// </summary>
+        /// <returns>thread id of the current thread</returns>
+        [[nodiscard]]
+        static native_thread_id current_thread_id() noexcept;
+
+        /// <summary>
         /// starts the thread using <paramref name="worker"/> if not already running
         /// </summary>
         /// <typeparam name="WORKER"></typeparam>
