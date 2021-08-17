@@ -148,7 +148,7 @@ namespace modern_win32::threading
 
     bool thread::is_running() const
     {
-        return exit_code().value_or(STILL_ACTIVE) == STILL_ACTIVE;
+        return static_cast<bool>(handle_) && exit_code().value_or(STILL_ACTIVE) == STILL_ACTIVE;
     }
 
     thread& thread::operator=(thread&& other) noexcept 
