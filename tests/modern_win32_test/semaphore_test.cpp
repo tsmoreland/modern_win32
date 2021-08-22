@@ -11,9 +11,9 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#pragma warning(push, 2)
+#pragma warning(disable : 26812 26495)
 #include <gtest/gtest.h>
-#pragma warning(pop)
+#pragma warning(default : 26812 26495)
 #include <modern_win32/threading/semaphore.h>
 #include "context.h"
 

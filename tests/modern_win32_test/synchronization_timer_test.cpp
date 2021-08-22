@@ -12,9 +12,9 @@
 // 
 
 
-#pragma warning(push,2)
+#pragma warning(disable : 26812 26495)
 #include <gtest/gtest.h>
-#pragma warning(pop)
+#pragma warning(default : 26812 26495)
 
 #include "timer_test.h"
 #include <chrono>
