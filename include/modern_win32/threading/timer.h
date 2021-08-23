@@ -377,8 +377,8 @@ namespace modern_win32::threading
         {
             auto const converted_time_value = value.count() * -10000;
             LARGE_INTEGER output_value;
-            output_value.LowPart = static_cast<DWORD>(converted_time_value & 0xFFFFFFFF);
-            output_value.HighPart = converted_time_value >>32;
+            output_value.LowPart = static_cast<decltype(output_value.LowPart)>(converted_time_value & 0xFFFFFFFF);
+            output_value.HighPart = static_cast<decltype(output_value.HighPart)>(converted_time_value >> 32);
             return output_value;
         }
     };
