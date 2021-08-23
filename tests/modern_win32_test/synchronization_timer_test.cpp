@@ -12,9 +12,9 @@
 // 
 
 
-#pragma warning(push,2)
+#pragma warning(disable : 26812 26495)
 #include <gtest/gtest.h>
-#pragma warning(pop)
+#pragma warning(default : 26812 26495)
 
 #include "timer_test.h"
 #include <chrono>
@@ -24,10 +24,13 @@
 #include "simple_object.h"
 
 using std::chrono::milliseconds;
+
 using modern_win32::threading::manual_reset_event;
 using modern_win32::threading::delayed_callback;
 using modern_win32::threading::synchronization_timer;
+
 using modern_win32::test::simple_object;
+using modern_win32::test::fake_timer_traits;
 
 class synchronization_timer_test : public modern_win32::test::timer_test
 {
@@ -90,6 +93,85 @@ TEST_P(synchronization_timer_test, start__throws_invalid_argument__when_poll_per
     } catch (std::invalid_argument const& e) {
         ASSERT_EQ(e.what(), std::string_view("period must be greater than or equal to zero"));
     }
+}
+
+TEST(synchronization_timer_test, stop__calls_cancel_waitable_timer__always)
+{
+    auto callback = [](int&) { /* ... */ };
+    using synchronization_timer_t = synchronization_timer<int, decltype(callback), fake_timer_traits>;
+
+    fake_timer_traits::reset();
+    synchronization_timer_t timer(callback, 3);
+
+    timer.stop();
+
+    ASSERT_EQ(fake_timer_traits::cancel_waitable_timer_call_count(), 1);
+}
+
+TEST(synchronization_timer_test, stop__returns_false__when_cancel_waitable_timer_returns_false_and_timer_is_running)
+{
+    auto callback = [](int&) { /* ... */ };
+    using synchronization_timer_t = synchronization_timer<int, decltype(callback), fake_timer_traits>;
+
+    fake_timer_traits::reset();
+    fake_timer_traits::get_cancel_waitable_timer_result() = [](fake_timer_traits::native_handle_type) {
+        return false;
+    };
+    synchronization_timer_t timer(callback, 3);
+
+    timer.start(10s, 5s);
+    auto const actual = timer.stop();
+
+    ASSERT_FALSE(actual);
+}
+
+TEST(synchronization_timer_test, stop__returns_true__when_cancel_waitable_timer_returns_true_and_timer_is_running)
+{
+    auto callback = [](int&) { /* ... */ };
+    using synchronization_timer_t = synchronization_timer<int, decltype(callback), fake_timer_traits>;
+
+    fake_timer_traits::reset();
+    fake_timer_traits::get_cancel_waitable_timer_result() = [](fake_timer_traits::native_handle_type) {
+        return true;
+    };
+    synchronization_timer_t timer(callback, 3);
+
+    timer.start(10s, 5s);
+    auto const actual = timer.stop();
+
+    ASSERT_TRUE(actual);
+}
+
+TEST(synchronization_timer_test, stop__returns_false__when_cancel_waitable_timer_returns_false_and_timer_is_not_running)
+{
+    auto callback = [](int&) { /* ... */ };
+    using synchronization_timer_t = synchronization_timer<int, decltype(callback), fake_timer_traits>;
+
+    fake_timer_traits::reset();
+    fake_timer_traits::get_cancel_waitable_timer_result() = [](fake_timer_traits::native_handle_type) {
+        return false; 
+    };
+    synchronization_timer_t timer(callback, 3);
+
+    auto const actual = timer.stop();
+
+    ASSERT_FALSE(actual);
+}
+
+TEST(synchronization_timer_test, stop__returns_true__when_cancel_waitable_timer_returns_true_and_timer_is_not_running)
+{
+    auto callback = [](int&) { /* ... */ };
+    using synchronization_timer_t = synchronization_timer<int, decltype(callback), fake_timer_traits>;
+
+    fake_timer_traits::reset();
+    fake_timer_traits::get_cancel_waitable_timer_result() = [](fake_timer_traits::native_handle_type) {
+        return true; 
+    };
+    synchronization_timer_t timer(callback, 3);
+
+    auto const actual = timer.stop();
+
+    ASSERT_TRUE(actual);
 }
 
 TEST(synchronization_timer_test, is_running__returns_false__before_start_is_called)

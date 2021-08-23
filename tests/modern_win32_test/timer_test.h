@@ -14,11 +14,9 @@
 #ifndef MODERN_WIN32_TEST_TIMER_TEST_H_
 #define MODERN_WIN32_TEST_TIMER_TEST_H_ // NOLINT(clang-diagnostic-unused-macros)
 
-#pragma warning(disable : 26812)
-#pragma warning(disable : 26495)
+#pragma warning(disable : 26812 26495)
 #include <gtest/gtest.h>
-#pragma warning(default : 26812)
-#pragma warning(default : 26495)
+#pragma warning(default : 26812 26495)
 
 #include <Windows.h>
 #include <chrono>
@@ -84,6 +82,11 @@ namespace modern_win32::test
             return value_ != 0;
         }
 
+        explicit operator bool() const 
+        {
+            return value_ != 0;
+        }
+
         [[nodiscard]]
         friend bool operator==(fake_handle const& left, fake_handle const& right)
         {
@@ -139,6 +142,18 @@ namespace modern_win32::test
         static constexpr get_create_result_type& get_create_result()
         {
             return get_create_result_;
+        }
+
+        [[nodiscard]]
+        static constexpr set_waitable_timer_type& get_set_waitable_timer_result()
+        {
+            return get_set_waitable_timer_result_;
+        }
+
+        [[nodiscard]]
+        static constexpr cancel_waitable_timer_type& get_cancel_waitable_timer_result()
+        {
+            return get_cancel_waitable_timer_result_;
         }
 
         [[nodiscard]]

@@ -132,25 +132,10 @@ namespace modern_win32::threading
                 static_cast<thread::thread_parameter>(this)));
         }
 
-        void stop()
+        [[maybe_unused]]
+        bool stop()
         {
-            std::lock_guard lock{ lock_ };
-            std::ignore = TRAITS::cancel_waitable_timer(handle_.native_handle());
-
-            stopped_ = true;
-            std::ignore = stop_event_.set();
-
-            if (!callback_thread_.has_value()) {
-                reset_stopped();
-                return;
-            }
-
-            if (thread::current_thread_id() != callback_thread_.value().id()) {
-                callback_thread_.value().join();
-                last_exit_code_ = callback_thread_.value().exit_code().value_or(0);
-                callback_thread_ = std::nullopt;
-            }
-            reset_stopped();
+            return stop(false);
         }
 
         [[nodiscard]]
@@ -202,7 +187,7 @@ namespace modern_win32::threading
 
         ~timer()
         {
-            stop();
+            stop(true);
         }
 
         timer(timer&& other) noexcept
@@ -305,6 +290,34 @@ namespace modern_win32::threading
             std::ignore = stop_event_.clear();
         }
 
+        [[maybe_unused]]
+        bool stop(bool destructing)
+        {
+            std::lock_guard lock{ lock_ };
+            if (static_cast<bool>(handle_) && !TRAITS::cancel_waitable_timer(handle_.native_handle())) {
+                if (!destructing) {
+                    return false;
+                }
+            }
+
+            stopped_ = true;
+            std::ignore = stop_event_.set();
+
+            if (!callback_thread_.has_value()) {
+                reset_stopped();
+                return true;
+            }
+
+            if (thread::current_thread_id() != callback_thread_.value().id()) {
+                callback_thread_.value().join();
+                last_exit_code_ = callback_thread_.value().exit_code().value_or(0);
+                callback_thread_ = std::nullopt;
+            }
+            reset_stopped();
+            return true;
+        }
+
+
         static void CALLBACK timer_proc(void* state, DWORD, DWORD)
         {
             
@@ -360,13 +373,12 @@ namespace modern_win32::threading
 
             return 0UL;
         }
-
         static LARGE_INTEGER to_large_integer(std::chrono::milliseconds const& value)
         {
             auto const converted_time_value = value.count() * -10000;
             LARGE_INTEGER output_value;
-            output_value.LowPart = static_cast<DWORD>(converted_time_value & 0xFFFFFFFF);
-            output_value.HighPart = converted_time_value >>32;
+            output_value.LowPart = static_cast<decltype(output_value.LowPart)>(converted_time_value & 0xFFFFFFFF);
+            output_value.HighPart = static_cast<decltype(output_value.HighPart)>(converted_time_value >> 32);
             return output_value;
         }
     };
