@@ -36,6 +36,12 @@ namespace modern_win32::threading
         static auto create(bool manual_reset) -> native_handle_type;
 
         [[nodiscard]]
+        static constexpr auto invalid() noexcept -> decltype(modern_handle_type::invalid())
+        {
+            return modern_handle_type::invalid();
+        }
+
+        [[nodiscard]]
         static auto set_waitable_timer(
             native_handle_type handle,
             LARGE_INTEGER& due_time,
@@ -156,7 +162,7 @@ namespace modern_win32::threading
             return static_cast<int>(last_exit_code_);
         }
 
-        constexpr auto native_handle() const noexcept -> TRAITS::native_handle_type const&
+        constexpr auto native_handle() const noexcept -> typename TRAITS::native_handle_type const&
         {
             return handle_.native_handle();
         }
