@@ -36,6 +36,12 @@ namespace modern_win32::threading
         static auto create(bool manual_reset) -> native_handle_type;
 
         [[nodiscard]]
+        static constexpr auto invalid() noexcept -> decltype(modern_handle_type::invalid())
+        {
+            return modern_handle_type::invalid();
+        }
+
+        [[nodiscard]]
         static auto set_waitable_timer(
             native_handle_type handle,
             LARGE_INTEGER& due_time,
@@ -156,15 +162,19 @@ namespace modern_win32::threading
             return static_cast<int>(last_exit_code_);
         }
 
+        constexpr auto native_handle() const noexcept -> typename TRAITS::native_handle_type const&
+        {
+            return handle_.native_handle();
+        }
+
         [[nodiscard]]
-        auto  get_timer_thread_id() const -> std::optional<thread::native_thread_id>
+        auto timer_thread_id() const -> std::optional<thread::native_thread_id>
         {
             std::lock_guard lock{ lock_ };
             return callback_thread_.has_value()
                 ? std::optional{ callback_thread_->id() }
                 : std::optional<thread::native_thread_id>{};
         }
-
 
         explicit timer(TIMER_CALLBACK callback, STATE const& state)
             : handle_{ TRAITS::create(MANUAL_RESET) }

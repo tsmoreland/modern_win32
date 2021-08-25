@@ -3,13 +3,13 @@ project(modern_win32 CXX)
 # Source groups
 set(source_files
     "impl/process_impl.cpp"
-	"threading/slim_lock.cpp"
+    "threading/slim_lock.cpp"
     "threading/semaphore.cpp"
     "threading/timer.cpp"
-	"threading/thread.cpp"
+    "threading/thread.cpp"
     "bcrypt_random.cpp"
     "environment.cpp"
-	"guid.cpp"
+    "guid.cpp"
     "process.cpp" 
     "process_module.cpp" 
     "wait_for.cpp"
@@ -55,9 +55,16 @@ set (PUBLIC_HEADER_FILES
 
 source_group("public header files" FILES ${PUBLIC_HEADER_FILES})
 
+add_definitions(-DVER_COMPANYNAME_STR="Terry Moreland")
+add_definitions(-DVER_FILEVERSION_STR="1,1,0.0")
+add_definitions(-DVER_PRODUCTVERSION_STR="1.0\\0")
+add_definitions(-DVER_INTERNALNAME_STR="modern win32 library")
+add_definitions(-DVER_LEGALCOPYRIGHT_STR="Copyright 2021 Terry Moreland")
+add_definitions(-DVER_PRODUCTNAME_STR="Modern WIN32 API")
+
 # Target
 
-add_library(${PROJECT_NAME} SHARED ${source_files})
+add_library(${PROJECT_NAME} SHARED ${source_files} version_info.rc)
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC        
@@ -92,8 +99,8 @@ set_target_properties(${PROJECT_NAME} PROPERTIES VS_GLOBAL_KEYWORD "Win32Proj")
 
 # Output directory
 set_target_properties(${PROJECT_NAME} PROPERTIES
-	OUTPUT_DIRECTORY_DEBUG   "${CMAKE_SOURCE_DIR}/${CMAKE_VS_PLATFORM_NAME}/$<CONFIG>/"
-	OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/${CMAKE_VS_PLATFORM_NAME}/$<CONFIG>/"
+    OUTPUT_DIRECTORY_DEBUG   "${CMAKE_SOURCE_DIR}/${CMAKE_VS_PLATFORM_NAME}/$<CONFIG>/"
+    OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/${CMAKE_VS_PLATFORM_NAME}/$<CONFIG>/"
 )
 
 if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
@@ -109,7 +116,7 @@ endif()
 
 # Include directories
 target_include_directories(${PROJECT_NAME} PUBLIC
-	"${CMAKE_CURRENT_SOURCE_DIR}/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 
 # Compile definitions

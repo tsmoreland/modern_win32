@@ -11,11 +11,9 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#pragma warning(disable : 26812)
-#pragma warning(disable : 26495)
+#pragma warning(disable : 26812 26495)
 #include <gtest/gtest.h>
-#pragma warning(default : 26812)
-#pragma warning(default : 26495)
+#pragma warning(default : 26812 26495)
 
 #include "timer_test.h"
 #include <chrono>
@@ -114,7 +112,6 @@ TEST(delayed_callback_test, stop__calls_cancel_waitable_timer__always)
 
 TEST(delayed_callback_test, stop__returns_false__when_cancel_waitable_timer_returns_false_and_timer_is_running)
 {
-
     auto callback = [](int&) { /* ... */ };
     using delayed_callback_t = delayed_callback<int, decltype(callback), fake_timer_traits>;
 
@@ -130,6 +127,54 @@ TEST(delayed_callback_test, stop__returns_false__when_cancel_waitable_timer_retu
     ASSERT_FALSE(actual);
 }
 
+TEST(delayed_callback_test, stop__returns_true__when_cancel_waitable_timer_returns_true_and_timer_is_running)
+{
+    auto callback = [](int&) { /* ... */ };
+    using delayed_callback_t = delayed_callback<int, decltype(callback), fake_timer_traits>;
+
+    fake_timer_traits::reset();
+    fake_timer_traits::get_cancel_waitable_timer_result() = [](fake_timer_traits::native_handle_type) {
+        return true;
+    };
+    delayed_callback_t timer(callback, 3);
+
+    timer.start(10s);
+    auto const actual = timer.stop();
+
+    ASSERT_TRUE(actual);
+}
+
+TEST(delayed_callback_test, stop__returns_false__when_cancel_waitable_timer_returns_false_and_timer_is_not_running)
+{
+    auto callback = [](int&) { /* ... */ };
+    using delayed_callback_t = delayed_callback<int, decltype(callback), fake_timer_traits>;
+
+    fake_timer_traits::reset();
+    fake_timer_traits::get_cancel_waitable_timer_result() = [](fake_timer_traits::native_handle_type) {
+        return false; 
+    };
+    delayed_callback_t timer(callback, 3);
+
+    auto const actual = timer.stop();
+
+    ASSERT_FALSE(actual);
+}
+
+TEST(delayed_callback_test, stop__returns_true__when_cancel_waitable_timer_returns_true_and_timer_is_not_running)
+{
+    auto callback = [](int&) { /* ... */ };
+    using delayed_callback_t = delayed_callback<int, decltype(callback), fake_timer_traits>;
+
+    fake_timer_traits::reset();
+    fake_timer_traits::get_cancel_waitable_timer_result() = [](fake_timer_traits::native_handle_type) {
+        return true; 
+    };
+    delayed_callback_t timer(callback, 3);
+
+    auto const actual = timer.stop();
+
+    ASSERT_TRUE(actual);
+}
 
 TEST(delayed_callback_test, is_running__returns_false__before_start_is_called)
 {

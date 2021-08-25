@@ -95,7 +95,7 @@ namespace modern_win32
             return handle_ != TRAITS::invalid();
         }
 
-        static constexpr auto invalid() noexcept
+        static constexpr auto invalid() noexcept -> decltype(TRAITS::invalid())
         {
             return TRAITS::invalid();
         }
