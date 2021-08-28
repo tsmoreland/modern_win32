@@ -2,6 +2,7 @@ project(modern_win32 CXX)
 
 # Source groups
 set(source_files
+    "impl/process_impl.h"
     "impl/process_impl.cpp"
     "threading/slim_lock.cpp"
     "threading/semaphore.cpp"
@@ -12,6 +13,7 @@ set(source_files
     "guid.cpp"
     "process.cpp" 
     "process_module.cpp" 
+    "version_info.h"
     "wait_for.cpp"
     "windows_error.cpp")
 
@@ -54,13 +56,6 @@ set (PUBLIC_HEADER_FILES
     "../../include/modern_win32/windows_memory.h")
 
 source_group("public header files" FILES ${PUBLIC_HEADER_FILES})
-
-add_definitions(-DVER_COMPANYNAME_STR="Terry Moreland")
-add_definitions(-DVER_FILEVERSION_STR="1,1,0.0")
-add_definitions(-DVER_PRODUCTVERSION_STR="1.0\\0")
-add_definitions(-DVER_INTERNALNAME_STR="modern win32 library")
-add_definitions(-DVER_LEGALCOPYRIGHT_STR="Copyright 2021 Terry Moreland")
-add_definitions(-DVER_PRODUCTNAME_STR="Modern WIN32 API")
 
 # Target
 
