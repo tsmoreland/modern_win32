@@ -88,11 +88,11 @@ TEST(delayed_callback_test, start__creates_new_thread__when_is_running_true)
 
     timer.start(50s);
 
-    auto const expected = timer.get_timer_thread_id();
+    auto const expected = timer.timer_thread_id();
     
     timer.start(50s);
 
-    auto const actual = timer.get_timer_thread_id();
+    auto const actual = timer.timer_thread_id();
 
     ASSERT_NE(actual.value_or(1), expected.value_or(1));
 }
@@ -201,6 +201,33 @@ TEST(delayed_callback_test, is_running__returns_false__after_stop_is_called)
     ASSERT_TRUE(!delay.is_running());
 }
 
+TEST(delayed_callback_test, native_handle__returns_valid_handle__when_constructor_does_not_throw)
+{
+    auto callback = [](int&) { /* ... */ };
+    using timer_t = delayed_callback<int, decltype(callback), fake_timer_traits>;
+
+    fake_timer_traits::reset();
+    timer_t const timer(callback, 3);
+
+    ASSERT_NE(timer.native_handle(), fake_timer_traits::invalid());
+}
+
+TEST(delayed_callback_test, timer_thread_id__has_value__when_is_running)
+{
+    delayed_callback<int> timer([](int&) { /* ... */ }, 3);
+    timer.start(100ms);
+    auto const has_value = timer.timer_thread_id().has_value();
+
+    ASSERT_TRUE(has_value);
+}
+TEST(delayed_callback_test, timer_thread_id__does_not_have_value__when_not_running)
+{
+    delayed_callback<int> const timer([](int&) { /* ... */ }, 3);
+    auto const has_value = timer.timer_thread_id().has_value();
+
+    ASSERT_FALSE(has_value);
+}
+
 TEST(delayed_callback_test, operator_equals__returns_true__when_timer_handles_equal)
 {
     fake_timer_traits::reset();
@@ -260,6 +287,5 @@ TEST(delayed_callback_test, operator_not_equals__returns_true__when_timer_handle
 
     ASSERT_TRUE(first != second);
 }
-
 
 INSTANTIATE_TEST_SUITE_P(data_driven, delayed_callback_test, testing::Values(-50ms, -100ms));

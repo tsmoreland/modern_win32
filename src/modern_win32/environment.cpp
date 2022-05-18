@@ -69,7 +69,7 @@ bool try_get_all_environment_variables(environment_map<char>& environment)
 #   define GetEnvironmentStrings GetEnvironmentStringsW  // NOLINT(cppcoreguidelines-macro-usage, clang-diagnostic-unused-macros) -- re-enabling GetEnvironmentStrings macro
 #   else 
     auto deleter = [](char* character) { FreeEnvironmentStringsA(character); };
-    auto env_block = std::unique_ptr<char, decltype(free)>{GetEnvironmentStrings(), deleter};
+    auto const env_block = std::unique_ptr<char, decltype(deleter)>{GetEnvironmentStringsA(), deleter};
 #   endif
 
     if (env_block == nullptr)

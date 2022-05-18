@@ -1,4 +1,4 @@
-set(TEST_PROJECT_NAME ${CMAKE_PROJECT_NAME}_test)
+cmake_minimum_required (VERSION 3.8)
 
 find_package(GTest REQUIRED)
 
@@ -6,8 +6,7 @@ file(GLOB_RECURSE TEST_SOURCES LIST_DIRECTORIES false *.h *.cpp)
 
 set(SOURCES ${TEST_SOURCES})
 
-add_executable(${TEST_PROJECT_NAME} ${TEST_SOURCES} 
-    "bcrypt_random_test.cpp"
+add_executable(modern_win32_test ${TEST_SOURCES} 
     "context.cpp" 
     "delayed_callback_test.cpp"
     "environment_test.cpp"
@@ -21,117 +20,29 @@ add_executable(${TEST_PROJECT_NAME} ${TEST_SOURCES}
     "timer_test.cpp"
 )
 
-add_test(NAME ${TEST_PROJECT_NAME} COMMAND ${TEST_PROJECT_NAME})
-
-if(MSVC)
-    target_compile_options(${PROJECT_NAME} PUBLIC "/Zc:__cplusplus")
-endif()
-
-if (CMAKE_CXX_STANDARD EQUAL 20)
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
-else()
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
-endif()
-
-set_target_properties(${TEST_PROJECT_NAME} PROPERTIES
-    VS_GLOBAL_KEYWORD "Win32Proj"
-)
-use_props(${TEST_PROJECT_NAME} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PROPS}")
-
 # use this if/when utils exports something
-# target_link_libraries(${TEST_PROJECT_NAME} PUBLIC ${CMAKE_PROJECT_NAME}_lib GTest::GTest GTest::Main)
-target_link_libraries(${TEST_PROJECT_NAME} PUBLIC ${CMAKE_PROJECT_NAME} GTest::GTest GTest::Main)
+target_link_libraries(modern_win32_test PUBLIC modern_win32 GTest::GTest GTest::Main)
 
-set_target_properties(${TEST_PROJECT_NAME} PROPERTIES
+set_target_properties(modern_win32_test PROPERTIES
 	INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
 )
 
-target_include_directories(${TEST_PROJECT_NAME} PUBLIC
-	"${CMAKE_CURRENT_SOURCE_DIR}/include"
+add_definitions(-DMODERN_WIN32_EXPORTS -DUNICODE -D_UNICODE)
+
+#gtest_add_tests(TARGET modern_win32_test)
+add_test(NAME modern_win32_test COMMAND modern_win32_test)
+
+
+# must be a better way to copy output but I haven't found it yet; strangely this just worked in the previous CMake setup
+add_custom_command(
+        TARGET modern_win32_test
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${CMAKE_VS_PLATFORM_NAME}-$<CONFIG>/src/modern_win32/modern_win32.dll ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${CMAKE_VS_PLATFORM_NAME}-$<CONFIG>/tests/modern_win32_test/modern_win32.dll 
+        COMMENT "Copying modern_win32.dll to modern_win32_test folder"
 )
 
-################################################################################
-# Compile definitions
-################################################################################
-if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
-    target_compile_definitions(${TEST_PROJECT_NAME} PRIVATE
-        "$<$<CONFIG:Debug>:"
-            "_DEBUG"
-        ">"
-        "$<$<CONFIG:Release>:"
-            "NDEBUG"
-        ">"
-        "_CONSOLE;"
-        "UNICODE;"
-        "_UNICODE"
-    )
-elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86" 
-       OR "${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
-    target_compile_definitions(${TEST_PROJECT_NAME} PRIVATE
-        "$<$<CONFIG:Debug>:"
-            "_DEBUG"
-        ">"
-        "$<$<CONFIG:Release>:"
-            "NDEBUG"
-        ">"
-        "WIN32;"
-        "_CONSOLE;"
-        "UNICODE;"
-        "_UNICODE"
-    )
-endif()
+set_tests_properties(modern_win32_test
+  PROPERTIES
+      ENVIRONMENT PATH="${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${CMAKE_VS_PLATFORM_NAME}-$<CONFIG>/src/modern_win32")
 
-################################################################################
-# Compile and link options
-################################################################################
-if(MSVC)
-    if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
-        target_compile_options(${TEST_PROJECT_NAME} PRIVATE
-            $<$<CONFIG:Debug>:
-                ${DEFAULT_CXX_DEBUG_RUNTIME_LIBRARY}
-            >
-            $<$<CONFIG:Release>:
-                /Oi;
-                ${DEFAULT_CXX_RUNTIME_LIBRARY};
-                /Gy
-            >
-            /permissive-;
-            /std:c++latest;
-            /sdl;
-            /W4;
-            ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT};
-            ${DEFAULT_CXX_EXCEPTION_HANDLING}
-        )
-    elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86" 
-           OR "${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")     
-        target_compile_options(${TEST_PROJECT_NAME} PRIVATE
-            $<$<CONFIG:Debug>:
-                ${DEFAULT_CXX_DEBUG_RUNTIME_LIBRARY}
-            >
-            $<$<CONFIG:Release>:
-                /Oi;
-                ${DEFAULT_CXX_RUNTIME_LIBRARY};
-                /Gy
-            >
-            /permissive-;
-            /std:c++latest;
-            /sdl;
-            /W4;
-            ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT};
-            ${DEFAULT_CXX_EXCEPTION_HANDLING}
-        )
-    endif()
 
-	target_link_options(${TEST_PROJECT_NAME} PRIVATE
-		$<$<CONFIG:Debug>:
-			/INCREMENTAL
-		>
-		$<$<CONFIG:Release>:
-			/OPT:REF;
-			/OPT:ICF;
-			/INCREMENTAL:NO
-		>
-		/DEBUG;
-		/SUBSYSTEM:CONSOLE
-	)
-endif()

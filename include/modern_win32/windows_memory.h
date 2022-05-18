@@ -12,8 +12,8 @@
 // 
 
 
-#ifndef MODERN_WIN32_WIN_MEMORY_H_
-#define MODERN_WIN32_WIN_MEMORY_H_  // NOLINT(clang-diagnostic-unused-macros)
+#ifndef MODERN_WIN32_WINDOWS_MEMORY_H_
+#define MODERN_WIN32_WINDOWS_MEMORY_H_  // NOLINT(clang-diagnostic-unused-macros)
 #ifdef _WIN32
 
 #include <Windows.h>

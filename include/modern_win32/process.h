@@ -23,7 +23,6 @@
 
 #include <chrono>
 #include <optional>
-#include <string>
 #include <Windows.h>
 
 namespace modern_win32
@@ -221,7 +220,8 @@ namespace modern_win32
     /// </returns>
     /// <exception cref="std::filesystem::filesystem_error">thrown if thte filename specified in <paramref name="startup_info"/> is not found.</exception>
     /// <exception cref="windows_exception">if there is an error in the native CreateProcess call</exception>
-    [[nodiscard]] process start_process(narrow_process_startup_info const& startup_info);
+    [[nodiscard]]
+    process start_process(narrow_process_startup_info const& startup_info);
 
     /// <summary>
     /// Starts the process resource that is specified by the parameter containing process start information

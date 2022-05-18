@@ -82,6 +82,12 @@ namespace modern_win32::test
             return value_ != 0;
         }
 
+        [[nodiscard]]
+        static constexpr auto invalid() noexcept -> native_handle_type
+        {
+            return 0;
+        }
+
         explicit operator bool() const 
         {
             return value_ != 0;
@@ -118,6 +124,12 @@ namespace modern_win32::test
     public:
         using modern_handle_type = fake_handle;
         using native_handle_type = int;
+
+        [[nodiscard]]
+        static constexpr auto invalid() -> decltype(fake_handle::invalid())
+        {
+            return fake_handle::invalid();
+        }
 
         [[nodiscard]]
         static inline auto create(bool) -> native_handle_type
