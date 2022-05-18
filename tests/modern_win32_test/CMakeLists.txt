@@ -32,8 +32,17 @@ add_definitions(-DMODERN_WIN32_EXPORTS -DUNICODE -D_UNICODE)
 #gtest_add_tests(TARGET modern_win32_test)
 add_test(NAME modern_win32_test COMMAND modern_win32_test)
 
+
+# must be a better way to copy output but I haven't found it yet; strangely this just worked in the previous CMake setup
+add_custom_command(
+        TARGET modern_win32_test
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${CMAKE_VS_PLATFORM_NAME}-$<CONFIG>/src/modern_win32/modern_win32.dll ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${CMAKE_VS_PLATFORM_NAME}-$<CONFIG>/tests/modern_win32_test/modern_win32.dll 
+        COMMENT "Copying modern_win32.dll to modern_win32_test folder"
+)
+
 set_tests_properties(modern_win32_test
   PROPERTIES
-      ENVIRONMENT PATH="${CMAKE_SOURCE_DIR}/../${CMAKE_VS_PLATFORM_NAME}/$<CONFIG>/")
+      ENVIRONMENT PATH="${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${CMAKE_VS_PLATFORM_NAME}-$<CONFIG>/src/modern_win32")
 
 
