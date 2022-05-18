@@ -2,7 +2,7 @@
 
 -----------
 
-Modern (c++17+) wrapper classes around primarily Win32 api calls to provide RAII support for
+Modern (c++20) wrapper classes around primarily Win32 api calls to provide RAII support for
 - handles including different invalid value support via traits
 - events both auto reset and manual
 - slim_lock RAII wrapper around SRWLOCK
