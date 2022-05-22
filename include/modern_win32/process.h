@@ -11,8 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#ifndef MODERN_WIN32_PROCESS_H_
-#define MODERN_WIN32_PROCESS_H_
+#ifndef MODERN_WIN32_PROCESS_H
+#define MODERN_WIN32_PROCESS_H
 #ifdef _WIN32
 
 #include <modern_win32/modern_win32_export.h>
@@ -60,8 +60,10 @@ namespace modern_win32
         process& operator=(process const&) = delete;
         process& operator=(process&& other) noexcept;
 
-        MODERN_WIN32_EXPORT friend bool operator==(process const& first, process const& second);
-        MODERN_WIN32_EXPORT friend bool operator!=(process const& first, process const& second);
+        MODERN_WIN32_EXPORT
+        friend bool operator==(process const& first, process const& second);
+        MODERN_WIN32_EXPORT
+        friend bool operator!=(process const& first, process const& second);
 
         /// <summary>
         /// Returns true if process handle is not invalid
@@ -70,7 +72,8 @@ namespace modern_win32
         explicit operator bool() const noexcept;
 
         /// <summary>swaps the value of <paramref name="lhs"/> and <paramref name="rhs"/></summary>
-        MODERN_WIN32_EXPORT friend void swap(process& first, process& second) noexcept;
+        MODERN_WIN32_EXPORT
+        friend void swap(process& first, process& second) noexcept;
 
         /// <summary>replaces the managed object</summary>
         /// <returns>true if the replacement represents a valid process; otherwise, false</returns>
@@ -187,20 +190,17 @@ namespace modern_win32
         void close() noexcept;
     };
 
-    /// <summary>
-    /// Opens an existing local process object, or throws an exception if unable to
-    /// </summary>
-    /// <param name="id">The identifier of the local process to be opened.</param>
-    /// <param name="access_rights">
-    /// The access to the process object. This access right is checked against the security
-    /// descriptor for the process. This parameter can be one or more of the <see cref="process_access_rights"/>.
-    /// </param>
-    /// <param name="inherit_handles">
-    /// If this value is true, processes created by this process will inherit the handle.
-    /// Otherwise, the processes do not inherit this handle.</param>
-    /// <returns>process instance</returns>
-    /// <exception cref="std::invalid_argument">if <paramref name="process_id"/> is 0</exception>
-    /// <exception cref="access_denied_exception">if insufficent access to open process</exception>
+    /**
+     * \brief Opens an existing local process object, or throws an exception if unable to
+     * \param id The identifier of the local process to be opened.
+     * \param access_rights The access to the process object. This access right is checked against the security
+     *                      descriptor for the process. This parameter can be one or more of the <see cref="process_access_rights"/>.
+     * \param inherit_handles  If this value is true, processes created by this process will inherit the handle.
+     *                         Otherwise, the processes do not inherit this handle.
+     * \return processs instance
+     * \exception std::invalid_argument if process_id is 0
+     * \exception access_denied_exception if insufficent access to open process
+     */
     [[nodiscard]]
     MODERN_WIN32_EXPORT
     process open_process_or_throw(process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles = false);
@@ -217,6 +217,15 @@ namespace modern_win32
     [[nodiscard]]
     MODERN_WIN32_EXPORT
     std::optional<process> open_process(process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles = false);
+
+    /**
+     * \brief opens first process matching process_name
+     * \param process_name name of the process to open
+     * \return std::optional containing the process matching process_name; otherwise, std::nullopt
+     */
+    [[nodiscard]]
+    MODERN_WIN32_EXPORT
+    std::optional<process> open_process_by_name(wchar_t const* process_name);
 
     /// <summary>
     /// Starts the process resource that is specified by the parameter containing process start information
@@ -235,6 +244,7 @@ namespace modern_win32
     /// <exception cref="std::filesystem::filesystem_error">thrown if thte filename specified in <paramref name="startup_info"/> is not found.</exception>
     /// <exception cref="windows_exception">if there is an error in the native CreateProcess call</exception>
     [[nodiscard]]
+    MODERN_WIN32_EXPORT
     process start_process(narrow_process_startup_info const& startup_info);
 
     /// <summary>
@@ -254,6 +264,7 @@ namespace modern_win32
     /// <exception cref="std::filesystem::filesystem_error">thrown if thte filename specified in <paramref name="startup_info"/> is not found.</exception>
     /// <exception cref="windows_exception">if there is an error in the native CreateProcess call</exception>
     [[nodiscard]]
+    MODERN_WIN32_EXPORT
     process start_process(wide_process_startup_info const& startup_info);
 
     /// <summary>
@@ -271,11 +282,13 @@ namespace modern_win32
     /// In this case, the started process may have activated an existing instance of itself and then exited.
     /// </returns>
     [[nodiscard]]
-    MODERN_WIN32_EXPORT process start_process(char const* filename, char const* arguments);
+    MODERN_WIN32_EXPORT
+    process start_process(char const* filename, char const* arguments);
 
     /// <summary><see cref="start(std::filesystem::path, char const*)"/></summary>
     [[nodiscard]]
-    MODERN_WIN32_EXPORT process start_process(wchar_t const* filename, wchar_t const* arguments);
+    MODERN_WIN32_EXPORT
+    process start_process(wchar_t const* filename, wchar_t const* arguments);
 
 }
 

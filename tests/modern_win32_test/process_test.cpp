@@ -22,15 +22,17 @@
 #include "context.h"
 
 #ifdef _WIN64
-auto CommandExe = R"(c:\windows\system32\cmd.exe)";
-auto TaskListExe = R"(c:\windows\system32\tasklist.exe)";
+auto command_exe = R"(c:\windows\system32\cmd.exe)";
+auto command_exe_name_wide = LR"(cmd.exe)";
+auto task_list_exe = R"(c:\windows\system32\tasklist.exe)";
 #else
-auto CommandExe = R"(c:\windows\SysWOW64\cmd.exe)";
-auto TaskListExe = R"(c:\windows\SysWOW64\tasklist.exe)";
+auto command_exe = R"(c:\windows\SysWOW64\cmd.exe)";
+auto task_list_exe = R"(c:\windows\SysWOW64\tasklist.exe)";
 #endif
 
 using modern_win32::combine;
 using modern_win32::open_process_or_throw;
+using modern_win32::open_process_by_name;
 using modern_win32::process;
 using modern_win32::process_access_rights;
 using modern_win32::start_process;
@@ -72,34 +74,34 @@ TEST(process, constructor_should_throw_file_error_when_file_not_found)
 
 TEST(process, get_process_id_should_return_process_with_id_when_file_exists)
 {
-    auto const process = start_process(TaskListExe, "");
+    auto const process = start_process(task_list_exe, "");
     auto const id = process.get_process_id();
     ASSERT_TRUE(id.has_value());
 }
 
 TEST(process, wait_for_exit_should_timeout_after_timeout_value)
 {
-    auto const process = start_process(CommandExe, "/c exit 5");
+    auto const process = start_process(command_exe, "/c exit 5");
     ASSERT_TRUE(process.wait_for_exit(milliseconds(2500)));
 }
 
 TEST(process, is_running_should_return_true_when_active)
 {
-    auto const process = start_process(CommandExe, "1");
+    auto const process = start_process(command_exe, "1");
     ASSERT_TRUE(process.is_running());
     ASSERT_TRUE(!process.has_exited());
 }
 
 TEST(process, wait_for_exit_should_report_correct_exit_code)
 {
-    auto const process = start_process(CommandExe, "/c exit 3");
+    auto const process = start_process(command_exe, "/c exit 3");
     EXPECT_TRUE(process.wait_for_exit(milliseconds(2500)));
     ASSERT_EQ(process::exit_code_type{ 3 }, process.get_exit_code());
 }
 
 TEST(process, has_exit_should_report_true_after_exit)
 {
-    auto const process = start_process(CommandExe, "/c Ping -n 2 127.0.0.1");
+    auto const process = start_process(command_exe, "/c Ping -n 2 127.0.0.1");
     EXPECT_TRUE(process.wait_for_exit(milliseconds(5000)));
     ASSERT_TRUE(process.has_exited());
     ASSERT_TRUE(!process.is_running());
@@ -107,7 +109,7 @@ TEST(process, has_exit_should_report_true_after_exit)
 
 TEST(process, wait_for_exit_should_timeout_when_waiting_too_long)
 {
-    auto const process = start_process(CommandExe, "/c Ping 127.0.0.1");
+    auto const process = start_process(command_exe, "/c Ping 127.0.0.1");
     auto const timeout = process.wait_for_exit(milliseconds(250));
 
     process.wait_for_exit();
@@ -116,7 +118,7 @@ TEST(process, wait_for_exit_should_timeout_when_waiting_too_long)
 
 TEST(process, open_process_or_throw_should_open_process_with_valid_id)
 {
-    auto const process = start_process(CommandExe, "/c Sleep 1");
+    auto const process = start_process(command_exe, "/c Sleep 1");
     auto const id = process.get_process_id().value_or(0UL);
     EXPECT_NE(0UL, id);
 
@@ -125,13 +127,14 @@ TEST(process, open_process_or_throw_should_open_process_with_valid_id)
     });
 }
 
-TEST(process, open_process_should_open_process_with_valid_id)
+TEST(process, open_process_by_name_should_open_process_with_valid_id_when_process_matching_name_exists)
 {
-    auto const process = start_process(CommandExe, "/c Sleep 1");
+    auto const process = start_process(command_exe, "/c timeout 1");
     auto const id = process.get_process_id().value_or(0UL);
     EXPECT_NE(0UL, id);
 
-    auto const opened_process = open_process(id, combine(process_access_rights::process_query_information, process_access_rights::synchronize));
+    auto const opened_process = open_process_by_name(command_exe_name_wide);
 
     ASSERT_TRUE(opened_process.has_value());
 }
+
