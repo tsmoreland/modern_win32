@@ -3,8 +3,7 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
-# define the source (cpp) files
-set(source_files
+set(public_header_files
     "../../include/modern_win32/access_denied_exception.h"
     "../../include/modern_win32/com_exception.h"
     "../../include/modern_win32/threading/event.h"
@@ -35,6 +34,10 @@ set(source_files
     "../../include/modern_win32/windows_error.h"
     "../../include/modern_win32/window_handle.h"
     "../../include/modern_win32/windows_memory.h"
+)
+
+# define the source (cpp) files
+set(source_files
 
     "impl/process_impl.h"
     "impl/process_impl.cpp"
@@ -55,7 +58,7 @@ set(source_files
 
 add_definitions(-DMODERN_WIN32_EXPORTS -DUNICODE -D_UNICODE)
 
-add_library(modern_win32 SHARED ${source_files})
+add_library(modern_win32 SHARED ${source_files} ${public_header_files})
 
 include(GenerateExportHeader)
 generate_export_header(modern_win32)
@@ -63,7 +66,7 @@ generate_export_header(modern_win32)
 set_target_properties(modern_win32 PROPERTIES EXPORT_NAME modern_win32)
 set_target_properties(modern_win32 PROPERTIES VS_GLOBAL_KEYWORD "Win32Proj")
 
-target_include_directories(${PROJECT_NAME}
+target_include_directories(modern_win32
     PUBLIC        
         $<INSTALL_INTERFACE:../../include>    
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../include>
@@ -78,5 +81,5 @@ install(TARGETS modern_win32
     RUNTIME DESTINATION lib
 )
 
-install(DIRECTORY ../../include/ DESTINATION include)
+install(FILES ${public_header_files} DESTINATION include/modern_win32)
 

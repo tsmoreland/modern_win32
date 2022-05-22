@@ -23,12 +23,13 @@
 
 #ifdef _WIN64
 auto command_exe = R"(c:\windows\system32\cmd.exe)";
-auto command_exe_name_wide = LR"(cmd.exe)";
 auto task_list_exe = R"(c:\windows\system32\tasklist.exe)";
 #else
 auto command_exe = R"(c:\windows\SysWOW64\cmd.exe)";
 auto task_list_exe = R"(c:\windows\SysWOW64\tasklist.exe)";
 #endif
+
+constexpr auto command_exe_name_wide = LR"(cmd.exe)";
 
 using modern_win32::combine;
 using modern_win32::open_process_or_throw;
