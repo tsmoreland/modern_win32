@@ -26,6 +26,7 @@
 #include <modern_win32/windows_error.h>
 #include <sstream>
 #include <vector>
+#include <iostream>
 
 namespace modern_win32 {
 
@@ -247,26 +248,26 @@ namespace modern_win32 {
         return std::nullopt;
     }
 
-    process start_process(narrow_process_startup_info const& startup_info) {
+    process start_process_or_throw(narrow_process_startup_info const& startup_info) {
         return impl::start_process<char>(startup_info);
     }
-    process start_process(wide_process_startup_info const& startup_info) {
+    process start_process_or_throw(wide_process_startup_info const& startup_info) {
         return impl::start_process<wchar_t>(startup_info);
     }
 
-    process start_process(char const* filename, char const* arguments) {
+    process start_process_or_throw(char const* filename, char const* arguments) {
         process_startup_info<char> const startup_info =
             narrow_process_startup_info_builder().with_filename(filename).with_arguments(arguments).build();
-        return start_process(startup_info);
+        return start_process_or_throw(startup_info);
     }
 
-    process start_process(wchar_t const* filename, wchar_t const* arguments) {
+    process start_process_or_throw(wchar_t const* filename, wchar_t const* arguments) {
         process_startup_info<wchar_t> const startup_info =
             wide_process_startup_info_builder().with_filename(filename).with_arguments(arguments).build();
-        return start_process(startup_info);
+        return start_process_or_throw(startup_info);
     }
 
-    [[nodiscard]] std::vector<process_id_type> get_all_proccess_ids() {
+    [[nodiscard]] std::vector<process_id_type> get_proccess_ids() {
         DWORD number_of_processes{0};
         size_t size = 0;
 
@@ -292,12 +293,19 @@ namespace modern_win32 {
             pids.push_back(processes[index]);
         }
 
+#if _DEBUG
+        std::ranges::sort(pids);
+
+#endif
+
         return pids;
     }
 
     std::optional<process> open_process_by_name(wchar_t const* process_name) {
         std::wstring_view process_name_view{process_name, wcsnlen_s(process_name, 512)};
-        std::vector<process_id_type> const processes{get_all_proccess_ids()};
+        std::vector const processes{get_proccess_ids()};
+
+        std::cout << processes.size() << std::endl;
 
         std::locale const current{};
 

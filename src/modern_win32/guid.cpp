@@ -77,15 +77,15 @@ namespace modern_win32 {
     }
 
     std::wstring to_wstring(guid const& uid) {
-        constexpr int NULL_TERMINATOR_SIZE = 1;
-        constexpr auto GUID_LENGTH         = static_cast<std::wstring::size_type>(36);
+        constexpr int null_terminator_size = 1;
+        constexpr auto guid_length         = static_cast<std::wstring::size_type>(36);
 
-        constexpr auto SIZE = std::size(L"{00000000-0000-0000-0000-000000000000}") + NULL_TERMINATOR_SIZE;
-        wchar_t buffer[SIZE];
-        if (StringFromGUID2(uid.get(), buffer, static_cast<int>(SIZE)) == 0)
+        constexpr auto size = std::size(L"{00000000-0000-0000-0000-000000000000}") + null_terminator_size;
+        wchar_t buffer[size];
+        if (StringFromGUID2(uid.get(), buffer, static_cast<int>(size)) == 0)
             return L"********-****-****-****-************";
 
-        return std::wstring(buffer + 1, GUID_LENGTH);
+        return std::wstring(buffer + 1, guid_length);
     }
     std::string to_string(guid const& uid) {
         auto value = to_wstring(uid);

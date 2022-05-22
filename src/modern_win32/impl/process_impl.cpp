@@ -63,20 +63,20 @@ namespace modern_win32::impl {
         // getting the raw value
         switch (native_priority) {
         case to_native_enum_value(process_priority::above_normal):
-            return std::optional(process_priority::above_normal);
+            return {process_priority::above_normal};
 
         case to_native_enum_value(process_priority::below_normal):
-            return std::optional(process_priority::below_normal);
+            return {process_priority::below_normal};
 
         case to_native_enum_value(process_priority::idle):
-            return std::optional(process_priority::idle);
+            return {process_priority::idle};
 
         case to_native_enum_value(process_priority::realtime):
-            return std::optional(process_priority::realtime);
+            return {process_priority::realtime};
 
         case to_native_enum_value(process_priority::normal):
         default:
-            return std::optional(process_priority::normal);
+            return {process_priority::normal};
         }
     }
 

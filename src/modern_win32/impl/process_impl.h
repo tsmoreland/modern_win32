@@ -28,7 +28,7 @@
 namespace modern_win32::impl {
     template <typename ENUM_TYPE>
     constexpr auto to_native_enum_value(ENUM_TYPE const& enum_value) {
-        return static_cast<typename std::underlying_type<ENUM_TYPE>::type>(enum_value);
+        return static_cast<std::underlying_type_t<ENUM_TYPE>>(enum_value);
     }
 
     using running_details = std::tuple<bool, process::exit_code_type>;
@@ -102,10 +102,10 @@ namespace modern_win32::impl {
 
     template <typename TCHAR>
     [[nodiscard]] process start_process(process_startup_info<TCHAR> const& startup_info) {
-        std::filesystem::path const filename(startup_info.filename);
-        if (!exists(filename))
+        if (std::filesystem::path const filename(startup_info.filename); !exists(filename)) {
             throw std::filesystem::filesystem_error("filename not found",
                 std::error_code(static_cast<int>(windows_error::error_file_not_found), std::iostream_category()));
+        }
 
         auto command_buffer = startup_info.build_command_buffer();
 
