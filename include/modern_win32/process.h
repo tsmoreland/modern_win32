@@ -188,7 +188,7 @@ namespace modern_win32
     };
 
     /// <summary>
-    /// Opens an existing local process object.
+    /// Opens an existing local process object, or throws an exception if unable to
     /// </summary>
     /// <param name="id">The identifier of the local process to be opened.</param>
     /// <param name="access_rights">
@@ -198,11 +198,25 @@ namespace modern_win32
     /// <param name="inherit_handles">
     /// If this value is true, processes created by this process will inherit the handle.
     /// Otherwise, the processes do not inherit this handle.</param>
-    /// <returns></returns>
+    /// <returns>process instance</returns>
     /// <exception cref="std::invalid_argument">if <paramref name="process_id"/> is 0</exception>
     /// <exception cref="access_denied_exception">if insufficent access to open process</exception>
     [[nodiscard]]
-    MODERN_WIN32_EXPORT process open_process(process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles = false);
+    MODERN_WIN32_EXPORT
+    process open_process_or_throw(process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles = false);
+
+    /**
+     * \brief Opens an existing local process object or an empty optional
+     * \param id The identifier of the local process to be opened.
+     * \param access_rights The access to the process object. This access right is checked against the security
+     *                      descriptor for the process. This parameter can be one or more of the <see cref="process_access_rights"/>.
+     * \param inherit_handles  If this value is true, processes created by this process will inherit the handle.
+     *                         Otherwise, the processes do not inherit this handle.</param>
+     * \return process if able to open or empty optional
+     */
+    [[nodiscard]]
+    MODERN_WIN32_EXPORT
+    std::optional<process> open_process(process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles = false);
 
     /// <summary>
     /// Starts the process resource that is specified by the parameter containing process start information

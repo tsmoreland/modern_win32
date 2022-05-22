@@ -30,7 +30,7 @@ auto TaskListExe = R"(c:\windows\SysWOW64\tasklist.exe)";
 #endif
 
 using modern_win32::combine;
-using modern_win32::open_process;
+using modern_win32::open_process_or_throw;
 using modern_win32::process;
 using modern_win32::process_access_rights;
 using modern_win32::start_process;
@@ -114,12 +114,24 @@ TEST(process, wait_for_exit_should_timeout_when_waiting_too_long)
     ASSERT_FALSE(timeout);
 }
 
+TEST(process, open_process_or_throw_should_open_process_with_valid_id)
+{
+    auto const process = start_process(CommandExe, "/c Sleep 1");
+    auto const id = process.get_process_id().value_or(0UL);
+    EXPECT_NE(0UL, id);
+
+    ASSERT_NO_THROW({
+        std::ignore = open_process_or_throw(id, combine(process_access_rights::process_query_information, process_access_rights::synchronize));
+    });
+}
+
 TEST(process, open_process_should_open_process_with_valid_id)
 {
     auto const process = start_process(CommandExe, "/c Sleep 1");
     auto const id = process.get_process_id().value_or(0UL);
     EXPECT_NE(0UL, id);
 
-    auto opened_process = open_process(id, combine(process_access_rights::process_query_information, process_access_rights::synchronize));
+    auto const opened_process = open_process(id, combine(process_access_rights::process_query_information, process_access_rights::synchronize));
 
+    ASSERT_TRUE(opened_process.has_value());
 }

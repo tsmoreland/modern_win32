@@ -239,7 +239,7 @@ namespace modern_win32
 
         std::vector<process_module> modules;
 
-        std::unique_ptr<HMODULE[]> const module_handles = std::make_unique<HMODULE[]>(max_count);
+        auto const module_handles = std::make_unique<HMODULE[]>(max_count);
         DWORD bytes_required;
         if (EnumProcessModules(handle_.native_handle(), module_handles.get(), max_count*sizeof(HMODULE), &bytes_required) == 0) {
             throw windows_exception();
@@ -256,15 +256,12 @@ namespace modern_win32
         return modules;
     }
 
-    process open_process(process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles)
+    process open_process_or_throw(process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles /* = false */)
     {
-        process process{id, access_rights, inherit_handles};
-
-        if (static_cast<bool>(process))
+        if (process process{id, access_rights, inherit_handles}; static_cast<bool>(process))
             return process;
 
-        windows_error_details const error{};
-        switch (error) {  // NOLINT(clang-diagnostic-switch-enum)
+        switch (windows_error_details const error{}) {  // NOLINT(clang-diagnostic-switch-enum)
         case windows_error::error_invalid_parameter:
             throw std::invalid_argument("invalid process id");
         case windows_error::error_access_denied:
@@ -274,23 +271,31 @@ namespace modern_win32
         }
     }
 
-process start_process(narrow_process_startup_info const& startup_info)
-{
-    return impl::start_process<char>(startup_info);
-}
-process start_process(wide_process_startup_info const& startup_info)
-{
-    return impl::start_process<wchar_t>(startup_info);
-}
+    std::optional<process> open_process(process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles /* = false */)
+    {
+        if (process process{ id, access_rights, inherit_handles }; static_cast<bool>(process))
+            return std::make_optional(std::move(process));
 
-process start_process(char const* filename, char const* arguments)
-{
-    auto const startup_info = narrow_process_startup_info_builder()
-        .with_filename(filename)
-        .with_arguments(arguments)
-        .build();
-    return start_process(startup_info);
-}
+        return std::nullopt;
+    }
+
+    process start_process(narrow_process_startup_info const& startup_info)
+    {
+        return impl::start_process<char>(startup_info);
+    }
+    process start_process(wide_process_startup_info const& startup_info)
+    {
+        return impl::start_process<wchar_t>(startup_info);
+    }
+
+    process start_process(char const* filename, char const* arguments)
+    {
+        process_startup_info<char> const startup_info = narrow_process_startup_info_builder()
+            .with_filename(filename)
+            .with_arguments(arguments)
+            .build();
+        return start_process(startup_info);
+    }
 
     process start_process(wchar_t const* filename, wchar_t const* arguments)
     {
@@ -300,6 +305,63 @@ process start_process(char const* filename, char const* arguments)
             .build();
         return start_process(startup_info);
 
+    }
+
+    [[nodiscard]]
+    std::pair<std::vector<process_id_type>, size_t> get_all_proccess_ids()
+    {
+        DWORD number_of_processes{ 0 };
+        size_t size = 0;
+
+        std::unique_ptr<DWORD[]> processes{};
+        do {
+            size += 1024;
+
+            processes.reset(new DWORD[size]);
+
+            DWORD needed{};
+            if (!EnumProcesses(processes.get(), sizeof(processes), &needed)) {
+                break;
+            }
+
+            number_of_processes = needed / sizeof(DWORD);
+
+        } while (number_of_processes == size);
+
+        std::vector<process_id_type> pids(number_of_processes);
+        for (decltype(number_of_processes) index = 0; index < number_of_processes; index++) {
+            pids.push_back(processes[index]);
+        }
+
+        return std::make_pair(std::move(pids), number_of_processes);
+    }
+
+
+
+    std::optional<process> get_process_by_name(wchar_t const* process_name)
+    {
+        std::wstring_view process_name_view{ process_name, wcsnlen_s(process_name, 512) };
+        auto [processes, number_of_processes] = get_all_proccess_ids();
+
+        std::locale const current{};
+        for (unsigned int index = 0; index < number_of_processes; index++) {
+            if (processes[index] != 0) {
+                std::optional<process> proc = open_process(processes[index], combine(process_access_rights::process_query_information, process_access_rights::process_vm_read));
+                if (!proc.has_value()) {
+                    continue;
+                }
+
+                if (std::ranges::equal(process_name_view, proc.value().get_primary_module().get_name(),
+                    [&current = std::as_const(current)](auto const& left, auto const& right) {
+                        return std::toupper(left, current) == std::toupper(right, current);
+                    })) {
+
+                    return proc;
+                }
+            }
+        }
+
+        return std::nullopt;
     }
 
 }
