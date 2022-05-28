@@ -363,3 +363,5 @@ FodyWeavers.xsd
 
 [Oo]ut/
 [Bb]uild/
+
+.idea/
