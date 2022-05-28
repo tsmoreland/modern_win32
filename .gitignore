@@ -365,3 +365,4 @@ FodyWeavers.xsd
 [Bb]uild/
 
 .idea/
+cmake-build-*
