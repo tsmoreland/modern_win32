@@ -222,7 +222,7 @@ StatementMacros:
 # TabWidth:        8
 # UseCRLF:         false
 UseCRLF:         true
-# UseTab:          Never
+UseTab:          Never
 # WhitespaceSensitiveMacros:
 #   - STRINGIZE
 #   - PP_STRINGIZE

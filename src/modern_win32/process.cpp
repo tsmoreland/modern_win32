@@ -17,6 +17,7 @@
 #include "impl/process_impl.h"
 #include <Psapi.h>
 #include <filesystem>
+#include <iostream>
 #include <modern_win32/access_denied_exception.h>
 #include <modern_win32/process.h>
 #include <modern_win32/process_enums.h>
@@ -26,7 +27,6 @@
 #include <modern_win32/windows_error.h>
 #include <sstream>
 #include <vector>
-#include <iostream>
 
 namespace modern_win32 {
 

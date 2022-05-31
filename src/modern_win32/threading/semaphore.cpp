@@ -20,8 +20,7 @@
 namespace modern_win32::threading {
     auto semaphore_traits::create(int const initial_count, int const maximum_count) -> native_handle_type {
 
-        if (auto const handle = CreateSemaphoreA(nullptr, initial_count, maximum_count, nullptr); 
-            handle != nullptr) {
+        if (auto const handle = CreateSemaphoreA(nullptr, initial_count, maximum_count, nullptr); handle != nullptr) {
             return handle;
         }
 

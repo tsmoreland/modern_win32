@@ -14,7 +14,6 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#include <Windows.h>
 #include <memory>
 #include <modern_win32/environment.h>
 #include <modern_win32/string.h>
@@ -22,6 +21,8 @@
 #include <processenv.h>
 #include <string>
 #include <string_view>
+
+#include <Windows.h>
 
 
 namespace modern_win32 {

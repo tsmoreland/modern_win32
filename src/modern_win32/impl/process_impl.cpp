@@ -24,7 +24,8 @@ namespace modern_win32::impl {
     [[nodiscard]] running_details get_running_details(process::native_handle_type const process_handle) {
         process::exit_code_type exit_code{};
 
-        if (auto const get_exit_process_success = GetExitCodeProcess(process_handle, &exit_code); !get_exit_process_success) {
+        if (auto const get_exit_process_success = GetExitCodeProcess(process_handle, &exit_code);
+            !get_exit_process_success) {
             throw windows_exception("Unable to get exit code for the requested process");
         }
 
