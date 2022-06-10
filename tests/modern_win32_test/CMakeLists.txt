@@ -24,7 +24,7 @@ add_executable(modern_win32_test ${TEST_SOURCES}
 target_link_libraries(modern_win32_test PUBLIC modern_win32 GTest::GTest GTest::Main)
 
 set_target_properties(modern_win32_test PROPERTIES
-	INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
+    INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
 )
 
 add_definitions(-DMODERN_WIN32_EXPORTS -DUNICODE -D_UNICODE)
@@ -35,10 +35,10 @@ add_test(NAME modern_win32_test COMMAND modern_win32_test)
 
 # must be a better way to copy output but I haven't found it yet; strangely this just worked in the previous CMake setup
 add_custom_command(
-        TARGET modern_win32_test
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${CMAKE_VS_PLATFORM_NAME}-$<CONFIG>/src/modern_win32/modern_win32.dll ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${CMAKE_VS_PLATFORM_NAME}-$<CONFIG>/tests/modern_win32_test/modern_win32.dll 
-        COMMENT "Copying modern_win32.dll to modern_win32_test folder"
+	TARGET modern_win32_test
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${CMAKE_VS_PLATFORM_NAME}-$<CONFIG>/src/modern_win32/modern_win32.dll ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${CMAKE_VS_PLATFORM_NAME}-$<CONFIG>/tests/modern_win32_test/modern_win32.dll 
+	COMMENT "Copying modern_win32.dll to modern_win32_test folder"
 )
 
 set_tests_properties(modern_win32_test
