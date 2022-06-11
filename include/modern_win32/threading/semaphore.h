@@ -134,75 +134,15 @@ namespace modern_win32::threading {
         semaphore(semaphore const&) = delete;
         semaphore& operator=(semaphore const&) = delete;
 
-#if __cplusplus > 201703L
         [[nodiscard]] auto operator<=>(semaphore const& other) {
             return handle_ <=> other.handle_;
         }
-
-#else
-        [[nodiscard]] bool operator<(semaphore const& other) {
-            return handle_ < other.handle_;
-        }
-
-        [[nodiscard]] bool operator<=(semaphore const& other) {
-            return !(other.handle_ < handle_);
-        }
-
-        [[nodiscard]] bool operator>(semaphore const& other) {
-            return other.handle_ < handle_;
-        }
-
-        [[nodiscard]] bool operator>=(semaphore const& other) {
-            return !(handle_ < other.handle_);
-        }
-
-        [[nodiscard]] bool operator==(semaphore const& other) {
-            return handle_ == other.handle_;
-        }
-
-        [[nodiscard]] bool operator!=(semaphore const& other) {
-            return !(handle_ == other.handle_);
-        }
-#endif
     };
 
-#if __cplusplus > 201703L
     template <typename TRAITS = semaphore_traits>
     [[nodiscard]] auto operator<=>(semaphore<TRAITS> const& lhs, semaphore<TRAITS> const& rhs) {
         return lhs.operator<=>(rhs);
     }
-
-#else
-    template <typename TRAITS = semaphore_traits>
-    [[nodiscard]] bool operator<(semaphore<TRAITS> const& lhs, semaphore<TRAITS> const& rhs) {
-        return lhs.operator<(rhs);
-    }
-
-    template <typename TRAITS = semaphore_traits>
-    [[nodiscard]] bool operator<=(semaphore<TRAITS> const& lhs, semaphore<TRAITS> const& rhs) {
-        return lhs.operator<=(rhs);
-    }
-
-    template <typename TRAITS = semaphore_traits>
-    [[nodiscard]] bool operator>(semaphore<TRAITS> const& lhs, semaphore<TRAITS> const& rhs) {
-        return lhs.operator>(rhs);
-    }
-
-    template <typename TRAITS = semaphore_traits>
-    [[nodiscard]] bool operator>=(semaphore<TRAITS> const& lhs, semaphore<TRAITS> const& rhs) {
-        return lhs.operator>=(rhs);
-    }
-
-    template <typename TRAITS = semaphore_traits>
-    [[nodiscard]] bool operator==(semaphore<TRAITS> const& lhs, semaphore<TRAITS> const& rhs) {
-        return lhs.operator==(rhs);
-    }
-
-    template <typename TRAITS = semaphore_traits>
-    [[nodiscard]] bool operator!=(semaphore<TRAITS> const& lhs, semaphore<TRAITS> const& rhs) {
-        return lhs.operator!=(rhs);
-    }
-#endif
 
     /// <summary>
     /// Swaps the values lhs and rhs.

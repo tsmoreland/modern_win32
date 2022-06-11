@@ -14,8 +14,8 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef MODERN_WIN32_SHARED_CASE_INSENSITIVE_CHARACTER_TRAITS_
-#define MODERN_WIN32_SHARED_CASE_INSENSITIVE_CHARACTER_TRAITS_ // NOLINT(clang-diagnostic-unused-macros)
+#ifndef MODERN_WIN32_SHARED_CASE_INSENSITIVE_CHARACTER_TRAITS
+#define MODERN_WIN32_SHARED_CASE_INSENSITIVE_CHARACTER_TRAITS 
 
 #include <string>
 #include <string_view>
@@ -58,12 +58,10 @@ namespace modern_win32::shared {
 
     private:
         static int to_upper(int ch) {
-#if __cplusplus > 201703L
             static_assert(
                 !std::is_same_v<TCHARACTER,
                     char8_t> && !std::is_same_v<TCHARACTER, char16_t> && !std::is_same_v<TCHARACTER, char32_t>,
                 "unicode strings not supported due to lack of toupper method");
-#endif
 
             if constexpr (std::is_same_v<TCHARACTER, wchar_t>) {
                 return static_cast<int>(towupper(static_cast<wint_t>(ch)));

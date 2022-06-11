@@ -66,6 +66,25 @@ generate_export_header(modern_win32)
 set_target_properties(modern_win32 PROPERTIES EXPORT_NAME modern_win32)
 set_target_properties(modern_win32 PROPERTIES VS_GLOBAL_KEYWORD "Win32Proj")
 
+if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC" AND CMAKE_BUILD_TYPE MATCHES "Release")
+   target_compile_options(modern_win32 PRIVATE /Zi)
+
+   # Tell linker to include symbol data
+    set_target_properties(modern_win32 PROPERTIES 
+        LINK_FLAGS "/INCREMENTAL:NO /DEBUG /OPT:REF /OPT:ICF"
+    )
+
+    # Set file name & location
+    set_target_properties(modern_win32 PROPERTIES 
+        COMPILE_PDB_NAME modern_win32 
+        COMPILE_PDB_OUTPUT_DIR ${CMAKE_BINARY_DIR}
+    )
+endif()
+
+set_property(TARGET modern_win32 PROPERTY
+  MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+
 target_include_directories(modern_win32
     PUBLIC        
         $<INSTALL_INTERFACE:../../include>    
@@ -80,6 +99,7 @@ install(TARGETS modern_win32
     ARCHIVE DESTINATION lib
     RUNTIME DESTINATION lib
 )
+install(FILES $<TARGET_PDB_FILE:modern_win32> DESTINATION lib)
 
 install(FILES ${public_header_files} DESTINATION include/modern_win32)
 

@@ -217,26 +217,9 @@ namespace modern_win32::threading {
             swap(stop_event_, other.stop_event_);
         }
 
-#if __cplusplus > 201703L
         friend auto operator<=>(timer const& first, timer const& second) noexcept {
             return first.handle_ <=> second.handle_;
         }
-
-#else
-        friend bool operator<(timer const& first, timer const& second) {
-            return first.handle_ < second.handle_;
-        }
-        friend bool operator>(timer const& first, timer const& second) {
-            return first.handle_ > second.handle_;
-        }
-        friend bool operator<=(timer const& first, timer const& second) {
-            return first.handle_ <= second.handle_;
-        }
-        friend bool operator>=(timer const& first, timer const& second) {
-            return first.handle_ >= second.handle_;
-        }
-
-#endif
 
         friend static bool operator==(timer const& first, timer const& second) {
             return first.handle_ == second.handle_;
