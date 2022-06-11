@@ -41,7 +41,7 @@ namespace modern_win32::threading {
         }
 
         [[nodiscard]] static auto set_waitable_timer(native_handle_type handle, LARGE_INTEGER& due_time, LONG period,
-            _In_opt_ PTIMERAPCROUTINE callback, void* state, bool const restore) -> bool;
+            _In_opt_ PTIMERAPCROUTINE callback, void* state, bool restore) -> bool;
 
         [[nodiscard]] static bool cancel_waitable_timer(native_handle_type handle);
     };
@@ -170,7 +170,7 @@ namespace modern_win32::threading {
         timer(timer&& other) noexcept
             : handle_{other.handle_.release()}, callback_{other.callback_}, state_{(other.state_)},
               callback_thread_{std::move(other.callback_thread_)}, timer_settings_{std::move(other.timer_settings_)},
-              stopped_{other.stopped_.load()}, lock_{}, stop_event_{std::move(other.stop_event_)} {
+              stopped_{other.stopped_.load()}, stop_event_{std::move(other.stop_event_)} {
             other.stopped_ = true;
         }
         timer& operator=(timer&& other) noexcept {

@@ -14,8 +14,8 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef MODERN_WIN32_THREADING_THREAD_H_
-#define MODERN_WIN32_THREADING_THREAD_H_
+#ifndef MODERN_WIN32_THREADING_THREAD_H
+#define MODERN_WIN32_THREADING_THREAD_H
 #ifdef _WIN32
 
 #include <chrono>
@@ -38,7 +38,7 @@ namespace modern_win32::threading {
     /// <returns>true on success; otherwise, false</returns>
     /// <remarks>only works on Windows Server 2016+ or Windows 10 1607+</remarks>
     [[nodiscard]] MODERN_WIN32_EXPORT bool set_thread_name(
-        thread_handle::native_handle_type const handle, wchar_t const* name);
+        thread_handle::native_handle_type handle, wchar_t const* name);
 
     /// <summary>
     /// Sets the description (or name) of the thread represented by this objet to <parmref name="name"/>
@@ -47,8 +47,7 @@ namespace modern_win32::threading {
     /// <param name="name">the name to apply to the thread represented by this object</param>
     /// <returns>true on success; otherwise, false</returns>
     /// <remarks>only works on Windows Server 2016+ or Windows 10 1607+</remarks>
-    [[nodiscard]] MODERN_WIN32_EXPORT bool set_thread_name(
-        thread_handle::native_handle_type const handle, char const* name);
+    [[nodiscard]] MODERN_WIN32_EXPORT bool set_thread_name(thread_handle::native_handle_type handle, char const* name);
 
     /// <summary>
     /// returns the current name for the thread represented by this object
@@ -57,7 +56,7 @@ namespace modern_win32::threading {
     /// <returns>optional containing the thread name on success; otherwise <see cref="std::nullopt"/></returns>
     /// <remarks>only works on Windows Server 2016+ or Windows 10 1607+</remarks>
     [[nodiscard]] MODERN_WIN32_EXPORT std::optional<std::wstring> get_thread_name(
-        thread_handle::native_handle_type const handle);
+        thread_handle::native_handle_type handle);
 
     class MODERN_WIN32_EXPORT thread final {
     public:
@@ -130,8 +129,8 @@ namespace modern_win32::threading {
         /// </remarks>
         template <typename WORKER>
         [[nodiscard]] bool start_stateless(WORKER worker) {
-            static_assert(std::is_convertible_v<decltype(worker), thread_worker>,
-                "WORKER must be assignable to thread_worker");
+            static_assert(
+                std::is_convertible_v<decltype(worker), thread_worker>, "WORKER must be assignable to thread_worker");
             if (is_running() || thread_start_ != nullptr)
                 return false;
             return handle_.reset(CreateThread(nullptr, 0, thread_adapter, static_cast<thread_worker>(worker), 0,
@@ -223,7 +222,7 @@ namespace modern_win32::threading {
     /// <returns>the running thread</returns>
     /// <exception cref="windows_exception">thrown if unable to create thread</exception>
     [[nodiscard]] MODERN_WIN32_EXPORT thread start_thread(
-        thread::thread_proc const worker, thread::thread_parameter parameter);
+        thread::thread_proc worker, thread::thread_parameter parameter);
 
     /// <summary>
     /// starts the thread using <paramref name="worker"/> if not already running
@@ -235,7 +234,7 @@ namespace modern_win32::threading {
     /// thread does not maintain lifetime of thread_start it is up to the caller to ensure that object exists until the
     /// thread completes
     /// </remarks>
-    [[nodiscard]] MODERN_WIN32_EXPORT thread start_thread(thread_start* const worker);
+    [[nodiscard]] MODERN_WIN32_EXPORT thread start_thread(thread_start* worker);
 
 } // namespace modern_win32::threading
 

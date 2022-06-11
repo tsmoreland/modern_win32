@@ -26,6 +26,7 @@ namespace modern_win32::threading {
         return handle;
     }
 
+    // ReSharper disable once CppParameterMayBeConstPtrOrRef
     auto timer_traits::set_waitable_timer(native_handle_type handle, LARGE_INTEGER& due_time, LONG period,
         _In_opt_ PTIMERAPCROUTINE callback, void* state, bool const restore) -> bool {
         return SetWaitableTimer(handle, &due_time, period, callback, state, restore ? TRUE : FALSE) == TRUE;

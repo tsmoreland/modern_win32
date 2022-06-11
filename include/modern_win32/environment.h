@@ -14,13 +14,14 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef MODERN_WIN32_ENVIRONMENT_H_
-#define MODERN_WIN32_ENVIRONMENT_H_
+#ifndef MODERN_WIN32_ENVIRONMENT_H
+#define MODERN_WIN32_ENVIRONMENT_H
 #ifdef _WIN32
 
 #include <map>
 #include <modern_win32/modern_win32_export.h>
 #include <string>
+
 
 namespace modern_win32 {
     template <typename TCHAR>

@@ -14,6 +14,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+// ReSharper disable CppParameterMayBeConst
 #include <modern_win32/module_handle.h>
 #include <modern_win32/string.h>
 #include <modern_win32/threading/thread.h>
@@ -74,14 +75,14 @@ namespace modern_win32::threading {
         return GetCurrentThreadId();
     }
 
-    thread start_thread(thread::thread_proc const worker, thread::thread_parameter parameter) {
+    thread start_thread(thread::thread_proc worker, thread::thread_parameter parameter) {
         thread new_thread;
         if (!new_thread.start(worker, parameter))
             throw windows_exception();
         return new_thread;
     }
 
-    thread start_thread(thread_start* const worker) {
+    thread start_thread(thread_start* worker) {
         thread new_thread;
         if (!new_thread.start(worker))
             throw windows_exception();
@@ -155,8 +156,8 @@ namespace modern_win32::threading {
         return 0;
     }
 
-    bool set_thread_name(thread_handle::native_handle_type const handle, wchar_t const* name) {
-        using set_thread_description_delegate = HRESULT (WINAPI *)(HANDLE, PCWSTR);
+    bool set_thread_name(thread_handle::native_handle_type handle, wchar_t const* name) {
+        using set_thread_description_delegate = HRESULT(WINAPI*)(HANDLE, PCWSTR);
         auto const maybe_kernel_base          = get_module("KernelBase.dll");
         if (!maybe_kernel_base.has_value())
             return false;
@@ -166,8 +167,9 @@ namespace modern_win32::threading {
         if (!static_cast<bool>(kernel_base))
             return false;
 
-        auto const set_name_delegate = reinterpret_cast<set_thread_description_delegate>(  // NOLINT(clang-diagnostic-cast-function-type)
-            GetProcAddress(kernel_base.native_handle(), "SetThreadDescription"));
+        auto const set_name_delegate =
+            reinterpret_cast<set_thread_description_delegate>( // NOLINT(clang-diagnostic-cast-function-type)
+                GetProcAddress(kernel_base.native_handle(), "SetThreadDescription"));
         if (set_name_delegate == nullptr)
             return false;
 
@@ -186,9 +188,10 @@ namespace modern_win32::threading {
         if (!maybe_kernel_base.has_value())
             return std::nullopt;
 
-        auto const& kernel_base      = maybe_kernel_base.value();
-        auto const get_name_delegate = reinterpret_cast<get_thread_description_delegate>(  // NOLINT(clang-diagnostic-cast-function-type)
-            GetProcAddress(kernel_base.native_handle(), "GetThreadDescription"));
+        auto const& kernel_base = maybe_kernel_base.value();
+        auto const get_name_delegate =
+            reinterpret_cast<get_thread_description_delegate>( // NOLINT(clang-diagnostic-cast-function-type)
+                GetProcAddress(kernel_base.native_handle(), "GetThreadDescription"));
         if (get_name_delegate == nullptr)
             return std::nullopt;
 

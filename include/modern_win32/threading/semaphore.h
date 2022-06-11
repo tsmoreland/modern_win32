@@ -32,7 +32,7 @@ namespace modern_win32::threading {
         using modern_handle_type = modern_win32::null_handle;
         using native_handle_type = modern_win32::null_handle::native_handle_type;
 
-        [[nodiscard]] static auto create(int const initial_count, int const maximum_count) -> native_handle_type;
+        [[nodiscard]] static auto create(int initial_count, int maximum_count) -> native_handle_type;
 
         [[nodiscard]] static auto release(modern_handle_type handle, int count) -> bool;
     };

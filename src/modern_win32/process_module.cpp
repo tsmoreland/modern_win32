@@ -15,6 +15,7 @@
 //
 
 #include "modern_win32/process_module.h"
+#include "modern_win32/windows_exception.h"
 
 #include <Psapi.h>
 #include <memory>

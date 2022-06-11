@@ -23,8 +23,6 @@
 #include <string>
 #include <string_view>
 
-#include <Windows.h>
-
 
 namespace modern_win32 {
 

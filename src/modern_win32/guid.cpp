@@ -33,7 +33,7 @@ namespace modern_win32 {
         return output;
     }
 
-    guid::guid() : value_{} {
+    guid::guid() {
         if (auto const hr = CoCreateGuid(&value_); FAILED(hr))
             throw com_exception(hr);
     }

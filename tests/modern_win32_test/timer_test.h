@@ -110,7 +110,7 @@ namespace modern_win32::test
     {
         // destruction of these may not be realiable as they're static but it's for unit testing purposes only so we'll ignore for now
         using get_create_result_type = std::function<int()>;
-        using set_waitable_timer_type = std::function<bool(int, LARGE_INTEGER&, LONG, PTIMERAPCROUTINE, void*, bool const)>;
+        using set_waitable_timer_type = std::function<bool(int, LARGE_INTEGER&, LONG, PTIMERAPCROUTINE, void*, bool)>;
         using cancel_waitable_timer_type = std::function<bool(int)>;
 
         static get_create_result_type get_create_result_;
@@ -145,7 +145,7 @@ namespace modern_win32::test
             LONG,
             _In_opt_ PTIMERAPCROUTINE,
             void*,
-            bool const) -> bool;
+            bool) -> bool;
 
         [[nodiscard]]
         static auto cancel_waitable_timer(native_handle_type) -> bool;
