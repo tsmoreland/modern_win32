@@ -156,7 +156,7 @@ namespace modern_win32::threading {
     }
 
     bool set_thread_name(thread_handle::native_handle_type const handle, wchar_t const* name) {
-        using set_thread_description_delegate = HRESULT(WINAPI*)(HANDLE, PCWSTR);
+        using set_thread_description_delegate = HRESULT (WINAPI *)(HANDLE, PCWSTR);
         auto const maybe_kernel_base          = get_module("KernelBase.dll");
         if (!maybe_kernel_base.has_value())
             return false;
@@ -166,7 +166,7 @@ namespace modern_win32::threading {
         if (!static_cast<bool>(kernel_base))
             return false;
 
-        auto const set_name_delegate = reinterpret_cast<set_thread_description_delegate>(
+        auto const set_name_delegate = reinterpret_cast<set_thread_description_delegate>(  // NOLINT(clang-diagnostic-cast-function-type)
             GetProcAddress(kernel_base.native_handle(), "SetThreadDescription"));
         if (set_name_delegate == nullptr)
             return false;
@@ -187,7 +187,7 @@ namespace modern_win32::threading {
             return std::nullopt;
 
         auto const& kernel_base      = maybe_kernel_base.value();
-        auto const get_name_delegate = reinterpret_cast<get_thread_description_delegate>(
+        auto const get_name_delegate = reinterpret_cast<get_thread_description_delegate>(  // NOLINT(clang-diagnostic-cast-function-type)
             GetProcAddress(kernel_base.native_handle(), "GetThreadDescription"));
         if (get_name_delegate == nullptr)
             return std::nullopt;
@@ -196,7 +196,7 @@ namespace modern_win32::threading {
         if (auto const hr = get_name_delegate(handle, &data); SUCCEEDED(hr)) {
             std::wstring name(data);
             LocalFree(data);
-            return std::optional(name);
+            return {name};
         }
 
         return std::nullopt;

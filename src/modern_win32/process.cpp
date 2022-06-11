@@ -293,7 +293,7 @@ namespace modern_win32 {
             pids.push_back(processes[index]);
         }
 
-#if _DEBUG
+#ifdef _DEBUG
         std::ranges::sort(pids);
 
 #endif

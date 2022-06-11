@@ -33,17 +33,17 @@ namespace modern_win32 {
         explicit windows_exception() : windows_exception(GetLastError()) {}
         explicit windows_exception(char const* message) : windows_exception(GetLastError(), message) {}
         explicit windows_exception(native_windows_error const error_code)
-            : std::system_error(error_code, std::system_category()), error_(error_code) {}
+            : std::system_error(static_cast<int>(error_code), std::system_category()), error_(error_code) {}
         explicit windows_exception(native_windows_error const error_code, char const* message)
-            : std::system_error(error_code, std::system_category(), message), error_(error_code) {}
+            : std::system_error(static_cast<int>(error_code), std::system_category(), message), error_(error_code) {}
         explicit windows_exception(windows_error_details const& error)
-            : std::system_error(error.native_error_code(), std::system_category()), error_(error) {}
+            : std::system_error(static_cast<int>(error.native_error_code()), std::system_category()), error_(error) {}
         explicit windows_exception(windows_error_details const& error, char const* message)
-            : std::system_error(error.native_error_code(), std::system_category(), message), error_(error) {}
+            : std::system_error(static_cast<int>(error.native_error_code()), std::system_category(), message), error_(error) {}
         explicit windows_exception(windows_error const error)
-            : std::system_error(static_cast<native_windows_error>(error), std::system_category()), error_(error) {}
+            : std::system_error(static_cast<int>( error), std::system_category()), error_(error) {}
         explicit windows_exception(windows_error const error, char const* message)
-            : std::system_error(static_cast<native_windows_error>(error), std::system_category(), message),
+            : std::system_error(static_cast<int>(error), std::system_category(), message),
               error_(error) {}
 
     private:

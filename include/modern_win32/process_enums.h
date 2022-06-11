@@ -70,7 +70,7 @@ namespace modern_win32 {
 
     template <typename ENUM>
     [[nodiscard]] constexpr auto to_underlying_type(ENUM enum_value) {
-        return static_cast<typename std::underlying_type<ENUM>::type>(enum_value);
+        return static_cast<std::underlying_type_t<ENUM>>(enum_value);
     }
 
     /// <summary>

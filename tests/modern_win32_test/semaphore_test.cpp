@@ -18,7 +18,6 @@
 #include "context.h"
 
 using modern_win32::threading::semaphore;
-using modern_win32::windows_exception;
 
 TEST(sempahore_test, constructor__throws_windows_exception__when_initial_count_negative)
 {

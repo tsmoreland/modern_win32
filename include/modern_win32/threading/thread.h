@@ -130,7 +130,7 @@ namespace modern_win32::threading {
         /// </remarks>
         template <typename WORKER>
         [[nodiscard]] bool start_stateless(WORKER worker) {
-            static_assert(std::is_convertible<decltype(worker), thread_worker>::value,
+            static_assert(std::is_convertible_v<decltype(worker), thread_worker>,
                 "WORKER must be assignable to thread_worker");
             if (is_running() || thread_start_ != nullptr)
                 return false;
@@ -206,8 +206,8 @@ namespace modern_win32::threading {
     /// <exception cref="windows_exception">thrown if unable to create thread</exception>
     template <typename WORKER>
     auto start_stateless_thread(WORKER worker) {
-        static_assert(std::is_invocable<decltype(worker)>::value, "WORKER must be invokable");
-        static_assert(std::is_convertible<decltype(worker), thread::thread_worker>::value,
+        static_assert(std::is_invocable_v<decltype(worker)>, "WORKER must be invokable");
+        static_assert(std::is_convertible_v<decltype(worker), thread::thread_worker>,
             "WORKER must be assignable to thread_worker");
         thread new_thread;
         if (!new_thread.start(worker))

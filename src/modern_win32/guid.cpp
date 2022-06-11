@@ -44,7 +44,7 @@ namespace modern_win32 {
         if (value == nullptr)
             throw std::invalid_argument("value is null");
 
-        using char_type = std::remove_pointer<RPC_CSTR>::type;
+        using char_type = std::remove_pointer_t<RPC_CSTR>;
         char_type buffer[64]{};
         memcpy_s(buffer, sizeof(buffer), value, strlen(value) * sizeof(char_type));
         buffer[63] = '\0';
@@ -55,7 +55,7 @@ namespace modern_win32 {
         if (value == nullptr)
             throw std::invalid_argument("value is null");
 
-        using char_type = std::remove_pointer<RPC_WSTR>::type;
+        using char_type = std::remove_pointer_t<RPC_WSTR>;
         char_type buffer[64]{};
         memcpy_s(buffer, sizeof(buffer), value, wcslen(value) * sizeof(char_type));
         buffer[63] = '\0';
@@ -85,15 +85,15 @@ namespace modern_win32 {
         if (StringFromGUID2(uid.get(), buffer, static_cast<int>(size)) == 0)
             return L"********-****-****-****-************";
 
-        return std::wstring(buffer + 1, guid_length);
+        return {buffer + 1, guid_length};
     }
     std::string to_string(guid const& uid) {
         auto value = to_wstring(uid);
         std::string value_a{};
 
-        std::transform(std::begin(value), std::end(value), std::back_inserter(value_a), [](auto const& wide_char) {
-            const wchar_t ascii_upper_bound = 127;
-            const wchar_t ascii_lower_bound = 0;
+        std::ranges::transform(value, std::back_inserter(value_a), [](auto const& wide_char) {
+            constexpr wchar_t ascii_upper_bound = 127;
+            constexpr wchar_t ascii_lower_bound = 0;
             return wide_char > ascii_upper_bound || wide_char < ascii_lower_bound ? '?' : static_cast<char>(wide_char);
         });
         return value_a;
