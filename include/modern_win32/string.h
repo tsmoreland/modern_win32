@@ -14,14 +14,13 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef MODERN_WIN32_STRING_H_
-#define MODERN_WIN32_STRING_H_
+#ifndef MODERN_WIN32_STRING_H
+#define MODERN_WIN32_STRING_H
 #ifdef _WIN32
 
 #include <modern_win32/windows_exception.h>
 #include <optional>
 #include <string>
-#include <string_view>
 
 #include <Windows.h>
 

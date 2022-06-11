@@ -11490,8 +11490,8 @@ namespace modern_win32 {
     class MODERN_WIN32_EXPORT windows_error_details final {
     public:
         explicit windows_error_details() noexcept;
-        explicit windows_error_details(windows_error const error_code) noexcept;
-        explicit windows_error_details(native_windows_error const error_code) noexcept;
+        explicit windows_error_details(windows_error error_code) noexcept;
+        explicit windows_error_details(native_windows_error error_code) noexcept;
 
         /// <summary>
         /// Returns the native windows error code value
