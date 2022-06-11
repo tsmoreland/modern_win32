@@ -86,26 +86,10 @@ namespace modern_win32 {
             return TRAITS::invalid();
         }
 
-#if __cplusplus > 201703L
         [[nodiscard]] friend auto operator<=>(
             unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second) noexcept {
             return first.handle_ <=> second.handle_;
         }
-#else
-        [[nodiscard]] friend bool operator<(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second) {
-            return first.handle_ < second.handle_;
-        }
-        [[nodiscard]] friend bool operator>(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second) {
-            return first.handle_ > second.handle_;
-        }
-        [[nodiscard]] friend bool operator<=(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second) {
-            return first.handle_ <= second.handle_;
-        }
-        [[nodiscard]] friend bool operator>=(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second) {
-            return first.handle_ >= second.handle_;
-        }
-
-#endif
 
         [[nodiscard]] friend bool operator==(unique_handle<TRAITS> const& first, unique_handle<TRAITS> const& second) {
             return first.handle_ == second.handle_;

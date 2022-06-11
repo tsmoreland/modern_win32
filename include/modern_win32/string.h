@@ -30,13 +30,8 @@ namespace modern_win32 {
     [[nodiscard]] std::optional<typename std::basic_string<TCHAR>::size_type> index_of(
         TCHAR const* source, TCHAR const& value = 0) {
         using size_type = typename std::basic_string<TCHAR>::size_type;
-#if __cplusplus > 201703L
 
         if (size_type position = 0; value == 0) {
-#else
-        size_type position = 0;
-        if (value == 0) {
-#endif
             while (source[position] != 0)
                 ++position;
 
@@ -108,9 +103,6 @@ namespace modern_win32 {
             return to_string<ALLOC>(value.c_str());
         }
 
-#if __cplusplus > 201703L || _MSVC_LANG > 201703L
-
-#endif
     } // namespace convert
 
 } // namespace modern_win32

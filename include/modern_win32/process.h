@@ -244,24 +244,32 @@ namespace modern_win32 {
     /// native CreateProcess call</exception>
     [[nodiscard]] MODERN_WIN32_EXPORT process start_process_or_throw(wide_process_startup_info const& startup_info);
 
-    /**
-     * \brief Starts a process resource and associates it with a process instance
-     * \param filename the executable to run
-     * \param arguments command line arguments for the executable
-     * \return process instance
-     * \exception std::error_code if file is not found
-     * \exception modern_win32::windows_exception if error occured creating the process
-     */
+    /// <summary>
+    /// Starts a process resource and associates it with a process instance
+    /// </summary>
+    /// <param name="filename">the executable to run</param>
+    /// <param name="arguments">command line arguments for the executable</param>
+    /// <returns>process instance</returns>
+    /// <exception cref="std::error_code">
+    /// if file is not found
+    /// </exception>
+    /// <exception cref="modern_win32::windows_exception">
+    /// if error occured creating the process
+    /// </exception
     [[nodiscard]] MODERN_WIN32_EXPORT process start_process_or_throw(char const* filename, char const* arguments);
 
-    /**
-     * \brief Starts a process resource and associates it with a process instance
-     * \param filename the executable to run
-     * \param arguments command line arguments for the executable
-     * \return process instance
-     * \exception std::error_code if file is not found
-     * \exception modern_win32::windows_exception if error occured creating the process
-     */
+    /// <summary>
+    /// Starts a process resource and associates it with a process instance
+    /// </summary>
+    /// <param name="filename">the executable to run</param>
+    /// <param name="arguments">command line arguments for the executable</param>
+    /// <returns>process instance</returns>
+    /// <exception cref="std::error_code">
+    /// if file is not found
+    /// </exception>
+    /// <exception cref="modern_win32::windows_exception">
+    /// if error occured creating the process
+    /// </exception
     [[nodiscard]] MODERN_WIN32_EXPORT process start_process_or_throw(wchar_t const* filename, wchar_t const* arguments);
 
     /**

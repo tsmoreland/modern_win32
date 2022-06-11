@@ -115,29 +115,9 @@ namespace modern_win32::threading {
             return *this;
         }
 
-#if __cplusplus > 201703L
         [[nodiscard]] auto operator<=>(event const& other) {
             return event_ <=> other.event_;
         }
-
-#else
-        bool operator<(event const& other) {
-            return event_ < other.event_;
-        }
-
-        bool operator<=(event const& other) {
-            return !(other.event_ < event_);
-        }
-
-        bool operator>(event const& other) {
-            return other.event_ < event_;
-        }
-
-        bool operator>=(event const& other) {
-            return !(event_ < other.event_);
-        }
-
-#endif
 
         [[nodiscard]] friend bool operator==(event const& left, event const& right) {
             return left.event_ == right.event_;
@@ -151,43 +131,10 @@ namespace modern_win32::threading {
         modern_handle_type event_;
     };
 
-#if __cplusplus > 201703L
     template <event_type EVENT_TYPE>
     [[nodiscard]] auto operator<=>(event<EVENT_TYPE> const& lhs, event<EVENT_TYPE> const& rhs) {
         return lhs.operator<=>(rhs);
     }
-
-#else
-    template <event_type EVENT_TYPE>
-    [[nodiscard]] bool operator<(event<EVENT_TYPE> const& lhs, event<EVENT_TYPE> const& rhs) {
-        return lhs.operator<(rhs);
-    }
-
-    template <event_type EVENT_TYPE>
-    [[nodiscard]] bool operator<=(event<EVENT_TYPE> const& lhs, event<EVENT_TYPE> const& rhs) {
-        return lhs.operator<=(rhs);
-    }
-
-    template <event_type EVENT_TYPE>
-    [[nodiscard]] bool operator>(event<EVENT_TYPE> const& lhs, event<EVENT_TYPE> const& rhs) {
-        return lhs.operator>(rhs);
-    }
-
-    template <event_type EVENT_TYPE>
-    [[nodiscard]] bool operator>=(event<EVENT_TYPE> const& lhs, event<EVENT_TYPE> const& rhs) {
-        return lhs.operator>=(rhs);
-    }
-
-    template <event_type EVENT_TYPE>
-    [[nodiscard]] bool operator==(event<EVENT_TYPE> const& lhs, event<EVENT_TYPE> const& rhs) {
-        return lhs.operator==(rhs);
-    }
-
-    template <event_type EVENT_TYPE>
-    [[nodiscard]] bool operator!=(event<EVENT_TYPE> const& lhs, event<EVENT_TYPE> const& rhs) {
-        return lhs.operator!=(rhs);
-    }
-#endif
 
     /// <summary>
     /// Swaps the values lhs and rhs.
