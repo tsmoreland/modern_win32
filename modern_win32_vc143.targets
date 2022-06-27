@@ -10,7 +10,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup >
-    <NativeLibs Include="$(MSBuildThisFileDirectory)**\*.dll" />
+    <NativeLibs Include="$(MSBuildThisFileDirectory)..\x64\*.dll" />
     <None Include="@(NativeLibs)">
       <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

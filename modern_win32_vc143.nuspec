@@ -12,7 +12,7 @@
     <description>C++20 Wrappers around Win32 API providing classes similar to C# System library</description>
     <summary>C++20 Wrappers around Win32 API providing classes similar to C# System library, built using vc143</summary>
     <releaseNotes></releaseNotes>
-    <copyright>Copyright © 2020 Terry Moreland.</copyright>
+    <copyright>Copyright © 2022 Terry Moreland.</copyright>
     <language />
     <tags>cpp</tags>
     <dependencies>
@@ -54,8 +54,8 @@
     <file src="out\install\x64-release\include\modern_win32\windows_memory.h" target="lib\native\include\modern_win32\windows_memory.h" />
 
     <file src="out\install\x64-release\lib\modern_win32.lib" target="lib\native\lib\modern_win32.lib" />
-    <file src="out\install\x64-release\lib\modern_win32.dll" target="build\native\modern_win32.dll" />
-    <file src="out\install\x64-release\lib\modern_win32.pdb" target="build\native\modern_win32.pdb" />
+    <file src="out\install\x64-release\lib\modern_win32.dll" target="build\x64\modern_win32.dll" />
+    <file src="out\install\x64-release\lib\modern_win32.pdb" target="build\x64\modern_win32.pdb" />
 
   </files>
 </package>
