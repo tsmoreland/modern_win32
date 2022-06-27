@@ -18,7 +18,6 @@
 #define MODERN_WIN32_PROCESS_MODULE_H_ // NOLINT(clang-diagnostic-unused-macros)
 #ifdef _WIN32
 
-#include "windows_exception.h"
 #include <modern_win32/modern_win32_export.h>
 #include <string>
 

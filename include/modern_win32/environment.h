@@ -14,13 +14,14 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef MODERN_WIN32_ENVIRONMENT_H_
-#define MODERN_WIN32_ENVIRONMENT_H_
+#ifndef MODERN_WIN32_ENVIRONMENT_H
+#define MODERN_WIN32_ENVIRONMENT_H
 #ifdef _WIN32
 
 #include <map>
 #include <modern_win32/modern_win32_export.h>
 #include <string>
+
 
 namespace modern_win32 {
     template <typename TCHAR>
@@ -30,8 +31,8 @@ namespace modern_win32 {
     /// attempts to retrieve all system and user environment variables storing them in <parmref name="environment"/>
     /// </summary>
     /// <typeparam name="TCHAR">character type</typeparam>
-    /// <param name="environment">on success stores all system and user environment variables</param
-    /// <returns>on success true; otherwise false
+    /// <param name="environment">on success stores all system and user environment variables</param>
+    /// <returns>on success true; otherwise false</returns>
     template <typename TCHAR>
     [[nodiscard]] bool try_get_all_environment_variables(environment_map<TCHAR>& environment);
 
@@ -39,8 +40,8 @@ namespace modern_win32 {
     /// attempts to retrieve all system and user environment variables storing them in <parmref name="environment"/>
     /// </summary>
     /// <typeparam name="TCHAR">character type</typeparam>
-    /// <param name="environment">on success stores all system and user environment variables</param
-    /// <returns>on success true; otherwise false
+    /// <param name="environment">on success stores all system and user environment variables</param>
+    /// <returns>on success true; otherwise false</returns>
     template <>
     [[nodiscard]] MODERN_WIN32_EXPORT bool try_get_all_environment_variables(environment_map<char>& environment);
 
@@ -48,8 +49,8 @@ namespace modern_win32 {
     /// attempts to retrieve all system and user environment variables storing them in <parmref name="environment"/>
     /// </summary>
     /// <typeparam name="TCHAR">character type</typeparam>
-    /// <param name="environment">on success stores all system and user environment variables</param
-    /// <returns>on success true; otherwise false
+    /// <param name="environment">on success stores all system and user environment variables</param>
+    /// <returns>on success true; otherwise false</returns>
     template <>
     [[nodiscard]] MODERN_WIN32_EXPORT bool try_get_all_environment_variables(environment_map<wchar_t>& environment);
 
@@ -57,7 +58,7 @@ namespace modern_win32 {
     /// attempts to retrieve all system and user environment variables storing them in <parmref name="environment"/>
     /// </summary>
     /// <typeparam name="TCHAR">character type</typeparam>
-    /// <param name="environment">on success stores all system and user environment variables</param
+    /// <param name="environment">on success stores all system and user environment variables</param>
     /// <returns>on success true; otherwise false</returns>
     template <typename TCHAR>
     [[nodiscard]] bool try_get_all_environment_variables(environment_map<TCHAR>& environment) {

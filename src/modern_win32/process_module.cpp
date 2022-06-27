@@ -15,6 +15,7 @@
 //
 
 #include "modern_win32/process_module.h"
+#include "modern_win32/windows_exception.h"
 
 #include <Psapi.h>
 #include <memory>
@@ -33,7 +34,7 @@ namespace modern_win32 {
             buffer.reset();
             return get_module_filename(process, module, length + 1);
         }
-        return std::wstring(buffer.get());
+        return {buffer.get()};
     }
 
     std::wstring process_module::get_name() const {

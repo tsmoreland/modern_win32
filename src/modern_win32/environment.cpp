@@ -14,6 +14,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+// ReSharper disable CppClangTidyClangDiagnosticUnusedMacros
 #include <memory>
 #include <modern_win32/environment.h>
 #include <modern_win32/string.h>
@@ -21,8 +22,6 @@
 #include <processenv.h>
 #include <string>
 #include <string_view>
-
-#include <Windows.h>
 
 
 namespace modern_win32 {
@@ -67,9 +66,9 @@ namespace modern_win32 {
 #undef GetEnvironmentStrings
         auto deleter         = [](char*& character) { FreeEnvironmentStringsA(character); };
         auto const env_block = std::unique_ptr<char, decltype(deleter)>{GetEnvironmentStrings(), deleter};
+// ReSharper disable once CppInconsistentNaming
 #define GetEnvironmentStrings \
     GetEnvironmentStringsW // NOLINT(cppcoreguidelines-macro-usage, clang-diagnostic-unused-macros) -- re-enabling
-                           // GetEnvironmentStrings macro
 #else
         auto deleter         = [](char* character) { FreeEnvironmentStringsA(character); };
         auto const env_block = std::unique_ptr<char, decltype(deleter)>{GetEnvironmentStringsA(), deleter};

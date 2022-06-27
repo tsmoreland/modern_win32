@@ -30,7 +30,7 @@ void wait_for(bool const& complete, std::chrono::milliseconds const& interval)
             std::this_thread::sleep_for(std::chrono::milliseconds(50));
 }
 
-void fail_if_not_complete_after(std::chrono::milliseconds timeout, bool& complete, bool& timed_out)
+void fail_if_not_complete_after(std::chrono::milliseconds timeout, bool const& complete, bool& timed_out)
 {
     wait_for(complete, timeout);
     if (!complete) {

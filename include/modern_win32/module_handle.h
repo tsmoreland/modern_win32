@@ -38,12 +38,12 @@ namespace modern_win32 {
     using module_handle = unique_handle<module_traits>;
 
     inline std::optional<module_handle> get_module(char const* module_name) {
-        typename module_traits::native_handle_type native_handle;
+        module_traits::native_handle_type native_handle;
         return GetModuleHandleExA(0, module_name, &native_handle) == TRUE ? std::optional(module_handle{native_handle})
                                                                           : std::nullopt;
     }
     inline std::optional<module_handle> get_module(wchar_t const* module_name) {
-        typename module_traits::native_handle_type native_handle;
+        module_traits::native_handle_type native_handle;
         return GetModuleHandleExW(0, module_name, &native_handle) == TRUE ? std::optional(module_handle{native_handle})
                                                                           : std::nullopt;
     }

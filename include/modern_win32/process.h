@@ -48,8 +48,7 @@ namespace modern_win32 {
 
         explicit process(native_handle_type const& handle = process_handle::invalid());
         explicit process(process_id_type const& id);
-        explicit process(
-            process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles = false);
+        explicit process(process_id_type const& id, process_access_rights access_rights, bool inherit_handles = false);
         explicit process(process_id_type const& id, native_handle_type const& handle);
         explicit process(deconstruct_type const& id_handle_pair);
         process(process const&) = delete;
@@ -79,7 +78,7 @@ namespace modern_win32 {
 
         /// <summary>replaces the managed object</summary>
         /// <returns>true if the replacement represents a valid process; otherwise, false</returns>
-        [[nodiscard]] bool reset(native_handle_type const handle = process_handle::invalid());
+        [[nodiscard]] bool reset(native_handle_type handle = process_handle::invalid());
 
         /// <summary>
         /// releases the ownership of the process handle if any,
@@ -174,36 +173,50 @@ namespace modern_win32 {
         void close() noexcept;
     };
 
-    /**
-     * \brief Opens an existing local process object, or throws an exception if unable to
-     * \param id The identifier of the local process to be opened.
-     * \param access_rights The access to the process object. This access right is checked against the security
-     *                      descriptor for the process. This parameter can be one or more of the <see
-     * cref="process_access_rights"/>. \param inherit_handles  If this value is true, processes created by this process
-     * will inherit the handle. Otherwise, the processes do not inherit this handle. \return processs instance
-     * \exception std::invalid_argument if process_id is 0
-     * \exception access_denied_exception if insufficent access to open process
-     */
+    /// <summary>
+    /// Opens an existing local process object, or throws an exception if unable to
+    /// </summary>
+    /// <param name="id">The identifier of the local process to be opened.</param>
+    /// <param name="access_rights">
+    /// The access to the process object. This access right is checked against the security
+    /// descriptor for the process. This parameter can be one or more of the <see cref="process_access_rights"/>.
+    /// </param>
+    /// <param name="inherit_handles">
+    /// If this value is true, processes created by this process
+    /// will inherit the handle. Otherwise, the processes do not inherit this handle.
+    /// </param>
+    /// <returns>processs instance</returns>
+    /// <exception cref="std::invalid_argument">
+    /// if process_id is 0
+    /// </exception
+    /// <exception cref="access_denied_exception">
+    /// if insufficent access to open process
+    /// </exception
     [[nodiscard]] MODERN_WIN32_EXPORT process open_process_or_throw(
-        process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles = false);
+        process_id_type const& id, process_access_rights access_rights, bool inherit_handles = false);
 
-    /**
-     * \brief Opens an existing local process object or an empty optional
-     * \param id The identifier of the local process to be opened.
-     * \param access_rights The access to the process object. This access right is checked against the security
-     *                      descriptor for the process. This parameter can be one or more of the <see
-     * cref="process_access_rights"/>. \param inherit_handles  If this value is true, processes created by this process
-     * will inherit the handle. Otherwise, the processes do not inherit this handle.</param> \return process if able to
-     * open or empty optional
-     */
+
+    /// <summary>
+    /// Opens an existing local process object or an empty optional
+    /// </summary>
+    /// <param name="id">The identifier of the local process to be opened.</param>
+    /// <param name="access_rights">
+    /// The access to the process object. This access right is checked against the security
+    /// descriptor for the process. This parameter can be one or more of the <see cref="process_access_rights"/>.
+    /// </param>
+    /// <param name="inherit_handles">
+    /// If this value is true, processes created by this process
+    /// will inherit the handle. Otherwise, the processes do not inherit this handle.
+    /// </param>
+    /// <returns>process if able to open or empty optional</returns>
     [[nodiscard]] MODERN_WIN32_EXPORT std::optional<process> open_process(
-        process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles = false);
+        process_id_type const& id, process_access_rights access_rights, bool inherit_handles = false);
 
-    /**
-     * \brief opens first process matching process_name
-     * \param process_name name of the process to open
-     * \return std::optional containing the process matching process_name; otherwise, std::nullopt
-     */
+    /// <summary>
+    /// opens first process matching process_name
+    /// </summary>
+    /// <param name="process_name">name of the process to open</param>
+    /// <returns>std::optional containing the process matching process_name; otherwise, std::nullopt</returns>
     [[nodiscard]] MODERN_WIN32_EXPORT std::optional<process> open_process_by_name(wchar_t const* process_name);
 
     /// <summary>
@@ -272,10 +285,11 @@ namespace modern_win32 {
     /// </exception
     [[nodiscard]] MODERN_WIN32_EXPORT process start_process_or_throw(wchar_t const* filename, wchar_t const* arguments);
 
-    /**
-     * \brief gets all active process ids
-     * \return std::vector containing active process ids;
-     */
+
+    /// <summary>
+    /// gets all active process ids
+    /// </summary>
+    /// <returns>std::vector containing active process ids;</returns>
     [[nodiscard]] MODERN_WIN32_EXPORT std::vector<process_id_type> get_proccess_ids();
 
 } // namespace modern_win32

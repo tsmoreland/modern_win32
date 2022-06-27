@@ -16,3 +16,17 @@ Using CMake to build the project which is primarily header file based so the pro
 ## Testing
 
 Testing will eventually be done using boost test and possibly google test just as an excuse to try out different testing frameworks
+
+## Nuget Package
+
+To build run:
+
+	```
+	nuget.exe pack modern_win32_vc143.nuspec
+	```
+
+The above command will build the 64-bit release build package.  Use modern_win32_debug_vc143.nuspec to 
+build the debug equivalent.
+
+Versions should be kept in sync between these two as they are intended to represent the same build just in different
+configurations
