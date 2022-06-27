@@ -3,10 +3,9 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
-set(public_header_files
+set(root_header_files
     "../../include/modern_win32/access_denied_exception.h"
     "../../include/modern_win32/com_exception.h"
-    "../../include/modern_win32/threading/event.h"
     "../../include/modern_win32/invalid_handle.h"
     "../../include/modern_win32/environment.h"
     "../../include/modern_win32/guid.h"
@@ -17,16 +16,8 @@ set(public_header_files
     "../../include/modern_win32/process_module.h"
     "../../include/modern_win32/process_enums.h"
     "../../include/modern_win32/process_startup_info.h"
-    "../../include/modern_win32/threading/semaphore.h"
     "../../include/modern_win32/shared_utilities.h"
     "../../include/modern_win32/string.h"
-    "../../include/modern_win32/shared/case_insensitive_string.h"
-    "../../include/modern_win32/shared/chrono_extensions.h"
-    "../../include/modern_win32/shared/timed_lock_guard.h"
-    "../../include/modern_win32/shared/timeout_exception.h"
-    "../../include/modern_win32/threading/slim_lock.h"
-    "../../include/modern_win32/threading/thread.h"
-    "../../include/modern_win32/threading/thread_start.h"
     "../../include/modern_win32/unique_handle.h"
     "../../include/modern_win32/wait_for.h"
     "../../include/modern_win32/wait_for_result.h"
@@ -34,6 +25,27 @@ set(public_header_files
     "../../include/modern_win32/windows_error.h"
     "../../include/modern_win32/window_handle.h"
     "../../include/modern_win32/windows_memory.h"
+)
+
+set(shared_header_files
+    "../../include/modern_win32/shared/case_insensitive_string.h"
+    "../../include/modern_win32/shared/chrono_extensions.h"
+    "../../include/modern_win32/shared/timed_lock_guard.h"
+    "../../include/modern_win32/shared/timeout_exception.h"
+)
+
+set(threading_header_files
+    "../../include/modern_win32/threading/event.h"
+    "../../include/modern_win32/threading/semaphore.h"
+    "../../include/modern_win32/threading/slim_lock.h"
+    "../../include/modern_win32/threading/thread.h"
+    "../../include/modern_win32/threading/thread_start.h"
+)
+
+set(public_header_files
+    ${root_header_files}
+    ${shared_header_files}
+    ${threading_header_files}
 )
 
 # define the source (cpp) files
@@ -101,5 +113,7 @@ install(TARGETS modern_win32
 )
 install(FILES $<TARGET_PDB_FILE:modern_win32> DESTINATION lib)
 
-install(FILES ${public_header_files} DESTINATION include/modern_win32)
+install(FILES ${root_header_files} DESTINATION include/modern_win32)
+install(FILES ${shared_header_files} DESTINATION include/modern_win32/shared)
+install(FILES ${threading_header_files} DESTINATION include/modern_win32/threading)
 
