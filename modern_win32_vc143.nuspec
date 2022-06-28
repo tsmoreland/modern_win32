@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>modern_win32_vc143</id>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <title>C++20 Wrappers around Win32 API</title>
     <authors>TS Moreland</authors>
     <owners>TS Moreland</owners>
@@ -53,9 +53,13 @@
     <file src="out\install\x64-release\include\modern_win32\window_handle.h" target="lib\native\include\modern_win32\window_handle.h" />
     <file src="out\install\x64-release\include\modern_win32\windows_memory.h" target="lib\native\include\modern_win32\windows_memory.h" />
 
-    <file src="out\install\x64-release\lib\modern_win32.lib" target="lib\native\lib\modern_win32.lib" />
-    <file src="out\install\x64-release\lib\modern_win32.dll" target="build\x64\modern_win32.dll" />
-    <file src="out\install\x64-release\lib\modern_win32.pdb" target="build\x64\modern_win32.pdb" />
+    <file src="out\install\x64-release\lib\modern_win32.lib" target="lib\native\release\lib\modern_win32.lib" />
+    <file src="out\install\x64-release\lib\modern_win32.dll" target="build\release\x64\modern_win32.dll" />
+    <file src="out\install\x64-release\lib\modern_win32.pdb" target="build\release\x64\modern_win32.pdb" />
+
+    <file src="out\install\x64-debug\lib\modern_win32.lib" target="lib\native\debug\lib\modern_win32.lib" />
+    <file src="out\install\x64-debug\lib\modern_win32.dll" target="build\debug\x64\modern_win32.dll" />
+    <file src="out\install\x64-debug\lib\modern_win32.pdb" target="build\debug\x64\modern_win32.pdb" />
 
   </files>
 </package>
