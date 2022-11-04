@@ -30,26 +30,30 @@
 
 namespace modern_win32 {
 
-    process::process(process_id_type const& id) : id_{id} {
+    process::process(process_id_type const& id) : process(id, process_access_rights::process_all_access, false) {}
+
+    process::process(process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles)
+        : id_(id) {
         if (id == 0UL)
             throw std::invalid_argument("id cannot be 0");
-    }
-    process::process(process_id_type const& id, process_access_rights const access_rights, bool const inherit_handles)
-        : process(id) {
+
         static_cast<void>(handle_.reset(impl::get_process_handle(id_, access_rights, inherit_handles).release()));
     }
+
     process::process(native_handle_type const& handle) : handle_{handle}, id_{0UL} {
         if (handle == process_handle::invalid())
             return;
 
         id_ = impl::get_process_id(handle);
     }
+
     process::process(process_id_type const& id, native_handle_type const& handle) : handle_{handle}, id_{id} {
         if (handle == process_handle::invalid() && id_ != 0UL)
             throw std::invalid_argument("id must be zero if handle is invalid");
         if (handle != process_handle::invalid() && id_ == 0UL)
             throw std::invalid_argument("id must be provided if handle is not invalid");
     }
+
     process::process(deconstruct_type const& id_handle_pair) : process(id_handle_pair.first, id_handle_pair.second) {}
     process::process(process&& other) noexcept {
         auto [id, handle] = other.release();
