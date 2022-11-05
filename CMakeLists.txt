@@ -10,6 +10,11 @@ project ("modern_win32")
 
 message("${CMAKE_VS_PLATFORM_NAME} architecture in use")
 
+SET(USE_SPECTRE $ENV{SPECTRE})
+if (${USE_SPECTRE} MATCHES "true")
+    message(status " Spectre is enabled")
+endif()
+
 if(NOT CMAKE_VS_PLATFORM_NAME)
     set(CMAKE_VS_PLATFORM_NAME "x64")
 endif()
@@ -24,3 +29,4 @@ enable_testing()
 # Include sub-projects.
 add_subdirectory ("src")
 add_subdirectory(tests/modern_win32_test)
+

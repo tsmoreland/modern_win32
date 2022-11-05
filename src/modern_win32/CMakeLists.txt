@@ -75,8 +75,15 @@ add_library(modern_win32 SHARED ${source_files} ${public_header_files})
 include(GenerateExportHeader)
 generate_export_header(modern_win32)
 
-set_target_properties(modern_win32 PROPERTIES EXPORT_NAME modern_win32)
 set_target_properties(modern_win32 PROPERTIES VS_GLOBAL_KEYWORD "Win32Proj")
+set_target_properties(modern_win32 PROPERTIES EXPORT_NAME modern_win32)
+
+if (${USE_SPECTRE} MATCHES "true")
+    message(status " Spectre is enabled, adding /QSpectre flag")
+    add_compile_options(/QSpectre)
+else()
+    message(status " Spectre is not enabled")
+endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC" AND CMAKE_BUILD_TYPE MATCHES "Release")
    target_compile_options(modern_win32 PRIVATE /Zi)

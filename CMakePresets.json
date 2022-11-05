@@ -2,7 +2,7 @@
     "version": 3,
     "configurePresets": [
         {
-            "name": "windows-base",
+            "name": "windows-vc143",
             "hidden": true,
             "generator": "Visual Studio 17 2022",
             "binaryDir": "${sourceDir}/out/build/${presetName}",
@@ -22,9 +22,9 @@
             }
         },
         {
-            "name": "x64-debug",
-            "displayName": "x64 Debug",
-            "inherits": "windows-base",
+            "name": "vc143-x64-debug",
+            "displayName": "x64 Debug (VC143)",
+            "inherits": "windows-vc143",
             "architecture": {
                 "value": "x64",
                 "strategy": "external"
@@ -34,11 +34,51 @@
             }
         },
         {
-            "name": "x64-release",
-            "displayName": "x64 Release",
-            "inherits": "x64-debug",
+            "name": "vc143-x64-release",
+            "displayName": "x64 Release (VC143)",
+            "inherits": "windows-vc143",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "windows-vc143-spectre",
+            "hidden": true,
+            "generator": "Visual Studio 17 2022",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "installDir": "${sourceDir}/out/install/${presetName}",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe",
+                "CMAKE_TOOLCHAIN_FILE": {
+                  "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                  "type": "FILEPATH"
+                }
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "vc143-x64-release-spectre",
+            "displayName": "x64 Release (VC143 Spectre)",
+            "inherits": "windows-vc143-spectre",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            },
+            "environment": {
+              "use_specture":  "true",
+              "SPECTRE":  "true"
             }
         }
     ]
