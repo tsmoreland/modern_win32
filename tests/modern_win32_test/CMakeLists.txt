@@ -34,17 +34,31 @@ add_test(NAME modern_win32_test COMMAND modern_win32_test)
 
 
 # must be a better way to copy output but I haven't found it yet; strangely this just worked in the previous CMake setup
-
-add_custom_command(
-	TARGET modern_win32_test
-	POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${CMAKE_VS_PLATFORM_NAME}-$<CONFIG>/src/modern_win32/$<CONFIG>/modern_win32.dll ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${CMAKE_VS_PLATFORM_NAME}-$<CONFIG>/tests/modern_win32_test/$<CONFIG>/modern_win32.dll 
-	COMMENT "Copying modern_win32.dll to modern_win32_test folder"
-)
-
-
-set_tests_properties(modern_win32_test
-  PROPERTIES
-      ENVIRONMENT PATH="${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${CMAKE_VS_PLATFORM_NAME}-$<CONFIG>/src/modern_win32")
+if (${USE_SPECTRE} MATCHES "true")
+	message(STATUS "Spectre enabled")
+	add_custom_command(
+		TARGET modern_win32_test
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/vc143-${CMAKE_VS_PLATFORM_NAME}-$<CONFIG>-spectre/src/modern_win32/$<CONFIG>/modern_win32.dll ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/vc143-${CMAKE_VS_PLATFORM_NAME}-$<CONFIG>-spectre/tests/modern_win32_test/$<CONFIG>/modern_win32.dll 
+		COMMENT "Copying modern_win32.dll to modern_win32_test folder"
+	)
 
 
+	set_tests_properties(modern_win32_test
+	  PROPERTIES
+		  ENVIRONMENT PATH="${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/vc143-${CMAKE_VS_PLATFORM_NAME}-$<CONFIG>-spectre/src/modern_win32")
+else()
+
+	add_custom_command(
+		TARGET modern_win32_test
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/vc143-${CMAKE_VS_PLATFORM_NAME}-$<CONFIG>/src/modern_win32/$<CONFIG>/modern_win32.dll ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/vc143-${CMAKE_VS_PLATFORM_NAME}-$<CONFIG>/tests/modern_win32_test/$<CONFIG>/modern_win32.dll 
+		COMMENT "Copying modern_win32.dll to modern_win32_test folder"
+	)
+
+
+	set_tests_properties(modern_win32_test
+	  PROPERTIES
+		  ENVIRONMENT PATH="${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${CMAKE_VS_PLATFORM_NAME}-$<CONFIG>/src/modern_win32")
+
+endif()
