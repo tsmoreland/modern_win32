@@ -72,9 +72,6 @@ add_definitions(-DMODERN_WIN32_EXPORTS -DUNICODE -D_UNICODE)
 
 add_library(modern_win32 SHARED ${source_files} ${public_header_files})
 
-set(LIBRARY_OUTPUT_PATH_RELEASE ${CMAKE_BUILD_TYPE})
-set(LIBRARY_OUTPUT_PATH_DEBUG ${CMAKE_BUILD_TYPE})
-
 message(status " build type " ${CMAKE_BUILD_TYPE})
 
 include(GenerateExportHeader)
@@ -84,17 +81,20 @@ set_target_properties(modern_win32 PROPERTIES VS_GLOBAL_KEYWORD "Win32Proj")
 set_target_properties(modern_win32 PROPERTIES EXPORT_NAME modern_win32)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    message(status " using msvc compiler")
     set(MSVC_TOOLSET_VERSION 143)
 
-if (${USE_SPECTRE} MATCHES "true")
-    message(status " Spectre is enabled, adding /QSpectre flag")
-    target_compile_options(modern_win32 PRIVATE /Zi /Qspectre /guard:cf /MP)
-    target_link_options(modern_win32 PRIVATE /DYNAMICBASE)
+	if (${USE_SPECTRE} MATCHES "true")
+		message(status " Spectre is enabled, adding /QSpectre flag")
+		target_compile_options(modern_win32 PRIVATE /Zi /Qspectre /guard:cf /MP)
+		target_link_options(modern_win32 PRIVATE /DYNAMICBASE)
 
-else()
-    message(status " Spectre is not enabled")
-    target_compile_options(modern_win32 PRIVATE /Zi /MP)
-endif()
+	else()
+		message(status " Spectre is not enabled")
+		#target_compile_options(modern_win32 PRIVATE /Zi /MP)
+		target_compile_options(modern_win32 PRIVATE /Zi /Qspectre /guard:cf /MP)
+		target_link_options(modern_win32 PRIVATE /DYNAMICBASE)
+	endif()
 
     if (CMAKE_BUILD_TYPE MATCHES "Release")
     else()
@@ -123,23 +123,13 @@ target_include_directories(modern_win32
         ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-if (${USE_SPECTRE} MATCHES "true")
 install(TARGETS modern_win32
     EXPORT modern_win32
-    LIBRARY DESTINATION lib/spectre/${CMAKE_BUILD_TYPE}
-    ARCHIVE DESTINATION lib/spectre/${CMAKE_BUILD_TYPE}
-    RUNTIME DESTINATION lib/spectre/${CMAKE_BUILD_TYPE}
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION lib
 )
-	install(FILES $<TARGET_PDB_FILE:modern_win32> DESTINATION lib/spectre/${CMAKE_BUILD_TYPE})
-else()
-install(TARGETS modern_win32
-    EXPORT modern_win32
-    LIBRARY DESTINATION lib/${CMAKE_BUILD_TYPE}
-    ARCHIVE DESTINATION lib/${CMAKE_BUILD_TYPE}
-    RUNTIME DESTINATION lib/${CMAKE_BUILD_TYPE}
-)
-	install(FILES $<TARGET_PDB_FILE:modern_win32> DESTINATION lib/${CMAKE_BUILD_TYPE})
-endif()
+install(FILES $<TARGET_PDB_FILE:modern_win32> DESTINATION lib)
 
 install(FILES ${root_header_files} DESTINATION include/modern_win32)
 install(FILES ${shared_header_files} DESTINATION include/modern_win32/shared)
