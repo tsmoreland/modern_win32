@@ -70,16 +70,12 @@ set(source_files
 
 add_definitions(-DMODERN_WIN32_EXPORTS -DUNICODE -D_UNICODE)
 
-if (${USE_SPECTRE} MATCHES "true")
-    message(status " Spectre is enabled, adding /QSpectre flag")
-    add_compile_options(/Zi /QSpectre /MP)
-
-else()
-    message(status " Spectre is not enabled")
-    add_compile_options(/Zi /MP)
-endif()
-
 add_library(modern_win32 SHARED ${source_files} ${public_header_files})
+
+set(LIBRARY_OUTPUT_PATH_RELEASE ${CMAKE_BUILD_TYPE})
+set(LIBRARY_OUTPUT_PATH_DEBUG ${CMAKE_BUILD_TYPE})
+
+message(status " build type " ${CMAKE_BUILD_TYPE})
 
 include(GenerateExportHeader)
 generate_export_header(modern_win32)
@@ -87,23 +83,37 @@ generate_export_header(modern_win32)
 set_target_properties(modern_win32 PROPERTIES VS_GLOBAL_KEYWORD "Win32Proj")
 set_target_properties(modern_win32 PROPERTIES EXPORT_NAME modern_win32)
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC" AND CMAKE_BUILD_TYPE MATCHES "Release")
+if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    set(MSVC_TOOLSET_VERSION 143)
+
+if (${USE_SPECTRE} MATCHES "true")
+    message(status " Spectre is enabled, adding /QSpectre flag")
+    target_compile_options(modern_win32 PRIVATE /Zi /Qspectre /guard:cf /MP)
+    target_link_options(modern_win32 PRIVATE /DYNAMICBASE)
+
+else()
+    message(status " Spectre is not enabled")
+    target_compile_options(modern_win32 PRIVATE /Zi /MP)
+endif()
+
+    if (CMAKE_BUILD_TYPE MATCHES "Release")
+    else()
+    endif()
 
    # Tell linker to include symbol data
-    set_target_properties(modern_win32 PROPERTIES 
-        LINK_FLAGS "/INCREMENTAL:NO /DEBUG /OPT:REF /OPT:ICF"
-    )
+	set_target_properties(modern_win32 PROPERTIES 
+		LINK_FLAGS "/INCREMENTAL:NO /DEBUG /OPT:REF /OPT:ICF"
+	)
 
     # Set file name & location
     set_target_properties(modern_win32 PROPERTIES 
         COMPILE_PDB_NAME modern_win32 
         COMPILE_PDB_OUTPUT_DIR ${CMAKE_BINARY_DIR}
     )
+
+	set_property(TARGET modern_win32 PROPERTY
+	  MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
-
-set_property(TARGET modern_win32 PROPERTY
-  MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-
 
 target_include_directories(modern_win32
     PUBLIC        
@@ -113,13 +123,23 @@ target_include_directories(modern_win32
         ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+if (${USE_SPECTRE} MATCHES "true")
 install(TARGETS modern_win32
     EXPORT modern_win32
-    LIBRARY DESTINATION lib 
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION lib
+    LIBRARY DESTINATION lib/spectre/${CMAKE_BUILD_TYPE}
+    ARCHIVE DESTINATION lib/spectre/${CMAKE_BUILD_TYPE}
+    RUNTIME DESTINATION lib/spectre/${CMAKE_BUILD_TYPE}
 )
-install(FILES $<TARGET_PDB_FILE:modern_win32> DESTINATION lib)
+	install(FILES $<TARGET_PDB_FILE:modern_win32> DESTINATION lib/spectre/${CMAKE_BUILD_TYPE})
+else()
+install(TARGETS modern_win32
+    EXPORT modern_win32
+    LIBRARY DESTINATION lib/${CMAKE_BUILD_TYPE}
+    ARCHIVE DESTINATION lib/${CMAKE_BUILD_TYPE}
+    RUNTIME DESTINATION lib/${CMAKE_BUILD_TYPE}
+)
+	install(FILES $<TARGET_PDB_FILE:modern_win32> DESTINATION lib/${CMAKE_BUILD_TYPE})
+endif()
 
 install(FILES ${root_header_files} DESTINATION include/modern_win32)
 install(FILES ${shared_header_files} DESTINATION include/modern_win32/shared)
