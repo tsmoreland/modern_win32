@@ -71,7 +71,7 @@ set(source_files
 if (CMAKE_BUILD_TYPE MATCHES "Release")
 	add_definitions(-DMODERN_WIN32_EXPORTS -DUNICODE -D_UNICODE -D_ENABLE_EXTENDED_ALIGNED_STORAGE -DNDEBUG -D_MBCS -DWIN32 -D_WINDOWS)
 else()
-	add_definitions(-DMODERN_WIN32_EXPORTS -DUNICODE -D_UNICODE -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_DEBUG -D_MBCS)
+	add_definitions(-DMODERN_WIN32_EXPORTS -DUNICODE -D_UNICODE -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_DEBUG -D_MBCS -DWIN32 -D_WINDOWS)
 endif()
 
 add_library(modern_win32 SHARED ${source_files} ${public_header_files})
@@ -89,12 +89,9 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     message(status " using msvc compiler")
     set(MSVC_TOOLSET_VERSION 143)
 
-    message(status " ${CMAKE_CXX_FLAGS_RELEASE}")
     set(CMAKE_CXX_FLAGS "/W4 /GR /GS /EHsc /wd4100 /wd4206 /wd4702 /wd6255 /nologo /diagnostics:column /std:c++20 /Zc:inline /fp:precise /errorReport:prompt /WX- /Zc:forScope /Zc:wchar_t /Zi /Gm- /we4715 /we4172")
 	set(CMAKE_CXX_FLAGS_RELEASE "/MP /Gy /O2 /Gd /Oi /MD /FC")
 	set(CMAKE_CXX_FLAGS_DEBUG "/JMC /MP /we4172 /GS /Od /RTC1 /Gd /MDd ")
-    message(status " after ${CMAKE_CXX_FLAGS}")
-    message(status " after ${CMAKE_CXX_FLAGS_RELEASE}")
 
     if (CMAKE_BUILD_TYPE MATCHES "Release")
 		if (${USE_SPECTRE} MATCHES "true")
