@@ -1,7 +1,7 @@
 ﻿# CMakeList.txt : CMake project for modern_win32, include source and define
 # project specific logic here.
 #
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.24)
 
 set(root_header_files
     "../../include/modern_win32/access_denied_exception.h"
@@ -68,7 +68,11 @@ set(source_files
 
 # Add source to this project's executable.
 
-add_definitions(-DMODERN_WIN32_EXPORTS -DUNICODE -D_UNICODE)
+if (CMAKE_BUILD_TYPE MATCHES "Release")
+	add_definitions(-DMODERN_WIN32_EXPORTS -DUNICODE -D_UNICODE -D_ENABLE_EXTENDED_ALIGNED_STORAGE -DNDEBUG -D_MBCS -DWIN32 -D_WINDOWS)
+else()
+	add_definitions(-DMODERN_WIN32_EXPORTS -DUNICODE -D_UNICODE -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_DEBUG -D_MBCS)
+endif()
 
 add_library(modern_win32 SHARED ${source_files} ${public_header_files})
 
@@ -80,24 +84,38 @@ generate_export_header(modern_win32)
 set_target_properties(modern_win32 PROPERTIES VS_GLOBAL_KEYWORD "Win32Proj")
 set_target_properties(modern_win32 PROPERTIES EXPORT_NAME modern_win32)
 
+
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     message(status " using msvc compiler")
     set(MSVC_TOOLSET_VERSION 143)
 
-	if (${USE_SPECTRE} MATCHES "true")
-		message(status " Spectre is enabled, adding /QSpectre flag")
-		target_compile_options(modern_win32 PRIVATE /Zi /Qspectre /guard:cf /MP)
-		target_link_options(modern_win32 PRIVATE /DYNAMICBASE)
-
-	else()
-		message(status " Spectre is not enabled")
-		#target_compile_options(modern_win32 PRIVATE /Zi /MP)
-		target_compile_options(modern_win32 PRIVATE /Zi /Qspectre /guard:cf /MP)
-		target_link_options(modern_win32 PRIVATE /DYNAMICBASE)
-	endif()
+    message(status " ${CMAKE_CXX_FLAGS_RELEASE}")
+    set(CMAKE_CXX_FLAGS "/W4 /GR /GS /EHsc /wd4100 /wd4206 /wd4702 /wd6255 /nologo /diagnostics:column /std:c++20 /Zc:inline /fp:precise /errorReport:prompt /WX- /Zc:forScope /Zc:wchar_t /Zi /Gm- /we4715 /we4172")
+	set(CMAKE_CXX_FLAGS_RELEASE "/MP /Gy /O2 /Gd /Oi /MD /FC")
+	set(CMAKE_CXX_FLAGS_DEBUG "/JMC /MP /we4172 /GS /Od /RTC1 /Gd /MDd ")
+    message(status " after ${CMAKE_CXX_FLAGS}")
+    message(status " after ${CMAKE_CXX_FLAGS_RELEASE}")
 
     if (CMAKE_BUILD_TYPE MATCHES "Release")
+		if (${USE_SPECTRE} MATCHES "true")
+			message(status " Spectre is enabled, adding /QSpectre flag")
+			target_compile_options(modern_win32 PRIVATE /Qspectre)
+
+			target_link_options(modern_win32 PRIVATE /DYNAMICBASE)
+
+		else()
+			message(status " Spectre is not enabled")
+		endif()
+
     else()
+		if (${USE_SPECTRE} MATCHES "true")
+			message(status " Spectre is enabled, adding /QSpectre flag")
+			target_compile_options(modern_win32 PRIVATE /Qspectre)
+
+			target_link_options(modern_win32 PRIVATE /DYNAMICBASE)
+		else()
+			message(status " Spectre is not enabled")
+		endif()
     endif()
 
    # Tell linker to include symbol data
@@ -111,8 +129,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
         COMPILE_PDB_OUTPUT_DIR ${CMAKE_BINARY_DIR}
     )
 
-	set_property(TARGET modern_win32 PROPERTY
-	  MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+	set_property(TARGET modern_win32 PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 endif()
 
 target_include_directories(modern_win32
