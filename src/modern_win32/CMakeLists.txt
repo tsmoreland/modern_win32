@@ -1,7 +1,7 @@
 ﻿# CMakeList.txt : CMake project for modern_win32, include source and define
 # project specific logic here.
 #
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.24)
 
 set(root_header_files
     "../../include/modern_win32/access_denied_exception.h"
@@ -68,18 +68,15 @@ set(source_files
 
 # Add source to this project's executable.
 
-add_definitions(-DMODERN_WIN32_EXPORTS -DUNICODE -D_UNICODE)
-
-if (${USE_SPECTRE} MATCHES "true")
-    message(status " Spectre is enabled, adding /QSpectre flag")
-    add_compile_options(/Zi /QSpectre /MP)
-
+if (CMAKE_BUILD_TYPE MATCHES "Release")
+	add_definitions(-DMODERN_WIN32_EXPORTS -DUNICODE -D_UNICODE -D_ENABLE_EXTENDED_ALIGNED_STORAGE -DNDEBUG -D_MBCS -DWIN32 -D_WINDOWS)
 else()
-    message(status " Spectre is not enabled")
-    add_compile_options(/Zi /MP)
+	add_definitions(-DMODERN_WIN32_EXPORTS -DUNICODE -D_UNICODE -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_DEBUG -D_MBCS -DWIN32 -D_WINDOWS)
 endif()
 
 add_library(modern_win32 SHARED ${source_files} ${public_header_files})
+
+message(status " build type " ${CMAKE_BUILD_TYPE})
 
 include(GenerateExportHeader)
 generate_export_header(modern_win32)
@@ -87,23 +84,58 @@ generate_export_header(modern_win32)
 set_target_properties(modern_win32 PROPERTIES VS_GLOBAL_KEYWORD "Win32Proj")
 set_target_properties(modern_win32 PROPERTIES EXPORT_NAME modern_win32)
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC" AND CMAKE_BUILD_TYPE MATCHES "Release")
+
+if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    message(status " using msvc compiler")
+    set(MSVC_TOOLSET_VERSION 143)
+
+    set(CMAKE_CXX_FLAGS "/W4 /GR /GS /EHsc /wd4100 /wd4206 /wd4702 /wd6255 /nologo /diagnostics:column /std:c++20 /Zc:inline /fp:precise /errorReport:prompt /WX- /Zc:forScope /Zc:wchar_t /Zi /Gm- /we4715 /we4172")
+	set(CMAKE_CXX_FLAGS_RELEASE "/MP /Gy /O2 /Gd /Oi /MD /FC")
+	set(CMAKE_CXX_FLAGS_DEBUG "/JMC /MP /we4172 /GS /Od /RTC1 /Gd /MDd ")
+
+    if (CMAKE_BUILD_TYPE MATCHES "Release")
+		if (${USE_SPECTRE} MATCHES "true")
+			message(status " Spectre is enabled, adding /QSpectre flag")
+			target_compile_options(modern_win32 PRIVATE /Qspectre)
+
+			target_link_options(modern_win32 PRIVATE /DYNAMICBASE)
+            set_target_properties(modern_win32 PROPERTIES LIBRARY_OUTPUT_NAME "modern_win32_spectre_md")
+            set_target_properties(modern_win32 PROPERTIES OUTPUT_NAME "modern_win32_spectre_md")
+
+		else()
+			message(status " Spectre is not enabled")
+            set_target_properties(modern_win32 PROPERTIES LIBRARY_OUTPUT_NAME "modern_win32_md")
+            set_target_properties(modern_win32 PROPERTIES OUTPUT_NAME "modern_win32_md")
+		endif()
+
+    else()
+		if (${USE_SPECTRE} MATCHES "true")
+			message(status " Spectre is enabled, adding /QSpectre flag")
+			target_compile_options(modern_win32 PRIVATE /Qspectre)
+
+			target_link_options(modern_win32 PRIVATE /DYNAMICBASE)
+            set_target_properties(modern_win32 PROPERTIES LIBRARY_OUTPUT_NAME "modern_win32_spectre_mdd")
+            set_target_properties(modern_win32 PROPERTIES OUTPUT_NAME "modern_win32_spectre_mdd")
+		else()
+			message(status " Spectre is not enabled")
+            set_target_properties(modern_win32 PROPERTIES LIBRARY_OUTPUT_NAME "modern_win32_mdd")
+            set_target_properties(modern_win32 PROPERTIES OUTPUT_NAME "modern_win32_mdd")
+		endif()
+    endif()
 
    # Tell linker to include symbol data
-    set_target_properties(modern_win32 PROPERTIES 
-        LINK_FLAGS "/INCREMENTAL:NO /DEBUG /OPT:REF /OPT:ICF"
-    )
+	set_target_properties(modern_win32 PROPERTIES 
+		LINK_FLAGS "/INCREMENTAL:NO /DEBUG /OPT:REF /OPT:ICF"
+	)
 
     # Set file name & location
     set_target_properties(modern_win32 PROPERTIES 
         COMPILE_PDB_NAME modern_win32 
         COMPILE_PDB_OUTPUT_DIR ${CMAKE_BINARY_DIR}
     )
+
+	set_property(TARGET modern_win32 PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 endif()
-
-set_property(TARGET modern_win32 PROPERTY
-  MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-
 
 target_include_directories(modern_win32
     PUBLIC        
@@ -115,7 +147,7 @@ target_include_directories(modern_win32
 
 install(TARGETS modern_win32
     EXPORT modern_win32
-    LIBRARY DESTINATION lib 
+    LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
     RUNTIME DESTINATION lib
 )

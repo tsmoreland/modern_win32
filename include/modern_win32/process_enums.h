@@ -150,7 +150,41 @@ namespace modern_win32 {
         synchronize = SYNCHRONIZE,
     };
 
-    _BITMASK_OPS(process_access_rights);
+    // formally _BITMASK_OPS(process_access_rights) but the definition of the macro changed without any obvious
+    // flag to control which version is used.
+
+    MODERN_WIN32_EXPORT [[nodiscard]] constexpr process_access_rights operator&(
+        process_access_rights left, process_access_rights right) noexcept {
+        using integer_type = std::underlying_type_t<process_access_rights>;
+        return static_cast<process_access_rights>(static_cast<integer_type>(left) & static_cast<integer_type>(right));
+    }
+
+    MODERN_WIN32_EXPORT [[nodiscard]] constexpr process_access_rights operator|(process_access_rights left, process_access_rights right) noexcept {
+        using integer_type = std::underlying_type_t<process_access_rights>;
+        return static_cast<process_access_rights>(static_cast<integer_type>(left) | static_cast<integer_type>(right));
+    }
+
+    MODERN_WIN32_EXPORT [[nodiscard]] constexpr process_access_rights operator^(process_access_rights left, process_access_rights right) noexcept {
+        using integer_type = std::underlying_type_t<process_access_rights>;
+        return static_cast<process_access_rights>(static_cast<integer_type>(left) ^ static_cast<integer_type>(right));
+    }
+
+    MODERN_WIN32_EXPORT constexpr process_access_rights& operator&=(process_access_rights& left, process_access_rights right) noexcept {
+        return left = left & right;
+    }
+
+    MODERN_WIN32_EXPORT constexpr process_access_rights& operator|=(process_access_rights& left, process_access_rights right) noexcept {
+        return left = left | right;
+    }
+
+    MODERN_WIN32_EXPORT constexpr process_access_rights& operator^=(process_access_rights& left, process_access_rights right) noexcept {
+        return left = left ^ right;
+    }
+
+    MODERN_WIN32_EXPORT [[nodiscard]] constexpr process_access_rights operator~(process_access_rights left) noexcept {
+        using integer_type = std::underlying_type_t<process_access_rights>;
+        return static_cast<process_access_rights>(~static_cast<integer_type>(left));
+    }
 
     /// <summary>
     /// https://docs.microsoft.com/en-us/windows/win32/procthread/process-creation-flags

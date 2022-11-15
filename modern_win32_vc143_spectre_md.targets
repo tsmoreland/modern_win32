@@ -6,7 +6,7 @@
       <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\lib\native\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(MSBuildThisFileDirectory)..\..\lib\native\debug\lib\modern_win32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(MSBuildThisFileDirectory)..\..\lib\native\debug\lib\modern_win32_vc143_spectre_mdd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup Condition="'$(Configuration)'=='Debug'">
@@ -23,7 +23,7 @@
       <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\lib\native\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(MSBuildThisFileDirectory)..\..\lib\native\release\lib\modern_win32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(MSBuildThisFileDirectory)..\..\lib\native\release\lib\modern_win32_vc143_spectre_md.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup Condition="'$(Configuration)'!='Debug'">
