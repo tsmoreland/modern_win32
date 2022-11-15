@@ -34,6 +34,7 @@
         "CMAKE_BUILD_TYPE": "Debug"
       },
       "environment": {
+        "SPECTRE": "false",
         "PRESET_NAME": "vc143-x64-debug"
       }
     },
@@ -49,6 +50,7 @@
         "CMAKE_BUILD_TYPE": "Release"
       },
       "environment": {
+        "SPECTRE": "false",
         "PRESET_NAME": "vc143-x64-release"
       }
     },
