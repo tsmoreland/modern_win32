@@ -20,7 +20,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="modern_win32_vc143.targets" target="build\native\modern_win32_vc143.targets" />
+    <file src="modern_win32_vc143_md.targets" target="build\native\modern_win32_vc143_md.targets" />
 
     <file src="out\install\vc143-x64-release\include\modern_win32\access_denied_exception.h" target="lib\native\include\modern_win32\access_denied_exception.h" />
     <file src="out\install\vc143-x64-release\include\modern_win32\com_exception.h" target="lib\native\include\modern_win32\com_exception.h" />
@@ -53,13 +53,13 @@
     <file src="out\install\vc143-x64-release\include\modern_win32\window_handle.h" target="lib\native\include\modern_win32\window_handle.h" />
     <file src="out\install\vc143-x64-release\include\modern_win32\windows_memory.h" target="lib\native\include\modern_win32\windows_memory.h" />
 
-    <file src="out\install\vc143-x64-release\lib\modern_win32.lib" target="lib\native\release\lib\modern_win32_vc143.lib" />
-    <file src="out\install\vc143-x64-release\lib\modern_win32.dll" target="build\release\x64\modern_win32_vc143.dll" />
-    <file src="out\install\vc143-x64-release\lib\modern_win32.pdb" target="build\release\x64\modern_win32_vc143.pdb" />
+    <file src="out\install\vc143-x64-release\lib\modern_win32_md.lib" target="lib\native\release\lib\modern_win32_vc143_md.lib" />
+    <file src="out\install\vc143-x64-release\lib\modern_win32_md.dll" target="build\release\x64\modern_win32_vc143_md.dll" />
+    <file src="out\install\vc143-x64-release\lib\modern_win32_md.pdb" target="build\release\x64\modern_win32_vc143_md.pdb" />
 
-    <file src="out\install\vc143-x64-debug\lib\modern_win32.lib" target="lib\native\debug\lib\modern_win32_vc143.lib" />
-    <file src="out\install\vc143-x64-debug\lib\modern_win32.dll" target="build\debug\x64\modern_win32_vc143.dll" />
-    <file src="out\install\vc143-x64-debug\lib\modern_win32.pdb" target="build\debug\x64\modern_win32_vc143.pdb" />
+    <file src="out\install\vc143-x64-debug\lib\modern_win32_mdd.lib" target="lib\native\debug\lib\modern_win32_vc143_mdd.lib" />
+    <file src="out\install\vc143-x64-debug\lib\modern_win32_mdd.dll" target="build\debug\x64\modern_win32_vc143_mdd.dll" />
+    <file src="out\install\vc143-x64-debug\lib\modern_win32_mdd.pdb" target="build\debug\x64\modern_win32_vc143_mdd.pdb" />
 
   </files>
 </package>
