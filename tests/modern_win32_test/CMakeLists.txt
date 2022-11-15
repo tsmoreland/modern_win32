@@ -81,16 +81,41 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 endif()
 
 
-
 # must be a better way to copy output but I haven't found it yet; strangely this just worked in the previous CMake setup
-message(STATUS "Spectre enabled")
-add_custom_command(
-	TARGET modern_win32_test
-	POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${PRESET_NAME}/src/modern_win32/modern_win32.dll ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${PRESET_NAME}/tests/modern_win32_test/modern_win32.dll 
-	COMMENT "Copying modern_win32.dll to modern_win32_test folder"
-)
-
+# if nothing else a generator liked $<CONFIG:SPECTRE:_spectre>_md$<$<CONFIG:Debug>:d> could reduce the repetition
+if (CMAKE_BUILD_TYPE MATCHES "Release")
+	if (${USE_SPECTRE} MATCHES "true")
+		add_custom_command(
+			TARGET modern_win32_test
+			POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${PRESET_NAME}/src/modern_win32/modern_win32_spectre_mdd.dll ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${PRESET_NAME}/tests/modern_win32_test/modern_win32_spectre_md.dll 
+			COMMENT "Copying modern_win32.dll to modern_win32_test folder"
+		)
+	else()
+		add_custom_command(
+			TARGET modern_win32_test
+			POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${PRESET_NAME}/src/modern_win32/modern_win32_md.dll ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${PRESET_NAME}/tests/modern_win32_test/modern_win32_md.dll 
+			COMMENT "Copying modern_win32.dll to modern_win32_test folder"
+		)
+	endif()
+else()
+	if (${USE_SPECTRE} MATCHES "true")
+		add_custom_command(
+			TARGET modern_win32_test
+			POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${PRESET_NAME}/src/modern_win32/modern_win32_spectre_mdd.dll ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${PRESET_NAME}/tests/modern_win32_test/modern_win32_spectre_mdd.dll 
+			COMMENT "Copying modern_win32.dll to modern_win32_test folder"
+		)
+	else()
+		add_custom_command(
+			TARGET modern_win32_test
+			POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${PRESET_NAME}/src/modern_win32/modern_win32_mdd.dll ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${PRESET_NAME}/tests/modern_win32_test/modern_win32_mdd.dll 
+			COMMENT "Copying modern_win32.dll to modern_win32_test folder"
+		)
+	endif()
+endif()
 
 set_tests_properties(modern_win32_test
   PROPERTIES

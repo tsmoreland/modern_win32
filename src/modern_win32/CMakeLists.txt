@@ -99,9 +99,11 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 			target_compile_options(modern_win32 PRIVATE /Qspectre)
 
 			target_link_options(modern_win32 PRIVATE /DYNAMICBASE)
+			set_target_properties(modern_win32 PROPERTIES LIBRARY_OUTPUT_NAME "modern_win32_spectre_md")
 
 		else()
 			message(status " Spectre is not enabled")
+            set_target_properties(modern_win32 PROPERTIES LIBRARY_OUTPUT_NAME "modern_win32_md")
 		endif()
 
     else()
@@ -110,8 +112,12 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 			target_compile_options(modern_win32 PRIVATE /Qspectre)
 
 			target_link_options(modern_win32 PRIVATE /DYNAMICBASE)
+            set_target_properties(modern_win32 PROPERTIES LIBRARY_OUTPUT_NAME "modern_win32_spectre_mdd")
+            set_target_properties(modern_win32 PROPERTIES OUTPUT_NAME "modern_win32_spectre_mdd")
 		else()
 			message(status " Spectre is not enabled")
+            set_target_properties(modern_win32 PROPERTIES LIBRARY_OUTPUT_NAME "modern_win32_mdd")
+            set_target_properties(modern_win32 PROPERTIES OUTPUT_NAME "modern_win32_mdd")
 		endif()
     endif()
 
