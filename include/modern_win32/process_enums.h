@@ -304,7 +304,38 @@ namespace modern_win32 {
         inherit_parent_affinity = 0x00010000,
     };
 
-    _BITMASK_OPS(process_creation_options);
+    MODERN_WIN32_EXPORT [[nodiscard]] constexpr process_creation_options operator&(
+        process_creation_options left, process_creation_options right) noexcept {
+        using integer_type = std::underlying_type_t<process_creation_options>;
+        return static_cast<process_creation_options>(static_cast<integer_type>(left) & static_cast<integer_type>(right));
+    }
+
+    MODERN_WIN32_EXPORT [[nodiscard]] constexpr process_creation_options operator|(process_creation_options left, process_creation_options right) noexcept {
+        using integer_type = std::underlying_type_t<process_creation_options>;
+        return static_cast<process_creation_options>(static_cast<integer_type>(left) | static_cast<integer_type>(right));
+    }
+
+    MODERN_WIN32_EXPORT [[nodiscard]] constexpr process_creation_options operator^(process_creation_options left, process_creation_options right) noexcept {
+        using integer_type = std::underlying_type_t<process_creation_options>;
+        return static_cast<process_creation_options>(static_cast<integer_type>(left) ^ static_cast<integer_type>(right));
+    }
+
+    MODERN_WIN32_EXPORT constexpr process_creation_options& operator&=(process_creation_options& left, process_creation_options right) noexcept {
+        return left = left & right;
+    }
+
+    MODERN_WIN32_EXPORT constexpr process_creation_options& operator|=(process_creation_options& left, process_creation_options right) noexcept {
+        return left = left | right;
+    }
+
+    MODERN_WIN32_EXPORT constexpr process_creation_options& operator^=(process_creation_options& left, process_creation_options right) noexcept {
+        return left = left ^ right;
+    }
+
+    MODERN_WIN32_EXPORT [[nodiscard]] constexpr process_creation_options operator~(process_creation_options left) noexcept {
+        using integer_type = std::underlying_type_t<process_creation_options>;
+        return static_cast<process_creation_options>(~static_cast<integer_type>(left));
+    }
 
     /// <summary>
     /// https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfoa
@@ -408,7 +439,38 @@ namespace modern_win32 {
         use_standard_handles = 0x00000100,
     };
 
-    _BITMASK_OPS(process_startup_options);
+    MODERN_WIN32_EXPORT [[nodiscard]] constexpr process_startup_options operator&(
+        process_startup_options left, process_startup_options right) noexcept {
+        using integer_type = std::underlying_type_t<process_startup_options>;
+        return static_cast<process_startup_options>(static_cast<integer_type>(left) & static_cast<integer_type>(right));
+    }
+
+    MODERN_WIN32_EXPORT [[nodiscard]] constexpr process_startup_options operator|(process_startup_options left, process_startup_options right) noexcept {
+        using integer_type = std::underlying_type_t<process_startup_options>;
+        return static_cast<process_startup_options>(static_cast<integer_type>(left) | static_cast<integer_type>(right));
+    }
+
+    MODERN_WIN32_EXPORT [[nodiscard]] constexpr process_startup_options operator^(process_startup_options left, process_startup_options right) noexcept {
+        using integer_type = std::underlying_type_t<process_startup_options>;
+        return static_cast<process_startup_options>(static_cast<integer_type>(left) ^ static_cast<integer_type>(right));
+    }
+
+    MODERN_WIN32_EXPORT constexpr process_startup_options& operator&=(process_startup_options& left, process_startup_options right) noexcept {
+        return left = left & right;
+    }
+
+    MODERN_WIN32_EXPORT constexpr process_startup_options& operator|=(process_startup_options& left, process_startup_options right) noexcept {
+        return left = left | right;
+    }
+
+    MODERN_WIN32_EXPORT constexpr process_startup_options& operator^=(process_startup_options& left, process_startup_options right) noexcept {
+        return left = left ^ right;
+    }
+
+    MODERN_WIN32_EXPORT [[nodiscard]] constexpr process_startup_options operator~(process_startup_options left) noexcept {
+        using integer_type = std::underlying_type_t<process_startup_options>;
+        return static_cast<process_startup_options>(~static_cast<integer_type>(left));
+    }
 
 } // namespace modern_win32
 
