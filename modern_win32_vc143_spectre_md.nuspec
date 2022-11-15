@@ -23,13 +23,13 @@
     <file src="modern_win32_vc143_spectre_md.targets" target="build" />
     <file src="out\install\vc143-x64-release-spectre\include\**\*.*" target="lib\native\include\" />
 
-    <file src="out\install\vc143-x64-release-spectre\lib\modern_win32_spectre_md.lib" target="lib\native\x64" />
-    <file src="out\install\vc143-x64-release-spectre\lib\modern_win32_spectre_md.dll" target="lib\native\x64" />
-    <file src="out\install\vc143-x64-release-spectre\lib\modern_win32_spectre_md.pdb" target="lib\native\x64" />
+    <file src="out\install\vc143-x64-release-spectre\lib\modern_win32_vc143_spectre_md.lib" target="lib\native\x64" />
+    <file src="out\install\vc143-x64-release-spectre\lib\modern_win32_vc143_spectre_md.dll" target="lib\native\x64" />
+    <file src="out\install\vc143-x64-release-spectre\lib\modern_win32_vc143_spectre_md.pdb" target="lib\native\x64" />
 
-    <file src="out\install\vc143-x64-debug-spectre\lib\modern_win32_spectre_mdd.lib" target="lib\native\x64" />
-    <file src="out\install\vc143-x64-debug-spectre\lib\modern_win32_spectre_mdd.dll" target="lib\native\x64" />
-    <file src="out\install\vc143-x64-debug-spectre\lib\modern_win32_spectre_mdd.pdb" target="lib\native\x64" />
+    <file src="out\install\vc143-x64-debug-spectre\lib\modern_win32_vc143_spectre_mdd.lib" target="lib\native\x64" />
+    <file src="out\install\vc143-x64-debug-spectre\lib\modern_win32_vc143_spectre_mdd.dll" target="lib\native\x64" />
+    <file src="out\install\vc143-x64-debug-spectre\lib\modern_win32_vc143_spectre_mdd.pdb" target="lib\native\x64" />
 
   </files>
 </package>
