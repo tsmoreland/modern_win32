@@ -88,7 +88,7 @@ if (CMAKE_BUILD_TYPE MATCHES "Release")
 		add_custom_command(
 			TARGET modern_win32_test
 			POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${PRESET_NAME}/src/modern_win32/modern_win32_spectre_mdd.dll ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${PRESET_NAME}/tests/modern_win32_test/modern_win32_spectre_md.dll 
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${PRESET_NAME}/src/modern_win32/modern_win32_spectre_md.dll ${CMAKE_CURRENT_SOURCE_DIR}/../../out/build/${PRESET_NAME}/tests/modern_win32_test/modern_win32_spectre_md.dll 
 			COMMENT "Copying modern_win32.dll to modern_win32_test folder"
 		)
 	else()
