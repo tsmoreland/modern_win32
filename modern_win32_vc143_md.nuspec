@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
-    <id>modern_win32_vc143</id>
+    <id>modern_win32_vc143_md</id>
     <version>1.0.1</version>
     <title>C++20 Wrappers around Win32 API</title>
     <authors>TS Moreland</authors>
@@ -23,13 +23,13 @@
     <file src="modern_win32_vc143_md.targets" target="build" />
     <file src="out\install\vc143-x64-release\include\**\*.*" target="lib\native\include\" />
 
-    <file src="out\install\vc143-x64-release\lib\modern_win32_md.lib" target="lib\native\x64\" />
-    <file src="out\install\vc143-x64-release\lib\modern_win32_md.dll" target="lib\native\x64\" />
-    <file src="out\install\vc143-x64-release\lib\modern_win32_md.pdb" target="lib\native\x64\" />
+    <file src="out\install\vc143-x64-release\lib\modern_win32_vc143_md.lib" target="lib\native\x64\" />
+    <file src="out\install\vc143-x64-release\lib\modern_win32_vc143_md.dll" target="lib\native\x64\" />
+    <file src="out\install\vc143-x64-release\lib\modern_win32_vc143_md.pdb" target="lib\native\x64\" />
 
-    <file src="out\install\vc143-x64-debug\lib\modern_win32_mdd.lib" target="lib\native\x64\" />
-    <file src="out\install\vc143-x64-debug\lib\modern_win32_mdd.dll" target="lib\native\x64\" />
-    <file src="out\install\vc143-x64-debug\lib\modern_win32_mdd.pdb" target="lib\native\x64\" />
+    <file src="out\install\vc143-x64-debug\lib\modern_win32_vc143_mdd.lib" target="lib\native\x64\" />
+    <file src="out\install\vc143-x64-debug\lib\modern_win32_vc143_mdd.dll" target="lib\native\x64\" />
+    <file src="out\install\vc143-x64-debug\lib\modern_win32_vc143_mdd.pdb" target="lib\native\x64\" />
 
   </files>
 </package>
