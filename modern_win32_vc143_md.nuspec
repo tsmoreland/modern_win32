@@ -20,7 +20,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="modern_win32_vc143_md.targets" target="build\native\modern_win32_vc143_md.targets" />
+    <file src="modern_win32_vc143_md.targets" target="build" />
 
     <file src="out\install\vc143-x64-release\include\modern_win32\access_denied_exception.h" target="lib\native\include\modern_win32\access_denied_exception.h" />
     <file src="out\install\vc143-x64-release\include\modern_win32\com_exception.h" target="lib\native\include\modern_win32\com_exception.h" />
