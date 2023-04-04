@@ -14,33 +14,16 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef MODERN_WIN32_SHARED_WAIT_FOR_EXCEPTION_H
-#define MODERN_WIN32_SHARED_WAIT_FOR_EXCEPTION_H
-
-#if _WIN32
-
-#include <exception>
-#include <modern_win32/modern_win32_export.h>
-#include <modern_win32/wait_for_result.h>
+#include <modern_win32/wait_for_exception.h>
 
 namespace modern_win32 {
 
-    class wait_for_exception final : public std::exception {
-        using base = std::exception;
-        wait_for_result m_unexpected_result{};
+    wait_for_exception::wait_for_exception() : base() {}
+    wait_for_exception::wait_for_exception(char const* message) : base(message) {}
+    wait_for_exception::wait_for_exception(wait_for_result const unexpected_result)
+        : base(), m_unexpected_result{unexpected_result} {}
 
-    public:
-        MODERN_WIN32_EXPORT explicit wait_for_exception();
-        MODERN_WIN32_EXPORT explicit wait_for_exception(char const* message);
-        MODERN_WIN32_EXPORT explicit wait_for_exception(wait_for_result const unexpected_result);
-        MODERN_WIN32_EXPORT explicit wait_for_exception(wait_for_result const unexpected_result, char const* message);
+    wait_for_exception::wait_for_exception(wait_for_result const unexpected_result, char const* message)
+        : base(message), m_unexpected_result{unexpected_result} {}
 
-        [[nodiscard]] constexpr wait_for_result unexpected_result() const noexcept {
-            return m_unexpected_result;
-        }
-    };
 } // namespace modern_win32
-
-
-#endif
-#endif
