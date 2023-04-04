@@ -27,12 +27,12 @@
 namespace modern_win32 {
     class MODERN_WIN32_EXPORT guid final {
     public:
-        MODERN_WIN32_EXPORT explicit guid();
-        MODERN_WIN32_EXPORT explicit guid(GUID const& value) noexcept;
-        MODERN_WIN32_EXPORT explicit guid(char const* value);
-        MODERN_WIN32_EXPORT explicit guid(wchar_t const* value);
+        explicit guid();
+        explicit guid(GUID const& value) noexcept;
+        explicit guid(char const* value);
+        explicit guid(wchar_t const* value);
 
-        [[nodiscard]] MODERN_WIN32_EXPORT GUID get() const noexcept;
+        [[nodiscard]] GUID get() const noexcept;
 
         static guid& zero();
 
