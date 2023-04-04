@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2022 Terry Moreland
+// Copyright (c) 2023 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 // documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
 // rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
@@ -14,8 +14,8 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef MODERN_WIN32_GUID_H_
-#define MODERN_WIN32_GUID_H_
+#ifndef MODERN_WIN32_GUID_H
+#define MODERN_WIN32_GUID_H
 #include <ostream>
 #ifdef _WIN32
 
@@ -27,12 +27,12 @@
 namespace modern_win32 {
     class MODERN_WIN32_EXPORT guid final {
     public:
-        explicit guid();
-        explicit guid(GUID const& value) noexcept;
-        explicit guid(char const* value);
-        explicit guid(wchar_t const* value);
+        MODERN_WIN32_EXPORT explicit guid();
+        MODERN_WIN32_EXPORT explicit guid(GUID const& value) noexcept;
+        MODERN_WIN32_EXPORT explicit guid(char const* value);
+        MODERN_WIN32_EXPORT explicit guid(wchar_t const* value);
 
-        [[nodiscard]] GUID get() const noexcept;
+        [[nodiscard]] MODERN_WIN32_EXPORT GUID get() const noexcept;
 
         static guid& zero();
 
