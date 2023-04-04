@@ -17,6 +17,7 @@
 #include "process_impl.h"
 
 #include <modern_win32/wait_for.h>
+#include <modern_win32/wait_for_exception.h>
 #include <modern_win32/windows_exception.h>
 
 namespace modern_win32::impl {
@@ -83,8 +84,27 @@ namespace modern_win32::impl {
 
 
     void wait_for_exit(process_handle const& process_handle) {
-        if (!is_running(process_handle))
+        if (!is_running(process_handle)) {
             return;
+        }
+
+        bool done = false;
+        while (!done) {
+            using std::literals::chrono_literals::operator""ms;
+            switch (wait_for_result const result = wait_one(process_handle, 500ms); result) {
+            case wait_for_result::object:
+                done = true;
+                break;
+            case wait_for_result::abandonded:
+            case wait_for_result::io_completion:
+            case wait_for_result::failed:
+                throw wait_for_exception(result);
+            case wait_for_result::timeout:
+            default:
+                std::this_thread::sleep_for(250ms);
+                break;
+            }
+        }
 
         static_cast<void>(wait_one(process_handle));
     }
