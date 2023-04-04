@@ -8,6 +8,7 @@ set(root_header_files
     "../../include/modern_win32/com_exception.h"
     "../../include/modern_win32/invalid_handle.h"
     "../../include/modern_win32/environment.h"
+    "../../include/modern_win32/environment_block.h"
     "../../include/modern_win32/guid.h"
     "../../include/modern_win32/modern_win32_export.h"
     "../../include/modern_win32/module_handle.h"
@@ -20,6 +21,7 @@ set(root_header_files
     "../../include/modern_win32/string.h"
     "../../include/modern_win32/unique_handle.h"
     "../../include/modern_win32/wait_for.h"
+    "../../include/modern_win32/wait_for_exception.h"
     "../../include/modern_win32/wait_for_result.h"
     "../../include/modern_win32/windows_exception.h"
     "../../include/modern_win32/windows_error.h"
@@ -63,6 +65,7 @@ set(source_files
     "process_module.cpp" 
     "version_info.h"
     "wait_for.cpp"
+    "wait_for_exception.cpp"
     "windows_error.cpp"
 )
 
