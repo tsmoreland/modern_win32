@@ -34,7 +34,9 @@ namespace modern_win32 {
     /// <param name="environment">on success stores all system and user environment variables</param>
     /// <returns>on success true; otherwise false</returns>
     template <typename TCHAR>
-    [[nodiscard]] bool try_get_all_environment_variables(environment_map<TCHAR>& environment);
+    [[nodiscard]] bool try_get_all_environment_variables(environment_map<TCHAR>& environment) {
+        return false;
+    }
 
     /// <summary>
     /// attempts to retrieve all system and user environment variables storing them in <parmref name="environment"/>
@@ -53,30 +55,6 @@ namespace modern_win32 {
     /// <returns>on success true; otherwise false</returns>
     template <>
     [[nodiscard]] MODERN_WIN32_EXPORT bool try_get_all_environment_variables(environment_map<wchar_t>& environment);
-
-    /// <summary>
-    /// attempts to retrieve all system and user environment variables storing them in <parmref name="environment"/>
-    /// </summary>
-    /// <typeparam name="TCHAR">character type</typeparam>
-    /// <param name="environment">on success stores all system and user environment variables</param>
-    /// <returns>on success true; otherwise false</returns>
-    template <typename TCHAR>
-    [[nodiscard]] bool try_get_all_environment_variables(environment_map<TCHAR>& environment) {
-        return false;
-    }
-
-    /*
-    template <typename TCHAR>
-    class environment_block final
-    {
-    public:
-        explicit environment_block() = default;
-
-    private:
-        environment_map m_environment{};
-    };
-    */
-
 
 } // namespace modern_win32
 
