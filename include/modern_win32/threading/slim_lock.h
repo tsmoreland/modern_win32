@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Terry Moreland
+// Copyright (c) 2023 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 // documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
 // rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
@@ -19,8 +19,9 @@
 
 #ifdef _WIN32
 
-#include <Windows.h>
 #include <synchapi.h>
+
+#include <Windows.h>
 
 #endif
 
@@ -85,7 +86,7 @@ namespace modern_win32::threading {
         [[nodiscard]] native_handle_type native_handle() noexcept;
 
         slim_lock& operator=(slim_lock const&) = delete;
-        slim_lock& operator                    =(slim_lock&& other) noexcept;
+        slim_lock& operator=(slim_lock&& other) noexcept;
 
     private:
         SRWLOCK lock_{};

@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Terry Moreland
+// Copyright (c) 2022 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 // documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
 // rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
@@ -17,6 +17,7 @@
 #include "process_impl.h"
 
 #include <modern_win32/wait_for.h>
+#include <modern_win32/wait_for_exception.h>
 #include <modern_win32/windows_exception.h>
 
 namespace modern_win32::impl {
@@ -83,8 +84,28 @@ namespace modern_win32::impl {
 
 
     void wait_for_exit(process_handle const& process_handle) {
-        if (!is_running(process_handle))
+        if (!is_running(process_handle)) {
             return;
+        }
+
+        bool done = false;
+        while (!done) {
+#pragma warning(push)
+            using std::literals::chrono_literals::operator""ms;
+#pragma warning(pop)
+            switch (wait_for_result const result = wait_one(process_handle, 500ms); result) {
+            case wait_for_result::object:
+                done = true;
+                break;
+            case wait_for_result::abandonded:
+            case wait_for_result::io_completion:
+            case wait_for_result::failed:
+                throw wait_for_exception(result);
+            case wait_for_result::timeout:
+                std::this_thread::sleep_for(250ms);
+                break;
+            }
+        }
 
         static_cast<void>(wait_one(process_handle));
     }

@@ -1,0 +1,7 @@
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+
+#define MODERN_WIN32_EXPORT
+#define MODERN_WIN32_EXPORT __declspec(dllexport)
+#define MODERN_WIN32_EXPORT __declspec(dllimport)

@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Terry Moreland
+// Copyright (c) 2023 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 // documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
 // rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
@@ -14,8 +14,8 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef MODERN_WIN32_THREADING_TIMER_
-#define MODERN_WIN32_THREADING_TIMER_
+#ifndef MODERN_WIN32_THREADING_TIMER
+#define MODERN_WIN32_THREADING_TIMER
 
 #ifdef _WIN32
 
@@ -192,7 +192,7 @@ namespace modern_win32::threading {
             return *this;
         }
 
-        timer(timer const&) = delete;
+        timer(timer const&)            = delete;
         timer& operator=(timer const&) = delete;
 
         /// <summary>

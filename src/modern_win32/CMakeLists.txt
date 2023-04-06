@@ -8,6 +8,7 @@ set(root_header_files
     "../../include/modern_win32/com_exception.h"
     "../../include/modern_win32/invalid_handle.h"
     "../../include/modern_win32/environment.h"
+    "../../include/modern_win32/environment_block.h"
     "../../include/modern_win32/guid.h"
     "../../include/modern_win32/modern_win32_export.h"
     "../../include/modern_win32/module_handle.h"
@@ -20,6 +21,7 @@ set(root_header_files
     "../../include/modern_win32/string.h"
     "../../include/modern_win32/unique_handle.h"
     "../../include/modern_win32/wait_for.h"
+    "../../include/modern_win32/wait_for_exception.h"
     "../../include/modern_win32/wait_for_result.h"
     "../../include/modern_win32/windows_exception.h"
     "../../include/modern_win32/windows_error.h"
@@ -58,11 +60,13 @@ set(source_files
     "threading/timer.cpp"
     "threading/thread.cpp"
     "environment.cpp"
+    "environment_block.cpp"
     "guid.cpp"
     "process.cpp" 
     "process_module.cpp" 
     "version_info.h"
     "wait_for.cpp"
+    "wait_for_exception.cpp"
     "windows_error.cpp"
 )
 
@@ -83,6 +87,9 @@ generate_export_header(modern_win32)
 
 set_target_properties(modern_win32 PROPERTIES VS_GLOBAL_KEYWORD "Win32Proj")
 set_target_properties(modern_win32 PROPERTIES EXPORT_NAME modern_win32)
+
+find_library(userenv_LIBRARY_PATH userenv)
+target_link_libraries(modern_win32 ${userenv_LIBRARY_PATH})
 
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
