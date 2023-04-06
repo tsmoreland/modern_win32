@@ -90,7 +90,9 @@ namespace modern_win32::impl {
 
         bool done = false;
         while (!done) {
+#pragma warning(push)
             using std::literals::chrono_literals::operator""ms;
+#pragma warning(pop)
             switch (wait_for_result const result = wait_one(process_handle, 500ms); result) {
             case wait_for_result::object:
                 done = true;
@@ -100,7 +102,6 @@ namespace modern_win32::impl {
             case wait_for_result::failed:
                 throw wait_for_exception(result);
             case wait_for_result::timeout:
-            default:
                 std::this_thread::sleep_for(250ms);
                 break;
             }
