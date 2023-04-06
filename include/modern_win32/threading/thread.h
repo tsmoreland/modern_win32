@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2022 Terry Moreland
+// Copyright (c) 2023 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 // documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
 // rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
@@ -181,7 +181,7 @@ namespace modern_win32::threading {
         [[nodiscard]] bool is_running() const;
 
         thread& operator=(thread const&) = delete;
-        thread& operator                 =(thread&& other) noexcept;
+        thread& operator=(thread&& other) noexcept;
 
         MODERN_WIN32_EXPORT friend void swap(thread& lhs, thread& rhs) noexcept;
 
