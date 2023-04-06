@@ -14,8 +14,8 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef MODERN_WIN32_THREADING_EVENT_H_
-#define MODERN_WIN32_THREADING_EVENT_H_
+#ifndef MODERN_WIN32_THREADING_EVENT_H
+#define MODERN_WIN32_THREADING_EVENT_H
 
 #ifdef _WIN32
 
@@ -108,7 +108,7 @@ namespace modern_win32::threading {
         }
 
         event& operator=(event const& other) = delete;
-        event& operator                      =(event&& other) noexcept {
+        event& operator=(event&& other) noexcept {
             if (this == &other)
                 return *this;
             static_cast<void>(event_.reset(other.event_.release()));
