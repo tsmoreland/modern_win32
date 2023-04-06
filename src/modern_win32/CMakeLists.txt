@@ -60,6 +60,7 @@ set(source_files
     "threading/timer.cpp"
     "threading/thread.cpp"
     "environment.cpp"
+    "environment_block.cpp"
     "guid.cpp"
     "process.cpp" 
     "process_module.cpp" 
@@ -86,6 +87,9 @@ generate_export_header(modern_win32)
 
 set_target_properties(modern_win32 PROPERTIES VS_GLOBAL_KEYWORD "Win32Proj")
 set_target_properties(modern_win32 PROPERTIES EXPORT_NAME modern_win32)
+
+find_library(userenv_LIBRARY_PATH userenv)
+target_link_libraries(modern_win32 ${userenv_LIBRARY_PATH})
 
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
