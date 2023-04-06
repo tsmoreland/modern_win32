@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2022 Terry Moreland
+// Copyright (c) 2023 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 // documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
 // rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
@@ -14,15 +14,39 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef MODERN_WIN32_WINDOW_HANDLE_
-#define MODERN_WIN32_WINDOW_HANDLE_
-#ifdef _WIN32
+#pragma warning(disable : 26812)
+#pragma warning(disable : 26495)
+#include <gtest/gtest.h>
+#pragma warning(default : 26812)
+#pragma warning(default : 26495)
 
-#include <modern_win32/null_handle.h>
+#include <modern_win32/environment_block.h>
 
-namespace modern_win32 {
-    using window_handle = null_handle;
+using modern_win32::environment_block;
+
+TEST(environment_block, constructor_does_not_throw_When_inherit_is_true) {
+
+    ASSERT_NO_THROW({ environment_block const eb(true); });
 }
 
-#endif
-#endif
+TEST(environment_block, native_returns_non_null_when_inherit_is_true) {
+
+    environment_block const eb(true);
+    auto const native_eb = eb.native();
+
+    ASSERT_NE(native_eb, nullptr);
+}
+
+
+TEST(environment_block, constructor_does_not_throw_When_inherit_is_false) {
+
+    ASSERT_NO_THROW({ environment_block const eb(false); });
+}
+
+TEST(environment_block, native_returns_non_null_when_inherit_is_false) {
+
+    environment_block const eb(false);
+    auto const native_eb = eb.native();
+
+    ASSERT_NE(native_eb, nullptr);
+}

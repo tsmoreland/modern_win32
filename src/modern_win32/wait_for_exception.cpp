@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2022 Terry Moreland
+// Copyright (c) 2023 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 // documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
 // rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
@@ -14,15 +14,16 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef MODERN_WIN32_WINDOW_HANDLE_
-#define MODERN_WIN32_WINDOW_HANDLE_
-#ifdef _WIN32
-
-#include <modern_win32/null_handle.h>
+#include <modern_win32/wait_for_exception.h>
 
 namespace modern_win32 {
-    using window_handle = null_handle;
-}
 
-#endif
-#endif
+    wait_for_exception::wait_for_exception() : base() {}
+    wait_for_exception::wait_for_exception(char const* message) : base(message) {}
+    wait_for_exception::wait_for_exception(wait_for_result const unexpected_result)
+        : base(), m_unexpected_result{unexpected_result} {}
+
+    wait_for_exception::wait_for_exception(wait_for_result const unexpected_result, char const* message)
+        : base(message), m_unexpected_result{unexpected_result} {}
+
+} // namespace modern_win32

@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Terry Moreland
+// Copyright (c) 2023 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 // documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
 // rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
@@ -74,8 +74,9 @@ namespace modern_win32 {
         auto const env_block = std::unique_ptr<char, decltype(deleter)>{GetEnvironmentStringsA(), deleter};
 #endif
 
-        if (env_block == nullptr)
+        if (env_block == nullptr) {
             return false;
+        }
 
         environment = to_environment_map(env_block.get());
 
@@ -84,10 +85,11 @@ namespace modern_win32 {
 
     template <>
     bool try_get_all_environment_variables(environment_map<wchar_t>&) {
-        auto deleter         = [](wchar_t*& character) { FreeEnvironmentStringsW(character); };
-        auto const env_block = std::unique_ptr<wchar_t, decltype(deleter)>{GetEnvironmentStringsW(), deleter};
-        if (env_block == nullptr)
+        auto deleter = [](wchar_t*& character) { FreeEnvironmentStringsW(character); };
+        if (auto const env_block = std::unique_ptr<wchar_t, decltype(deleter)>{GetEnvironmentStringsW(), deleter};
+            env_block == nullptr) {
             return false;
+        }
 
         return true;
     }

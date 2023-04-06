@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2022 Terry Moreland
+// Copyright (c) 2023 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 // documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
 // rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
@@ -14,15 +14,25 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef MODERN_WIN32_WINDOW_HANDLE_
-#define MODERN_WIN32_WINDOW_HANDLE_
-#ifdef _WIN32
-
-#include <modern_win32/null_handle.h>
+#include <modern_win32/environment_block.h>
+#include <modern_win32/windows_exception.h>
+#include <Windows.h>
+#include <UserEnv.h>
 
 namespace modern_win32 {
-    using window_handle = null_handle;
-}
 
-#endif
-#endif
+    environment_block::environment_block(bool const inherit_from_current_process) {
+        if (TRUE != CreateEnvironmentBlock(&environment_, nullptr, inherit_from_current_process ? TRUE : FALSE)) {
+            throw windows_exception();
+        }
+    }
+
+    environment_block::~environment_block() {
+        if (environment_ != nullptr) {
+            DestroyEnvironmentBlock(environment_);
+            environment_ = nullptr;
+        }
+    }
+
+
+}
