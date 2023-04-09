@@ -19,9 +19,9 @@
 
 #ifdef _WIN32
 
-#include <synchapi.h>
-
+#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include <synchapi.h>
 
 #endif
 
