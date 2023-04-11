@@ -50,6 +50,8 @@ TEST(delayed_callback_test, constructor__does_not_throw__when_state_is_reference
     });
 }
 
+INSTANTIATE_TEST_SUITE_P(invalid_due_times, delayed_callback_test, testing::Values(-50ms, -100ms));
+
 TEST_P(delayed_callback_test, start__throws_invalid_argument__when_due_time_is_less_than_zero)
 {
     try {
@@ -288,4 +290,3 @@ TEST(delayed_callback_test, operator_not_equals__returns_true__when_timer_handle
     ASSERT_TRUE(first != second);
 }
 
-INSTANTIATE_TEST_SUITE_P(data_driven, delayed_callback_test, testing::Values(-50ms, -100ms));
