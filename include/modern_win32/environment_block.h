@@ -19,6 +19,7 @@
 #ifdef _WIN32
 
 
+#include <modern_win32/environment_block_iterator.h>
 #include <modern_win32/modern_win32_export.h>
 
 namespace modern_win32 {
@@ -50,11 +51,13 @@ namespace modern_win32 {
             return environment_;
         }
 
+        [[nodiscard]] MODERN_WIN32_EXPORT environment_block_iterator begin() const noexcept;
+        [[nodiscard]] MODERN_WIN32_EXPORT environment_block_iterator end() const noexcept;
+
         environment_block(environment_block const&)            = delete;
         environment_block(environment_block&&)                 = default;
         environment_block& operator=(environment_block const&) = delete;
         environment_block& operator=(environment_block&&)      = default;
-
 
     private:
         native_environment_block environment_{nullptr};

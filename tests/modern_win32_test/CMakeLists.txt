@@ -9,6 +9,7 @@ add_executable(modern_win32_test ${TEST_SOURCES}
     "delayed_callback_test.cpp"
     "environment_test.cpp"
     "environment_block_test.cpp"
+    "environment_block_iterator_test.cpp"
     "event_test.cpp" 
     "guid_test.cpp" 
     "process_test.cpp"
