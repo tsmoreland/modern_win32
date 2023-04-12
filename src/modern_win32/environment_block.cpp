@@ -14,9 +14,10 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 #include <modern_win32/environment_block.h>
 #include <modern_win32/windows_exception.h>
-#include <Windows.h>
 #include <UserEnv.h>
 
 namespace modern_win32 {
@@ -32,6 +33,15 @@ namespace modern_win32 {
             DestroyEnvironmentBlock(environment_);
             environment_ = nullptr;
         }
+    }
+
+    environment_block_iterator environment_block::begin() const noexcept {
+        return environment_block_iterator(*this);
+    }
+
+    // ReSharper disable once CppMemberFunctionMayBeStatic -- keeping as member to work as an iterator
+    environment_block_iterator environment_block::end() const noexcept {
+        return environment_block_iterator();
     }
 
 
