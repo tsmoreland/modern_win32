@@ -50,7 +50,7 @@ namespace modern_win32 {
         return *this;
     }
 
-    environment_block_iterator environment_block_iterator::operator++(int) {
+    environment_block_iterator& environment_block_iterator::operator++(int) {
         iterate_to_next();
         return *this;
     }
