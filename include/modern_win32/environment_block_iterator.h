@@ -76,7 +76,7 @@ namespace modern_win32 {
          * \brief post-fix increment the iterator (i++)
          * \return  current iterator prior to update)
          */
-        MODERN_WIN32_EXPORT environment_block_iterator operator++(int);
+        MODERN_WIN32_EXPORT environment_block_iterator& operator++(int);
         MODERN_WIN32_EXPORT environment_block_iterator& operator+=(int i);
 
         MODERN_WIN32_EXPORT difference_type operator+(environment_block_iterator const& other) const;
