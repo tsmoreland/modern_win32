@@ -44,5 +44,13 @@ namespace modern_win32 {
         return environment_block_iterator();
     }
 
+    void environment_block::swap(environment_block& that) noexcept {
+        std::swap(environment_, that.environment_);
+    }
+
+    void swap(environment_block& lhs, environment_block& rhs) noexcept {
+        lhs.swap(rhs);
+    }
+
 
 }
