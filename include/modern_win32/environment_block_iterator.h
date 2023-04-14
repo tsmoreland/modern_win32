@@ -89,12 +89,25 @@ namespace modern_win32 {
             return index_ <=> other.index_;
         }
 
+        /**
+         * \brief swaps the values of this with that
+         * \param that the other iterator to swaps values with
+         */
+        MODERN_WIN32_EXPORT void swap(environment_block_iterator& that) noexcept;
+
     private:
         explicit environment_block_iterator(int index, difference_type increment_by, std::wstring_view value);
 
         [[nodiscard]] bool has_next() const;
         void iterate_to_next();
     };
+
+    /**
+     * \brief swaps the values of lhs and rhs
+     * \param lhs one of the values to be swapped
+     * \param rhs one of the values to be swapped
+     */
+    MODERN_WIN32_EXPORT void swap(environment_block_iterator& lhs, environment_block_iterator& rhs) noexcept;
 
 } // namespace modern_win32
 

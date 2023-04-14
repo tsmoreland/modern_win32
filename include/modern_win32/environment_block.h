@@ -27,6 +27,7 @@ namespace modern_win32 {
     class environment_block final {
     public:
         using native_environment_block = void*;
+        using iterator = environment_block_iterator;
 
         /// <summary>
         /// instantiates a new instance of environment_block populated with the block provided by
@@ -51,8 +52,8 @@ namespace modern_win32 {
             return environment_;
         }
 
-        [[nodiscard]] MODERN_WIN32_EXPORT environment_block_iterator begin() const noexcept;
-        [[nodiscard]] MODERN_WIN32_EXPORT environment_block_iterator end() const noexcept;
+        [[nodiscard]] MODERN_WIN32_EXPORT iterator begin() const noexcept;
+        [[nodiscard]] MODERN_WIN32_EXPORT iterator end() const noexcept;
 
         environment_block(environment_block const&)            = delete;
         environment_block(environment_block&&)                 = default;

@@ -36,6 +36,12 @@ namespace modern_win32 {
     environment_block_iterator::environment_block_iterator() : index_{max_index} {
     }
 
+    void environment_block_iterator::swap(environment_block_iterator& that) noexcept {
+
+        std::swap(index_, that.index_);
+        std::swap(value_, that.value_);
+    }
+
     environment_block_iterator::environment_block_iterator(int index, environment_block_iterator::difference_type increment_by, std::wstring_view value)
         : index_{index}, value_{value} {
 
@@ -103,6 +109,10 @@ namespace modern_win32 {
         index_++;
         auto const* start = value_.data() + value_.size();
         value_ = std::wstring_view(start + 1); 
+    }
+
+    void swap(environment_block_iterator& lhs, environment_block_iterator& rhs) noexcept {
+        lhs.swap(rhs);
     }
 
     environment_block_iterator operator+(environment_block_iterator::difference_type const value,
