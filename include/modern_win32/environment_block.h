@@ -29,31 +29,40 @@ namespace modern_win32 {
         using native_environment_block = void*;
         using iterator = environment_block_iterator;
 
-        /// <summary>
-        /// instantiates a new instance of environment_block populated with the block provided by
-        /// CreateEnvironmentBlock
-        /// </summary>
-        /// <param name="inherit_from_current_process">if true then environment of current process is included in the
-        /// block</param>
+        /**
+         * \brief Instantiates a new instance of environment_block with provided environment block
+         * \param inherit_from_current_process if true then environment of current process is included in the block
+         */
         MODERN_WIN32_EXPORT explicit environment_block(bool const inherit_from_current_process);
 
-
-        /// <summary>
-        /// Instantiates a new instance of environment_block with provided environment block
-        /// </summary>
-        /// <param name="environment">
-        /// environment block provided by CreateEnvironmentBlock
-        /// cleanup of this block will be handled by this instance
-        /// </param>
+        /**
+         * \brief Instantiates a new instance of environment_block with provided environment block
+         * \param environment environment block provided by CreateEnvironmentBlock
+         *                   cleanup of this block will be handled by this instance
+         *                   cleanup of this block will be handled by this instance
+         */
         constexpr explicit environment_block(native_environment_block&& environment) : environment_{environment} {}
+
         MODERN_WIN32_EXPORT ~environment_block();
 
         [[nodiscard]] constexpr auto native() const noexcept {
             return environment_;
         }
 
+        /**
+         * \return Iterator to the first element.
+         */
         [[nodiscard]] MODERN_WIN32_EXPORT iterator begin() const noexcept;
+
+        /**
+         * \return Iterator to the element following the last element.
+         */
         [[nodiscard]] MODERN_WIN32_EXPORT iterator end() const noexcept;
+
+        /**
+         * \brief swap the values of this and that
+         */
+        MODERN_WIN32_EXPORT void swap(environment_block& that) noexcept;
 
         environment_block(environment_block const&)            = delete;
         environment_block(environment_block&&)                 = default;
@@ -64,6 +73,7 @@ namespace modern_win32 {
         native_environment_block environment_{nullptr};
     };
 
+    MODERN_WIN32_EXPORT void swap(environment_block& lhs, environment_block& rhs) noexcept;
 
 } // namespace modern_win32
 
